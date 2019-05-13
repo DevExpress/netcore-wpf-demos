@@ -1,0 +1,118 @@
+<UserControl x:Class="DevExpress.MailClient.View.EditTaskView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:viewmodel="clr-namespace:DevExpress.MailClient.ViewModel"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             mc:Ignorable="d" d:DataContext="{Binding SelectedItem, Source={dxmvvm:ViewModelSource viewmodel:TasksViewModel}}"
+             Width="600" Height="300">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DevExpress.MailClient.Xpf;component/Resources/GridTemplates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <dxlc:LayoutControl>
+        <dxlc:LayoutGroup Orientation="Vertical">
+            <dxlc:LayoutGroup Orientation="Horizontal" VerticalAlignment="Top">
+                <dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup Orientation="Vertical">
+                        <dxlc:LayoutItem Label="Subject: ">
+                            <dxe:TextEdit x:Name="tbSubject" EditValue="{Binding Subject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutGroup>
+                            <dxlc:LayoutGroup Header="LayoutGroup" View="Group">
+                                <dxlc:LayoutGroup Orientation="Vertical">
+                                    <dxlc:LayoutItem Label="Start Date:">
+                                        <dxe:DateEdit EditValue="{Binding StartDate, Mode=TwoWay}"/>
+                                    </dxlc:LayoutItem>
+                                    <dxlc:LayoutItem Label="Due Date:">
+                                        <dxe:DateEdit EditValue="{Binding DueDate, Mode=TwoWay}"/>
+                                    </dxlc:LayoutItem>
+                                </dxlc:LayoutGroup>
+                            </dxlc:LayoutGroup>
+                            <dxlc:LayoutGroup>
+                                <dxlc:LayoutGroup Orientation="Vertical">
+                                    <dxlc:LayoutItem Label="Status: ">
+                                        <dxe:ComboBoxEdit EditValue="{Binding Status, Mode=TwoWay}" ValueMember="Id" IsTextEditable="False" DisplayTextConverter="{StaticResource SplitStringConverter}">
+                                            <dxe:ComboBoxEdit.ItemsSource>
+                                                <dxe:EnumItemsSource EnumType="{x:Type viewmodel:TaskStatus}"/>
+                                            </dxe:ComboBoxEdit.ItemsSource>
+                                            <dxe:ComboBoxEdit.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Id, Converter={StaticResource SplitStringConverter}}"/>
+                                                </DataTemplate>
+                                            </dxe:ComboBoxEdit.ItemTemplate>
+                                        </dxe:ComboBoxEdit>
+                                    </dxlc:LayoutItem>
+                                    <dxlc:LayoutItem Label="Priority: ">
+                                        <dxe:ComboBoxEdit EditValue="{Binding Priority, Mode=TwoWay}" ValueMember="Id" IsTextEditable="False" ApplyItemTemplateToSelectedItem="True">
+                                            <dxe:ComboBoxEdit.ItemsSource>
+                                                <dxe:EnumItemsSource EnumType="{x:Type viewmodel:TaskPriority}"/>
+                                            </dxe:ComboBoxEdit.ItemsSource>
+                                            <dxe:ComboBoxEdit.DisplayTemplate>
+                                                <ControlTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Image Source="{Binding EditValue.Id, Converter={StaticResource ColumnPriorityConverter}}" Height="16"/>
+                                                        <TextBlock Text="{Binding EditValue.Id}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </ControlTemplate>
+                                            </dxe:ComboBoxEdit.DisplayTemplate>
+                                            <dxe:ComboBoxEdit.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" IsHitTestVisible="False">
+                                                        <Image Source="{Binding Id, Converter={StaticResource ColumnPriorityConverter}}" Height="16"/>
+                                                        <TextBlock Text="{Binding Id}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </dxe:ComboBoxEdit.ItemTemplate>
+                                        </dxe:ComboBoxEdit>
+                                    </dxlc:LayoutItem>
+                                </dxlc:LayoutGroup>
+                            </dxlc:LayoutGroup>
+                        </dxlc:LayoutGroup>
+                    </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup Orientation="Vertical" Width="200">
+                        <dxlc:LayoutItem Label="Category: ">
+                            <dxe:ComboBoxEdit EditValue="{Binding Category, Mode=TwoWay}" IsTextEditable="False" ValueMember="Id" ApplyItemTemplateToSelectedItem="True">
+                                <dxe:ComboBoxEdit.ItemsSource>
+                                    <dxe:EnumItemsSource EnumType="{x:Type viewmodel:TaskCategory}"/>
+                                </dxe:ComboBoxEdit.ItemsSource>
+                                <dxe:ComboBoxEdit.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="2">
+                                            <Image Source="{Binding Path=Id, Converter={StaticResource ColumnCategoryImageConverter}}" Height="16"/>
+                                            <TextBlock Text="{Binding Path=Id, Converter={StaticResource SplitStringConverter}}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </dxe:ComboBoxEdit.ItemTemplate>
+                            </dxe:ComboBoxEdit>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="% Complete: " VerticalAlignment="Bottom">
+                            <dxe:SpinEdit EditValue="{Binding PercentComplete, Mode=TwoWay}" MinValue="0" MaxValue="100" Mask="f0" EditValueType="{x:Type sys:Int32}"/>
+                        </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutItem VerticalAlignment="Stretch">
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Description:" Margin="0,0,0,4"/>
+                    <dxe:TextEdit Grid.Row="1" EditValue="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Visible"/>
+                </Grid>
+            </dxlc:LayoutItem>
+        </dxlc:LayoutGroup>
+    </dxlc:LayoutControl>
+</UserControl>

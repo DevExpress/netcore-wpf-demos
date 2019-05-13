@@ -1,0 +1,105 @@
+<UserControl x:Class="DevExpress.MailClient.View.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxa="http://schemas.devexpress.com/winfx/2008/xaml/accordion"
+             xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:viewmodel="clr-namespace:DevExpress.MailClient.ViewModel"
+             xmlns:view="clr-namespace:DevExpress.MailClient.View"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap"
+             d:DesignHeight="392" d:DesignWidth="699">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dx:DXSplashScreenService x:Name="SplashScreenService" SplashScreenType="view:SplashScreenWindow" ShowSplashScreenOnLoading="True" FadeOutDuration="0:0:1.0"/>
+    </dxmvvm:Interaction.Behaviors>
+    <UserControl.Resources>
+        <DataTemplate x:Key="{dxt:DXTabControlThemeKey ResourceKey=Background, IsThemeIndependent=true}">
+            <Border Background="Transparent" BorderBrush="Transparent" BorderThickness="0" />
+        </DataTemplate>
+        <dxmvvm:ObjectToObjectConverter x:Key="accordionWidthConverter" DefaultTarget="46">
+            <dxmvvm:MapItem Source="True" Target="242"/>
+        </dxmvvm:ObjectToObjectConverter>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <dxr:RibbonControl Grid.Row="0" x:Name="mainRibbonControl" ToolbarShowMode="Hide" RibbonStyle="Office2010">
+            <dxr:RibbonControl.ApplicationMenu>
+                <dxr:ApplicationMenu RightPaneWidth="100" ShowRightPane="false">
+                    <dxr:ApplicationMenu.Items>
+                        <dxb:BarButtonItem Content="About" Command="{Binding ShowAboutCommand}" LargeGlyph="{dx:DXImageOffice2013 Image=Info_32x32.png}"/>
+                        <dxb:BarButtonItem Content="Exit" Command="{Binding ExitCommand}" LargeGlyph="{dx:DXImageOffice2013 Image=Close_32x32.png}"/>
+                    </dxr:ApplicationMenu.Items>
+                </dxr:ApplicationMenu>
+            </dxr:RibbonControl.ApplicationMenu>
+            <dxr:RibbonDefaultPageCategory Caption="Default Category">
+                <dxr:RibbonPage Caption="View" x:Name="viewRibbonPage">
+                    <dxr:RibbonPageGroup Caption="Navigation" x:Name="navigationRibbonPageGroup">
+                        <dxb:BarSubItem Content="Navigation" Glyph="{dx:DXImageOffice2013 Image=NavigationBar_16x16.png}" LargeGlyph="{dx:DXImageOffice2013 Image=NavigationBar_32x32.png}">
+                            <dxb:BarButtonItem Content="Mail" Command="{Binding OpenMailCommand}" Glyph="{dx:DXImageOffice2013 Image=Mail_16x16.png}" LargeGlyph="{dx:DXImageOffice2013 Image=Mail_32x32.png}" />
+                            <dxb:BarButtonItem Content="Calendar" Command="{Binding OpenCalendarCommand}" Glyph="{dx:DXImageOffice2013 Image=Today_16x16.png}" LargeGlyph="{dx:DXImageOffice2013 Image=Today_32x32.png}" />
+                            <dxb:BarButtonItem Content="Contacts" Command="{Binding OpenContactsCommand}" Glyph="{dx:DXImageOffice2013 Image=Contact_16x16.png}" LargeGlyph="{dx:DXImageOffice2013 Image=Contact_32x32.png}" />
+                            <dxb:BarButtonItem Content="Tasks" Command="{Binding OpenTasksCommand}" Glyph="{dx:DXImageOffice2013 Image=Task_16x16.png}" LargeGlyph="{dx:DXImageOffice2013 Image=Task_32x32.png}" />
+                        </dxb:BarSubItem>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Theme" MergeOrder="{x:Static sys:Int32.MaxValue}">
+                        <dxr:RibbonGalleryBarItem>
+                            <dxr:RibbonGalleryBarItem.DropDownGallery>
+                                <dxb:Gallery RowCount="6"/>
+                            </dxr:RibbonGalleryBarItem.DropDownGallery>
+                            <dxmvvm:Interaction.Behaviors>
+                                <view:ThemeSelectorBehavior ShowTouchThemes="False"/>
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxr:RibbonGalleryBarItem>
+                    </dxr:RibbonPageGroup>
+                </dxr:RibbonPage>
+            </dxr:RibbonDefaultPageCategory>
+        </dxr:RibbonControl>
+        <dxlc:LayoutControl Grid.Row="1" Padding="0" Margin="0">
+            <dxa:AccordionControl x:Name="accordion" Margin="6,6,0,6" HorizontalAlignment="Left" 
+                                  MinWidth="{Binding IsExpanded, RelativeSource={RelativeSource Self}, Converter={StaticResource accordionWidthConverter}}" 
+                                  dxlc:LayoutControl.AllowHorizontalSizing="False"
+                                  IsCollapseButtonVisible="True"
+                                  AutoExpandAllItems="True"
+                                  ChildrenPath="Content"
+                                  ViewMode="NavigationPane"
+                                  ShowHeader="True"
+                                  HeaderContent="{Binding SelectedRootItem.Header, RelativeSource={RelativeSource Self}}"
+                                  HeaderGlyph="{Binding SelectedRootItem.Icon, RelativeSource={RelativeSource Self}}"
+                                  dxmvvm:UIRegion.Region="{x:Static viewmodel:Regions.Navigation}">
+                <dxa:AccordionControl.ItemContainerStyle>
+                    <Style TargetType="dxa:AccordionItem">
+                        <Style.Triggers>
+                            <Trigger Property="ItemLevel" Value="0">
+                                <Setter Property="Header" Value="{Binding Header}"/>
+                                <Setter Property="Glyph" Value="{Binding Icon}"/>
+                            </Trigger>
+                            <Trigger Property="ItemLevel" Value="1">
+                                <Setter Property="ItemDisplayMode" Value="Header"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </dxa:AccordionControl.ItemContainerStyle>
+            </dxa:AccordionControl>
+            <dx:LoadingDecorator MinWidth="450">
+                <dx:DXTabControl AllowMerging="True" TabContentCacheMode="CacheAllTabs" Padding="6" Margin="6"
+                                 dxmvvm:UIRegion.Region="{x:Static viewmodel:Regions.Documents}">
+                    <dx:DXTabControl.View>
+                        <dx:TabControlScrollView HeaderLocation="None"/>
+                    </dx:DXTabControl.View>
+                </dx:DXTabControl>
+            </dx:LoadingDecorator>
+        </dxlc:LayoutControl>
+    </Grid>
+</UserControl>

@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/DevExpress.RealtorWorld.Xpf;component/Themes/CommonResources.xaml" />
+        <ResourceDictionary Source="/DevExpress.RealtorWorld.Xpf;component/Themes/CommonStyles.xaml" />
+        <ResourceDictionary Source="/DevExpress.RealtorWorld.Xpf;component/Themes/CommonTemplates.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

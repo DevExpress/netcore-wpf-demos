@@ -1,0 +1,10 @@
+<dx:ThemedWindow x:Class="DevExpress.MailClient.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"      
+        xmlns:view="clr-namespace:DevExpress.MailClient.View"
+        Title="DevExpress Mail Client" Height="700" Width="1200" 
+        UseLayoutRounding="True" WindowStartupLocation="CenterScreen"
+        Icon="/DevExpress.MailClient.Xpf;component/Images/AppIcon/AppIcon.ico">
+    <view:MainView />
+</dx:ThemedWindow>

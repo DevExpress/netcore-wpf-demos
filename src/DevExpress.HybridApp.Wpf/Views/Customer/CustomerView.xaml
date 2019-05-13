@@ -1,0 +1,294 @@
+<UserControl
+    xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    xmlns:dxcr="http://schemas.devexpress.com/winfx/2008/xaml/charts/rangecontrolclient"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxm="http://schemas.devexpress.com/winfx/2008/xaml/map"
+    xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:conv="clr-namespace:DevExpress.DevAV.Converters"
+    xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+    xmlns:commonView="clr-namespace:DevExpress.DevAV.Common.View"
+    xmlns:devav="clr-namespace:DevExpress.DevAV;assembly=DevExpress.DevAV.v19.1.Data"
+    xmlns:localDevav="clr-namespace:DevExpress.DevAV"
+    x:Class="DevExpress.DevAV.Views.CustomerView"
+    mc:Ignorable="d"
+    d:DesignHeight="649" d:DesignWidth="1162.7"
+    DataContext="{dxmvvm:ViewModelSource viewmodel:CustomerViewModel}">
+    <UserControl.Resources>
+        <conv:AbsoluteToLocalConverter x:Key="converter" MaxValue="50" MinValue="20"/>
+        <conv:HalfValueConverter x:Key="HalfValueConverter" NegativeValue="True"/>
+        <Style TargetType="{x:Type Image}">
+            <Setter Property="Stretch" Value="None"/>
+        </Style>
+        <dxe:EditRangeToFilterCriteriaConverter x:Key="EditRangeToFilterCriteriaConverter"/>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIMessageBoxService/>
+    </dxmvvm:Interaction.Behaviors>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <dxwui:PageAdornerControl Header="{Binding Entity.Name}" FontSize="13" Foreground="#FF646464" >
+            <dxwui:PageAdornerControl.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="5,-7,0,0">
+                        <TextBlock Text="CUSTOMER" FontSize="18" Foreground="#FF806464"/>
+                        <TextBlock Text="{Binding}" Margin="7,0,0,0" FontSize="18" Foreground="{StaticResource blueForegroundBrush}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </dxwui:PageAdornerControl.HeaderTemplate>
+            <dxlc:LayoutControl Orientation="Vertical" Style="{StaticResource HybridLayoutControlStyle}">
+                <dxlc:LayoutControl.Resources>
+                    <Style TargetType="dxlc:LayoutItem">
+                        <Setter Property="ElementSpace" Value="55"/>
+                    </Style>
+                </dxlc:LayoutControl.Resources>
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand Event="{x:Static Binding.SourceUpdatedEvent}" Command="{Binding UpdateCommand}" />
+                </dxmvvm:Interaction.Behaviors>
+                <dxlc:LayoutGroup Orientation="Vertical">
+                    <dxlc:LayoutItem Label="NAME">
+                        <dxe:TextEdit EditValue="{Binding Entity.Name, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="ADDRESS">
+                        <dxe:TextEdit EditValue="{Binding Entity.HomeOffice.Line, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutGroup SizeChanged="CityGroupSizeChanged">
+                        <dxlc:LayoutItem Label="CITY" >
+                            <dxe:TextEdit EditValue="{Binding Entity.HomeOffice.City, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="STATE" Width="130" ElementSpace="30">
+                            <dxe:ComboBoxEdit EditValue="{Binding Entity.HomeOffice.State, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" IsTextEditable="False" ItemsSource="{dxe:EnumItemsSource EnumType={x:Type devav:StateEnum}}"/>
+                        </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutItem Label="ZIPCODE">
+                        <dxe:TextEdit EditValue="{Binding Entity.HomeOffice.ZipCode, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Orientation="Vertical" Margin="0,20">
+                    <dxlc:LayoutItem Label="PHONE">
+                        <dxe:TextEdit EditValue="{Binding Entity.Phone, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" MaskType="Simple" Mask="(000) 000-0000" MaskUseAsDisplayFormat="True" />
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="FAX" >
+                        <dxe:TextEdit EditValue="{Binding Entity.Fax, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" MaskType="Simple" Mask="(000) 000-0000" MaskUseAsDisplayFormat="True" />
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Orientation="Vertical">
+                    <dxlc:LayoutItem Label="BILLING ADDRESS">
+                        <dxe:TextEdit EditValue="{Binding Entity.BillingAddress.Line, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutGroup SizeChanged="CityGroupSizeChanged">
+                        <dxlc:LayoutItem Label="CITY">
+                            <dxe:TextEdit EditValue="{Binding Entity.BillingAddress.City, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="STATE" Width="130" ElementSpace="30">
+                            <dxe:ComboBoxEdit EditValue="{Binding Entity.BillingAddress.State, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                                              IsTextEditable="False" ItemsSource="{dxe:EnumItemsSource EnumType={x:Type devav:StateEnum}}"/>
+                        </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutItem Label="ZIPCODE">
+                        <dxe:TextEdit EditValue="{Binding Entity.BillingAddress.ZipCode, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup>
+                    <dxlc:LayoutItem Label="PROFILE" VerticalAlignment="Stretch" LabelPosition="Top" ElementSpace="7">
+                        <dxe:TextEdit EditValue="{Binding Entity.Profile}" VerticalContentAlignment="Stretch" TextWrapping="WrapWithOverflow"/>
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutControl>
+        </dxwui:PageAdornerControl>
+        <Grid Grid.Column="1" Margin="5,14,44,5">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Border BorderBrush="#FFC3C3C3" BorderThickness="1">
+                <dxm:MapControl Visibility="{Binding IsChecked, Converter={dxmvvm:BooleanToVisibilityConverter}, ElementName=mapBtn}"
+                                IsManipulationEnabled="True" SelectionMode="Single" Focusable="False" IsTabStop="False"
+                                UseLayoutRounding="True">
+                    <dxmvvm:Interaction.Behaviors>
+                        <commonView:ZoomToFitMapBehavior PaddingFactor="0.35" ZoomLayerName="dataSourceLayer" />
+                        <dxmvvm:FunctionBindingBehavior Target="{Binding Data, ElementName=dataSourceLayer}" Property="DataSource" Function="UpdateMapItems" Arg1="{Binding SelectionRangeStart, ElementName=rangeControl}" Arg2="{Binding SelectionRangeEnd, ElementName=rangeControl}"/>
+                    </dxmvvm:Interaction.Behaviors>
+                    <dxm:VectorLayer EnableHighlighting="False" EnableSelection="False">
+                        <dxm:VectorLayer.Data>
+                            <dxm:ShapefileDataAdapter FileUri="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/NorthAmerica.shp"/>
+                        </dxm:VectorLayer.Data>
+                    </dxm:VectorLayer>
+                    <dxm:VectorLayer Name="dataSourceLayer" SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+                        <dxm:VectorLayer.Data>
+                            <dxm:ListSourceDataAdapter>
+                                <dxm:ListSourceDataAdapter.Mappings>
+                                    <dxm:MapItemMappingInfo Latitude="Address.Latitude" Longitude="Address.Longitude"/>
+                                </dxm:ListSourceDataAdapter.Mappings>
+                                <dxm:ListSourceDataAdapter.ItemSettings>
+                                    <dxm:MapCustomElementSettings>
+                                        <dxm:MapCustomElementSettings.ContentTemplate>
+                                            <DataTemplate>
+                                                <Border Name="border" BorderThickness="1" BorderBrush="#FFB56000" CornerRadius="50" Height="{Binding AbsSize, Converter={StaticResource converter}}" Width="{Binding AbsSize, Converter={StaticResource converter}}" Background="#FFCE7100">
+                                                    <Border.RenderTransform>
+                                                        <TranslateTransform X="{Binding ElementName=border, Path=ActualWidth, Converter={StaticResource HalfValueConverter}}" Y="{Binding ElementName=border, Path=ActualHeight, Converter={StaticResource HalfValueConverter}}"/>
+                                                    </Border.RenderTransform>
+                                                </Border>
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding Path=DataContext.IsSelected, RelativeSource={RelativeSource AncestorType=dxm:MapItemPresenter}}" Value="True">
+                                                        <Setter TargetName="border" Property="BorderBrush" Value="#FF2F51A5"/>
+                                                        <Setter TargetName="border" Property="Background" Value="#FF2F51A5"/>
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
+                                            </DataTemplate>
+                                        </dxm:MapCustomElementSettings.ContentTemplate>
+                                    </dxm:MapCustomElementSettings>
+                                </dxm:ListSourceDataAdapter.ItemSettings>
+                            </dxm:ListSourceDataAdapter>
+                        </dxm:VectorLayer.Data>
+                    </dxm:VectorLayer>
+                    <dxm:VectorLayer>
+                        <dxm:VectorLayer.Data>
+                            <dxm:MapItemStorage>
+                                <dxm:MapCustomElement x:Name="toolTipElement"
+                                              Location="{Binding Path=SelectedItem.Address, Converter={StaticResource AddressToGeoPointConverter}}"
+                                              Content="{Binding Path=SelectedItem}"
+                                              IsHitTestVisible="False">
+                                    <dxm:MapCustomElement.ContentTemplate>
+                                        <DataTemplate>
+                                            <Grid Name="root" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <Grid.RenderTransform>
+                                                    <TranslateTransform Y="-163" X="-26"/>
+                                                </Grid.RenderTransform>
+                                                <Grid Margin="3,3,0,-3" Opacity="0.15">
+                                                    <Border Background="#FF000000" Margin="0,0,0,27" />
+                                                    <Path Stretch="Fill" Fill="#FF000000" Data="F1 M 0,30L 9,0L 20,1.90735e-006L 0,30 Z "  Width="22" Height="32" Margin="23,0,0,2"                                                                                  HorizontalAlignment="Left" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" >
+                                                        <Path.RenderTransform>
+                                                            <TransformGroup>
+                                                                <ScaleTransform/>
+                                                                <SkewTransform/>
+                                                                <RotateTransform Angle="7"/>
+                                                                <TranslateTransform/>
+                                                            </TransformGroup>
+                                                        </Path.RenderTransform>
+                                                    </Path>
+                                                </Grid>
+                                                <Grid Margin="0,0,3,0" Opacity="0.5">
+                                                    <Border Background="#FF000000" Margin="0,0,0,27" />
+                                                    <Path Stretch="Fill" Fill="#FF000000" Data="F1 M 0,30L 9,0L 20,1.90735e-006L 0,30 Z "  Width="22" Height="32" Margin="24,0,0,0"                                                                                  HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                                                </Grid>
+                                                <Grid Margin="0,0,3,0">
+                                                    <Path Stretch="Fill" Fill="#FFFFFFFF" Data="F1 M 2.66667,24L 9.86667,0L 18.6667,0L 2.66667,24 Z " Width="18" Height="26" Margin="26,0,0,4"                                                                       HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                                                    <Border Background="#FFFFFFFF" Margin="1,1,1,28">
+                                                        <StackPanel TextBlock.TextAlignment="Center" TextBlock.Foreground="#FF8D8D8D" Margin="20,10">
+                                                            <TextBlock Text="TOTAL SALES"/>
+                                                            <TextBlock Text="{Binding TotalSales, StringFormat={}{0:c}}" FontSize="18" Foreground="#FF2F51A5" FontWeight="Bold"/>
+                                                            <StackPanel Margin="0,10">
+                                                                <TextBlock Text="TOTAL OPPORTUNITIES"/>
+                                                                <TextBlock Text="{Binding TotalOpportunities, StringFormat={}{0:c}}" FontSize="18" Foreground="#FFCE7100" FontWeight="Bold"/>
+                                                            </StackPanel>
+                                                            <TextBlock Text="{Binding Address.City}"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </Grid>
+                                            </Grid>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                                    <Setter TargetName="root" Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </dxm:MapCustomElement.ContentTemplate>
+                                </dxm:MapCustomElement>
+                            </dxm:MapItemStorage>
+                        </dxm:VectorLayer.Data>
+                    </dxm:VectorLayer>
+                </dxm:MapControl>
+            </Border>
+            <dxg:GridControl DesignTimeDataObjectType="{x:Type devav:Order}" SelectionMode="None"
+                    ItemsSource="{Binding Entity.Orders}"
+                    FilterCriteria="{Binding ElementName=rangeControl, Path=SelectionRange, Converter={StaticResource EditRangeToFilterCriteriaConverter}, ConverterParameter=OrderDate}"
+                    Visibility="{Binding IsChecked, Converter={dxmvvm:BooleanToVisibilityConverter}, ElementName=orderListBtn}"
+                    AutoExpandAllGroups="True">
+                <dxg:GridControl.View>
+                    <dxg:TableView AllowEditing="False" AutoWidth="True" NavigationStyle="Row" AllowFixedGroups="True" 
+                                   ShowIndicator="False" AllowPerPixelScrolling="True" ShowFilterPanelMode="Never"
+                                   AllowMoveColumnToDropArea="False"/>
+                </dxg:GridControl.View>
+                <dxg:GridControl.Columns>
+                    <dxg:GridColumn FieldName="InvoiceNumber" Header="Invoice #" IsSmart="True" VisibleIndex="0" />
+                    <dxg:GridColumn FieldName="PONumber" Header="PO #" IsSmart="True" VisibleIndex="1" />
+                    <dxg:GridColumn FieldName="OrderDate" SortIndex="1" SortOrder="Ascending" VisibleIndex="2" FilterPopupMode="Custom">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:DateEditSettings/>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="ShippingAmount" Header="Shipping" VisibleIndex="4">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:TextEditSettings MaskType="Numeric" MaskUseAsDisplayFormat="True" Mask="c"/>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="Store.City" Header="Store" GroupIndex="0" SortOrder="Ascending" />
+                    <dxg:GridColumn FieldName="TotalAmount" Header="Order Total" VisibleIndex="5">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:TextEditSettings MaskType="Numeric" MaskUseAsDisplayFormat="True" Mask="c"/>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="SaleAmount" Header="Sub-Total" UnboundType="Integer" VisibleIndex="3">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:TextEditSettings MaskType="Numeric" MaskUseAsDisplayFormat="True" Mask="c" />
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                </dxg:GridControl.Columns>
+                <dxg:GridControl.GroupSummary>
+                    <dxg:GridSummaryItem FieldName="Store" Alignment="Left" SummaryType="Count" DisplayFormat="(Count={0:d})"/>
+                    <dxg:GridSummaryItem FieldName="TotalAmount" Alignment="Left" DisplayFormat="{}{0:c2}" SummaryType="Sum" />
+                </dxg:GridControl.GroupSummary>
+            </dxg:GridControl>
+            <Grid Grid.Row="1" Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Padding="0" Command="{Binding ElementName=RangeSelectionBehavior, Path=MoveRangeLeftCommand}" >
+                    <Image Source="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/ArrowLeft.png"/>
+                </Button>
+                <dxe:RangeControl x:Name="rangeControl" Grid.Column="1" ShowRangeBar="False" MinHeight="99" ShowLabels="False" AllowSnapToInterval="True" Margin="5,0"
+                          ShowRangeThumbs="True" ShowNavigationButtons="False" ShadingMode="Shading" AllowZoom="False">
+                    <dxmvvm:Interaction.Behaviors>
+                        <localDevav:RangeSelectionBehavior x:Name="RangeSelectionBehavior" MinimumRangeChange="30"/>
+                    </dxmvvm:Interaction.Behaviors>
+                    <dxcr:DateTimeChartRangeControlClient ItemsSource="{Binding Entity.Orders}"
+                                                          ValueDataMember="TotalAmount" ArgumentDataMember="OrderDate" 
+                                                          ArgumentLabelFormatString="{}{0:MMM/yyyy}" 
+                                                          SnapAlignment="Month">
+                        <dxcr:DateTimeChartRangeControlClient.View>
+                            <dxcr:RangeControlClientAreaView ShowMarkers="False"/>
+                        </dxcr:DateTimeChartRangeControlClient.View>
+                    </dxcr:DateTimeChartRangeControlClient>
+                </dxe:RangeControl>
+                <Button Grid.Column="2" Padding="0" Command="{Binding ElementName=RangeSelectionBehavior, Path=MoveRangeRightCommand}">
+                    <Image Source="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/ArrowRight.png"/>
+                </Button>
+            </Grid>
+        </Grid>
+        <dxwui:AppBar Grid.ColumnSpan="2" Grid.Row="1" HideMode="AlwaysVisible">
+            <dxwui:AppBarButton Label="Save" Command="{Binding SaveAndCloseCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Save.png"/>
+            <dxwui:AppBarButton Label="Cancel" Command="{Binding CloseCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Cancel.png"/>
+            <dxwui:AppBarSeparator/>
+            <dxwui:AppBarToggleButton x:Name="orderListBtn" Label="Orders List" IsChecked="False"  Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/OrderList.png"/>
+            <dxwui:AppBarToggleButton x:Name="mapBtn" Label="Sales Map" IsChecked="{Binding ElementName=orderListBtn, Path=IsChecked, Converter={dxmvvm:BooleanNegationConverter}, Mode=TwoWay}"  Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/SalesMap.png"/>
+        </dxwui:AppBar>
+    </Grid>
+</UserControl>

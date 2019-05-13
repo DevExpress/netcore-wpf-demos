@@ -1,0 +1,69 @@
+<UserControl x:Class="DevExpress.DevAV.Views.EvaluationCollectionView"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+mc:Ignorable="d"
+d:DesignHeight="400" d:DesignWidth="600"
+DataContext="{dxmvvm:ViewModelSource viewmodel:EvaluationCollectionViewModel}">
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIMessageBoxService/>
+    </dxmvvm:Interaction.Behaviors>
+    <Grid>
+        <dxg:GridControl Name="gridControl" ItemsSource="{Binding Entities}" ShowBorder="False" SelectedItem="{Binding SelectedEntity}">
+            <dxmvvm:Interaction.Behaviors>
+                <dxmvvm:EventToCommand PassEventArgsToCommand="True" Command="{Binding EditCommand}" EventName="MouseDoubleClick">
+                    <dxmvvm:EventToCommand.EventArgsConverter>
+                        <dx:EventArgsToDataRowConverter/>
+                    </dxmvvm:EventToCommand.EventArgsConverter>
+                </dxmvvm:EventToCommand>
+            </dxmvvm:Interaction.Behaviors>
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn FieldName="CreatedBy.FullName" Header="Created By" ReadOnly="True" />
+                <dxg:GridColumn IsSmart="True" FieldName="CreatedOn" />
+                <dxg:GridColumn FieldName="Employee.FullName" Header="Employee" ReadOnly="True" />
+                <dxg:GridColumn IsSmart="True" FieldName="Subject" />
+                <dxg:GridColumn IsSmart="True" FieldName="Details" />
+            </dxg:GridControl.Columns>
+            <dxg:GridControl.TotalSummary>
+                <dxg:GridSummaryItem SummaryType="Count" Alignment="Right"/>
+            </dxg:GridControl.TotalSummary>
+            <dxg:GridControl.GroupSummary>
+                <dxg:GridSummaryItem SummaryType="Count"/>
+            </dxg:GridControl.GroupSummary>
+            <dxg:GridControl.View>
+                <dxg:TableView Name="tableView" AllowEditing="False" ShowFixedTotalSummary="True" AllowPerPixelScrolling="True" 
+                               ShowFilterPanelMode="Never" AllowMoveColumnToDropArea="False"/>
+            </dxg:GridControl.View>
+        </dxg:GridControl>
+        <dxwui:AppBar HideMode="AlwaysVisible">
+            <dxwui:AppBarButton Label="New" Command="{Binding NewCommand}" >
+                <Image Stretch="None" Source="{dx:DXImageGrayscale Image=New_32x32.png}"/>
+            </dxwui:AppBarButton>
+            <dxwui:AppBarButton Label="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedEntity}">
+                <Image Stretch="None" Source="{dx:DXImageGrayscale Image=Edit_32x32.png}"/>
+            </dxwui:AppBarButton>
+            <dxwui:AppBarButton Label="Delete" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedEntity}">
+                <Image Stretch="None" Source="{dx:DXImageGrayscale Image=Delete_32x32.png}"/>
+            </dxwui:AppBarButton>
+            <dxwui:AppBarButton Label="Refresh" Command="{Binding RefreshCommand}" >
+                <Image Stretch="None" Source="{dx:DXImageGrayscale Image=Refresh_32x32.png}"/>
+            </dxwui:AppBarButton>
+            <dxwui:AppBarButton Label="Print Preview" Command="{Binding TableViewCommands.ShowPrintPreviewDialog, ElementName=tableView}">
+                <Image Stretch="None" Source="{dx:DXImageGrayscale Image=Preview_32x32.png}"/>
+            </dxwui:AppBarButton>
+        </dxwui:AppBar>
+    </Grid>
+</UserControl>
+
+
+

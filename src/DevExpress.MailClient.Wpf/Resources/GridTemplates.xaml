@@ -1,0 +1,446 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:local="clr-namespace:DevExpress.MailClient.View"
+                    xmlns:viewmodel="clr-namespace:DevExpress.MailClient.ViewModel"
+                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                    xmlns:dxp="http://schemas.devexpress.com/winfx/2008/xaml/printing"
+                    xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
+                    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <dxmvvm:ObjectToObjectConverter x:Key="ColumnPriorityConverter">
+        <dxmvvm:MapItem Source="Low" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Priority_Low.png"/>
+        <dxmvvm:MapItem Source="Medium" Target="{x:Null}"/>
+        <dxmvvm:MapItem Source="High" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Priority_High.png"/>
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ObjectToObjectConverter x:Key="ColumnCategoryImageConverter">
+        <dxmvvm:MapItem Source="HouseChores" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Category_HouseChores.png"/>
+        <dxmvvm:MapItem Source="Shopping" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Category_Shopping.png"/>
+        <dxmvvm:MapItem Source="Work" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Category_Work.png"/>
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ObjectToObjectConverter x:Key="ColumnIconConverter">
+        <dxmvvm:MapItem Source="0" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Status_0.png"/>
+        <dxmvvm:MapItem Source="1" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Status_1.png"/>
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ObjectToObjectConverter x:Key="ColumnFlagStatusImageConverter">
+        <dxmvvm:MapItem Source="Today" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Today_Flag.png"/>
+        <dxmvvm:MapItem Source="Tomorrow" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Tomorrow_Flag.png"/>
+        <dxmvvm:MapItem Source="ThisWeek" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/ThisWeek_Flag.png"/>
+        <dxmvvm:MapItem Source="NextWeek" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/NextWeek_Flag.png"/>
+        <dxmvvm:MapItem Source="NoDate" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/NoDate_Flag.png"/>
+        <dxmvvm:MapItem Source="Custom" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Custom_Flag.png"/>
+        <dxmvvm:MapItem Source="Completed" Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Completed_Flag.png"/>
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ObjectToObjectConverter x:Key="personPrefixToImageSourceConverter">
+        <dxmvvm:MapItem Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Doctor.png" Source="Dr" />
+        <dxmvvm:MapItem Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Mr.png" Source="Mr" />
+        <dxmvvm:MapItem Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Ms.png" Source="Ms" />
+        <dxmvvm:MapItem Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Miss.png" Source="Miss" />
+        <dxmvvm:MapItem Target="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Mrs.png" Source="Mrs" />
+    </dxmvvm:ObjectToObjectConverter>
+    <local:SplitStringConverter x:Key="SplitStringConverter"/>
+    <dxmvvm:ObjectToObjectConverter x:Key="IsGroupedConverter">
+        <dxmvvm:ObjectToObjectConverter.DefaultSource>
+            <sys:Boolean>True</sys:Boolean>
+        </dxmvvm:ObjectToObjectConverter.DefaultSource>
+        <dxmvvm:MapItem>
+            <dxmvvm:MapItem.Source>
+                <sys:Boolean>False</sys:Boolean>
+            </dxmvvm:MapItem.Source>
+            <dxmvvm:MapItem.Target>
+                <sys:Int32>-1</sys:Int32>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem>
+            <dxmvvm:MapItem.Source>
+                <sys:Boolean>True</sys:Boolean>
+            </dxmvvm:MapItem.Source>
+            <dxmvvm:MapItem.Target>
+                <sys:Int32>0</sys:Int32>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+    </dxmvvm:ObjectToObjectConverter>
+
+    <Style x:Key="PrintCellBaseStyle" TargetType="dxe:BaseEdit" BasedOn="{StaticResource {dxgt:TableViewThemeKey ResourceKey=DefaultPrintCellStyle}}">
+        <Setter Property="dxp:ExportSettings.TargetType" Value="Panel" />
+    </Style>
+    <Style x:Key="PrintHeaderBaseStyle" TargetType="dxe:BaseEdit" BasedOn="{StaticResource {dxgt:TableViewThemeKey ResourceKey=DefaultPrintHeaderStyle}}">
+        <Setter Property="dxp:ExportSettings.TargetType" Value="Panel" />    
+    </Style>
+    
+    <dxmvvm:ObjectToObjectConverter x:Key="ColumnToHeaderTemplateConverter">
+        <dxmvvm:MapItem Source="Complete">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dx:DXImage Source="{dx:DXImageOffice2013 Image=Apply_16x16.png}" Width="16"/>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Icon">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dx:DXImage Source="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Column_Icon.png" Width="16"/>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Priority">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dx:DXImage Source="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Column_Priority.png" Width="16"/>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="FlagStatus">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dx:DXImage Source="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Column_FlagStatus.png" Width="16" />
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ObjectToObjectConverter x:Key="ColumnToCellTemplateConverter">
+        <dxmvvm:MapItem Source="Icon">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dx:DXImage Source="{Binding Value, Converter={StaticResource ColumnIconConverter}}" Width="16"/>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Priority">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dxe:ComboBoxEdit x:Name="PART_Editor" ItemsSource="{dxe:EnumItemsSource EnumType={x:Type viewmodel:TaskPriority}}" IsTextEditable="False" HorizontalContentAlignment="Center" ApplyItemTemplateToSelectedItem="True" ValueMember="Id">
+                        <dxe:ComboBoxEdit.DisplayTemplate>
+                            <ControlTemplate>
+                                <dx:DXImage Source="{Binding RowData.Row.Priority, Converter={StaticResource ColumnPriorityConverter}}" Width="16"/>
+                            </ControlTemplate>
+                        </dxe:ComboBoxEdit.DisplayTemplate>
+                        <dxe:ComboBoxEdit.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" IsHitTestVisible="False">
+                                    <dx:DXImage Source="{Binding Id, Converter={StaticResource ColumnPriorityConverter}}" Width="16"/>
+                                    <TextBlock Text="{Binding Id}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </dxe:ComboBoxEdit.ItemTemplate>
+                    </dxe:ComboBoxEdit>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Subject">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dxe:TextEdit x:Name="PART_Editor"/>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Status">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dxe:ComboBoxEdit x:Name="PART_Editor" ItemsSource="{dxe:EnumItemsSource EnumType={x:Type viewmodel:TaskStatus}}" ValueMember="Id" IsTextEditable="False" DisplayTextConverter="{StaticResource SplitStringConverter}">
+                        <dxe:ComboBoxEdit.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Id, Converter={StaticResource SplitStringConverter}}"/>
+                            </DataTemplate>
+                        </dxe:ComboBoxEdit.ItemTemplate>
+                    </dxe:ComboBoxEdit>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="PercentComplete">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dxe:TrackBarEdit x:Name="PART_Editor" Minimum="0" Maximum="100" HorizontalContentAlignment="Center" DisplayFormatString="{}{0:P0}"/>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="CreatedDate">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dxe:DateEdit x:Name="PART_Editor" NullText="None"/>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="StartDate">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dxe:DateEdit x:Name="PART_Editor" NullText="None"/>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="DueDate">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dxe:DateEdit x:Name="PART_Editor" NullText="None"/>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="CompletedDate">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dxe:DateEdit x:Name="PART_Editor" NullText="None"/>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Category">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <dx:DXImage Source="{Binding Value, Converter={StaticResource ColumnCategoryImageConverter}}" Width="16" Margin="2,0"/>
+                        <TextBlock Text="{Binding Value, Converter={StaticResource SplitStringConverter}}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Activity">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dxe:SparklineEdit x:Name="PART_Editor">
+                        <dxe:SparklineEdit.StyleSettings>
+                            <dxe:LineSparklineStyleSettings HighlightMaxPoint="True" HighlightMinPoint="True" MaxPointBrush="Red" MinPointBrush="Blue"/>
+                        </dxe:SparklineEdit.StyleSettings>
+                    </dxe:SparklineEdit>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="FlagStatus">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dx:DXImage Source="{Binding Value, Converter={StaticResource ColumnFlagStatusImageConverter}}" Width="16">
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand EventName="MouseLeftButtonUp" Command="{Binding RowData.Row.ChangeCompleteCommand}"/>
+                        </dxmvvm:Interaction.Behaviors>
+                    </dx:DXImage>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Prefix">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <dx:DXImage Source="{Binding Value, Converter={StaticResource personPrefixToImageSourceConverter}}" Width="16"/>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ObjectToObjectConverter x:Key="ColumnToDisplayTemplateConverter">
+        <dxmvvm:MapItem Source="PercentComplete">
+            <dxmvvm:MapItem.Target>
+                <ControlTemplate>
+                    <dxe:ProgressBarEdit EditValue="{Binding RowData.Row.PercentComplete}" Minimum="0" Maximum="100" ContentDisplayMode="Value" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsPercent="True" Background="{x:Null}" BorderBrush="{x:Null}" EditMode="InplaceInactive" DisplayFormatString="{}{0:P0}"/>
+                </ControlTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ObjectToObjectConverter x:Key="ColumnToGroupValueTemplateConverter">
+        <dxmvvm:MapItem Source="Priority">
+            <dxmvvm:MapItem.Target>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Priority:"/>
+                        <dx:DXImage Source="{Binding RowData.Row.Priority, Converter={StaticResource ColumnPriorityConverter}}" Width="16" Margin="4,0"/>
+                        <TextBlock Text="{Binding RowData.Row.Priority}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Category">
+            <dxmvvm:MapItem.Target>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Category:"/>
+                    <dx:DXImage Source="{Binding RowData.Row.Category, Converter={StaticResource ColumnCategoryImageConverter}}" Width="16" Margin="4,0"/>
+                    <TextBlock Text="{Binding RowData.Row.Category, Converter={StaticResource SplitStringConverter}}"/>
+                </StackPanel>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ObjectToObjectConverter x:Key="ColumnToPrintCellStyleConverter">
+        <dxmvvm:MapItem Source="Activity">
+            <dxmvvm:MapItem.Target>
+                <Style TargetType="dxe:BaseEdit" BasedOn="{StaticResource PrintCellBaseStyle}">
+                    <Setter Property="DisplayTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <dxe:SparklineEdit EditValue="{Binding Path=RowData.Row.Activity}" dxp:ExportSettings.TargetType="Image">
+                                    <dxe:SparklineEdit.StyleSettings>
+                                        <dxe:LineSparklineStyleSettings HighlightMaxPoint="True" HighlightMinPoint="True" MaxPointBrush="Red" MinPointBrush="Blue"/>
+                                    </dxe:SparklineEdit.StyleSettings>
+                                </dxe:SparklineEdit>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Prefix">
+            <dxmvvm:MapItem.Target>
+                <Style TargetType="dxe:BaseEdit" BasedOn="{StaticResource PrintCellBaseStyle}">
+                    <Setter Property="DisplayTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <dxe:ImageEdit IsPrintingMode="True" Source="{Binding Value, Converter={StaticResource personPrefixToImageSourceConverter}}" Width="16"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Icon">
+            <dxmvvm:MapItem.Target>
+                <Style TargetType="dxe:BaseEdit" BasedOn="{StaticResource PrintCellBaseStyle}">
+                    <Setter Property="DisplayTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <dxe:ImageEdit IsPrintingMode="True" Source="{Binding Value, Converter={StaticResource ColumnIconConverter}}" Width="16"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Priority">
+            <dxmvvm:MapItem.Target>
+                <Style TargetType="dxe:BaseEdit" BasedOn="{StaticResource PrintCellBaseStyle}">
+                    <Setter Property="DisplayTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <dxe:ImageEdit IsPrintingMode="True" Source="{Binding Value, Converter={StaticResource ColumnPriorityConverter}}" Width="16"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="PercentComplete">
+            <dxmvvm:MapItem.Target>
+                <Style TargetType="dxe:BaseEdit" BasedOn="{StaticResource PrintCellBaseStyle}">
+                    <Setter Property="DisplayTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <dxe:TextEdit IsPrintingMode="True" EditValue="{Binding Value}" HorizontalContentAlignment="Center" DisplayFormatString="{}{0}%"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Category">
+            <dxmvvm:MapItem.Target>
+                <Style TargetType="dxe:BaseEdit" BasedOn="{StaticResource PrintCellBaseStyle}">
+                    <Setter Property="DisplayTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <StackPanel Orientation="Horizontal" dxp:ExportSettings.TargetType="Panel">
+                                    <dxe:ImageEdit IsPrintingMode="True" Source="{Binding Value, Converter={StaticResource ColumnCategoryImageConverter}}" Width="16" Margin="2,0"/>
+                                    <dxe:TextEdit IsPrintingMode="True" Text="{Binding Value, Converter={StaticResource SplitStringConverter}}" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="FlagStatus">
+            <dxmvvm:MapItem.Target>
+                <Style TargetType="dxe:BaseEdit" BasedOn="{StaticResource PrintCellBaseStyle}">
+                    <Setter Property="DisplayTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <dxe:ImageEdit IsPrintingMode="True" Source="{Binding Value, Converter={StaticResource ColumnFlagStatusImageConverter}}" Width="16"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ObjectToObjectConverter x:Key="ColumnToPrintColumnHeaderStyleConverter">
+        <dxmvvm:MapItem Source="Complete">
+            <dxmvvm:MapItem.Target>
+                <Style TargetType="dxe:BaseEdit" BasedOn="{StaticResource PrintHeaderBaseStyle}">
+                    <Setter Property="DisplayTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <dxe:ImageEdit IsPrintingMode="True" Source="{dx:DXImageOffice2013 Image=Apply_16x16.png}" Width="16" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Icon">
+            <dxmvvm:MapItem.Target>
+                <Style TargetType="dxe:BaseEdit" BasedOn="{StaticResource PrintHeaderBaseStyle}">
+                    <Setter Property="DisplayTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <dxe:ImageEdit IsPrintingMode="True" Source="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Column_Icon.png" Width="16" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Priority">
+            <dxmvvm:MapItem.Target>
+                <Style TargetType="dxe:BaseEdit" BasedOn="{StaticResource PrintHeaderBaseStyle}">
+                    <Setter Property="DisplayTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <dxe:ImageEdit IsPrintingMode="True" Source="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Priority_High.png" Width="16" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="FlagStatus">
+            <dxmvvm:MapItem.Target>
+                <Style TargetType="dxe:BaseEdit" BasedOn="{StaticResource PrintHeaderBaseStyle}">
+                    <Setter Property="DisplayTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <dxe:ImageEdit IsPrintingMode="True" Source="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Column_FlagStatus.png" Width="16" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+        <dxmvvm:MapItem Source="Prefix">
+            <dxmvvm:MapItem.Target>
+                <Style TargetType="dxe:BaseEdit" BasedOn="{StaticResource PrintHeaderBaseStyle}">
+                    <Setter Property="DisplayTemplate">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <dxe:TextEdit IsPrintingMode="True"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </dxmvvm:MapItem.Target>
+        </dxmvvm:MapItem>
+    </dxmvvm:ObjectToObjectConverter>
+
+    <Style x:Key="columnGeneratorStyle" TargetType="{x:Type dxg:GridColumn}">
+        <Setter Property="FieldName" Value="{Binding FieldName}"/>
+        <Setter Property="Header" Value="{Binding DisplayName}"/>
+        <Setter Property="GroupIndex" Value="{Binding IsGrouped, Mode=TwoWay, Converter={StaticResource IsGroupedConverter}}"/>
+        <Setter Property="HorizontalHeaderContentAlignment" Value="{Binding HorizontalHeaderContentAlignment}"/>
+        <Setter Property="AllowColumnFiltering" Value="{Binding AllowFiltering}"/>
+        <Setter Property="AllowSorting" Value="{Binding AllowSorting, Mode=OneWay}"/>
+        <Setter Property="AllowEditing" Value="{Binding AllowEditing, Mode=OneWay}"/>
+        <Setter Property="GroupInterval" Value="{Binding GroupInterval}"/>
+        <Setter Property="SortOrder" Value="{Binding SortOrder, Mode=TwoWay}"/>
+        <Setter Property="VisibleIndex" Value="{Binding Index, Mode=TwoWay}"/>
+        <Setter Property="Visible" Value="{Binding IsVisible, Mode=OneWay}"/>
+        <Setter Property="HeaderTemplate" Value="{Binding FieldName, Converter={StaticResource ColumnToHeaderTemplateConverter}}"/>
+        <Setter Property="CellTemplate" Value="{Binding FieldName, Converter={StaticResource ColumnToCellTemplateConverter}}"/>
+        <Setter Property="DisplayTemplate" Value="{Binding FieldName, Converter={StaticResource ColumnToDisplayTemplateConverter}}"/>
+        <Setter Property="GroupValueTemplate" Value="{Binding FieldName, Converter={StaticResource ColumnToGroupValueTemplateConverter}}"/>
+        <Setter Property="PrintCellStyle" Value="{Binding FieldName, Converter={StaticResource ColumnToPrintCellStyleConverter}}"/>
+        <Setter Property="PrintColumnHeaderStyle" Value="{Binding FieldName, Converter={StaticResource ColumnToPrintColumnHeaderStyleConverter}}"/>
+        <Setter Property="Width" Value="{Binding Width, Mode=TwoWay, Converter={local:DoubleToGridColumnWidthConverter}}"/>
+    </Style>
+</ResourceDictionary>

@@ -1,0 +1,65 @@
+<UserControl x:Class="DevExpress.MailClient.View.NavigationMailView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:viewmodel="clr-namespace:DevExpress.MailClient.ViewModel"
+             mc:Ignorable="d" d:DataContext="{dxmvvm:ViewModelSource viewmodel:MailNavigationViewModel}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <dx:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <dxg:TreeListControl ShowBorder="False" Margin="0" ItemsSource="{Binding Folders}" SelectedItem="{Binding CurrentFolder, Mode=TwoWay}" DesignTimeShowSampleData="False">
+        <dxg:TreeListControl.Columns>
+            <dxg:TreeListColumn FieldName="Name" MinWidth="155">
+                <dxg:TreeListColumn.CellTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Stretch="Fill" Source="{Binding RowData.Row.Icon}" Margin="4,0,4,0" Height="16" Width="16"/>
+                            <TextBlock Text="{Binding RowData.Row.Name}" VerticalAlignment="Center">
+                            <TextBlock.FontWeight>
+                                <Binding Path="RowData.Row.UnreadCount">
+                                    <Binding.Converter>
+                                        <dx:EnumToObjectConverter DefaultValue="Bold">
+                                            <dx:EnumToObjectConverter.Values>
+                                                <dx:EnumObjectProvider x:Key="0" Value="Normal"/>
+                                            </dx:EnumToObjectConverter.Values>
+                                        </dx:EnumToObjectConverter>
+                                    </Binding.Converter>
+                                </Binding>
+                            </TextBlock.FontWeight>
+                            </TextBlock>
+                            <TextBlock Margin="4,0,0,0" VerticalAlignment="Center" Text="{Binding RowData.Row.UnreadCount, StringFormat=[\{0\}]}">
+                                <TextBlock.Visibility>
+                                    <Binding Path="RowData.Row.UnreadCount">
+                                        <Binding.Converter>
+                                            <dx:EnumToObjectConverter DefaultValue="Visible">
+                                                <dx:EnumToObjectConverter.Values>
+                                                    <dx:EnumObjectProvider x:Key="0" Value="Collapsed"/>
+                                                </dx:EnumToObjectConverter.Values>
+                                            </dx:EnumToObjectConverter>
+                                        </Binding.Converter>
+                                    </Binding>
+                                </TextBlock.Visibility>
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </dxg:TreeListColumn.CellTemplate>
+            </dxg:TreeListColumn>
+        </dxg:TreeListControl.Columns>
+        <dxg:TreeListControl.View>
+            <dxg:TreeListView ShowColumnHeaders="False" NavigationStyle="Row" AllowEditing="False" ShowHorizontalLines="False"
+                              ShowVerticalLines="False" ShowIndicator="False" VerticalScrollbarVisibility="Hidden"
+                              TreeDerivationMode="ChildNodesSelector"
+                              TreeLineStyle="None" AutoExpandAllNodes="True">
+                <dxg:TreeListView.ChildNodesSelector>
+                    <viewmodel:MailFoldersChildSelector/>
+                </dxg:TreeListView.ChildNodesSelector>
+            </dxg:TreeListView>
+        </dxg:TreeListControl.View>
+    </dxg:TreeListControl>
+</UserControl>

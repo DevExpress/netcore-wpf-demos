@@ -1,0 +1,145 @@
+<UserControl x:Class="DevExpress.DevAV.Views.TaskCollectionView"
+            xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+            xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+            xmlns:dxet="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
+            xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+            xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+            xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+            xmlns:dxp="http://schemas.devexpress.com/winfx/2008/xaml/printing"
+            xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+            xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+            xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+            xmlns:cview="clr-namespace:DevExpress.DevAV.Common.View"
+            xmlns:views="clr-namespace:DevExpress.DevAV.Views"
+            xmlns:dxnav="http://schemas.devexpress.com/winfx/2008/xaml/navigation"
+            xmlns:devav="clr-namespace:DevExpress.DevAV;assembly=DevExpress.DevAV.v19.1.Data"
+            xmlns:view="clr-namespace:DevExpress.DevAV.Views"
+            xmlns:dxei="http://schemas.devexpress.com/winfx/2008/xaml/editors/internal"
+            mc:Ignorable="d"
+            DataContext="{dxmvvm:ViewModelSource viewmodel:EmployeeTaskCollectionViewModel}">
+    <UserControl.Resources>
+        <dxmvvm:ObjectToObjectConverter x:Key="PriorityToImageConverter">
+            <dxmvvm:MapItem Source="Low" Target="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Priority/LowPriority.png"/>
+            <dxmvvm:MapItem Source="Normal" Target="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Priority/NormalPriority.png"/>
+            <dxmvvm:MapItem Source="High" Target="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Priority/MediumPriority.png"/>
+            <dxmvvm:MapItem Source="Urgent" Target="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Priority/HighPriority.png"/>
+        </dxmvvm:ObjectToObjectConverter>
+        <ControlTemplate x:Key="ExpandToggleButtonTemplate"  TargetType="ToggleButton">
+            <ContentPresenter/>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsChecked" Value="False">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <Image Stretch="None" Source="pack://application:,,,/Resources/ArrowRight.png"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <Image Stretch="None" Source="pack://application:,,,/Resources/ArrowLeft.png"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate x:Key="PriorityColumnDispayTemplate">
+            <Image Height="24" Width="24" Source="{Binding Path=Data.Priority, Converter={StaticResource PriorityToImageConverter}}"></Image>
+        </ControlTemplate>
+        <Style x:Key="completionColumnTotalSummaryContentStyle" TargetType="ContentPresenter">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel HorizontalAlignment="Right" Margin="{StaticResource totalSummaryMargin}">
+                            <TextBlock HorizontalAlignment="Right" Foreground="{StaticResource grayForegroundBrush}" TextTrimming="CharacterEllipsis" TextAlignment="Right" IsHitTestVisible="False">
+                                <Run Text="TOTAL # OF TASKS" />
+                                <LineBreak />
+                                <Run Text="{Binding Column.TotalSummaryText, Mode=OneWay}" Foreground="{StaticResource blackForegroundBrush}" FontWeight="Bold" />
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ControlTemplate x:Key="{dxet:ProgressBarEditThemeKey ResourceKey=PanelBackgroundHorizontalTemplate, IsThemeIndependent=True}" TargetType="{x:Type ContentControl}">
+            <Border Background="Transparent" />
+        </ControlTemplate>
+        <ControlTemplate x:Key="{dxet:ProgressBarEditThemeKey ResourceKey=PanelLeftSideHorizontalTemplate, IsThemeIndependent=True}" TargetType="{x:Type ContentControl}">
+            <Border Background="#FF00879C" />
+        </ControlTemplate>
+        <ControlTemplate x:Key="{dxet:ProgressBarEditThemeKey ResourceKey=DisplayTemplate, IsThemeIndependent=True}">
+            <dxe:RangeEditBasePanel x:Name="PART_Editor" dxei:EditorMarginHelper.Margin="12,10,12,10,0,1,1,1" />
+        </ControlTemplate>
+    </UserControl.Resources>
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIMessageBoxService/>
+        <dxwui:WinUIDialogService />
+        <dx:WindowedDocumentUIService  WindowType="dxwui:WinUIDialogWindow">
+            <dx:WindowedDocumentUIService.WindowStyle>
+                <Style TargetType="dxwui:WinUIDialogWindow">
+                    <Setter Property="ShowTitle" Value="False"/>
+                </Style>
+            </dx:WindowedDocumentUIService.WindowStyle>
+        </dx:WindowedDocumentUIService>
+    </dxmvvm:Interaction.Behaviors>
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="TASKS" Style="{StaticResource TextBlockTitleBlueStyle}" />
+        <dxwui:AppBar DockPanel.Dock="Bottom" HideMode="AlwaysVisible">
+            <dxwui:AppBarButton Label="New" Command="{Binding NewCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/New.png"/>
+            <dxwui:AppBarButton Label="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedEntity}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Edit.png"/>
+            <dxwui:AppBarButton Label="Delete" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedEntity}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Delete.png"/>
+            <dxwui:AppBarSeparator/>
+            <dxwui:AppBarButton Label="Print" Command="{Binding ShowPrintPreviewCommand}" CommandParameter="{Binding ElementName=tableView}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Print.png"/>
+        </dxwui:AppBar>
+        <views:StaticFiltersPanel DockPanel.Dock="Left"/>
+            <dxg:GridControl Name="gridControl"
+                             Margin="0,0,42,2"
+                             ItemsSource="{Binding Entities}"
+                             SelectedItem="{Binding SelectedEntity}"
+                             ShowBorder="True"
+                             FontSize="12">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand PassEventArgsToCommand="True" Command="{Binding EditCommand}" EventName="MouseDoubleClick">
+                        <dxmvvm:EventToCommand.EventArgsConverter>
+                            <dx:EventArgsToDataRowConverter/>
+                        </dxmvvm:EventToCommand.EventArgsConverter>
+                    </dxmvvm:EventToCommand>
+                </dxmvvm:Interaction.Behaviors>
+                <dxg:GridControl.Columns>
+                    <dxg:GridColumn FieldName="AssignedEmployee.FullName" Header="Assigned To" ReadOnly="True" Width="180"/>
+                    <dxg:GridColumn FieldName="Owner.FullName" Header="Owned By" ReadOnly="True" Width="176" />
+                    <dxg:GridColumn IsSmart="True" FieldName="Subject" Width="355" />
+                    <dxg:GridColumn IsSmart="True" FieldName="Priority" DisplayTemplate="{StaticResource PriorityColumnDispayTemplate}" AllowSorting="False" AllowColumnFiltering="False" Width="92" />
+                    <dxg:GridColumn IsSmart="True" FieldName="DueDate" SortIndex="0" SortOrder="Descending" Width="115" />
+                    <dxg:GridColumn IsSmart="True" FieldName="Completion" Header="% Complete" TotalSummaryContentStyle="{StaticResource completionColumnTotalSummaryContentStyle}" Width="184" MinWidth="80">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:ProgressBarEditSettings ContentDisplayMode="Value" DisplayFormat="{}{0}%" />
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                </dxg:GridControl.Columns>
+                <dxg:GridControl.TotalSummary>
+                    <dxg:GridSummaryItem SummaryType="Count" FieldName="Completion" DisplayFormat="{}{0}" />
+                </dxg:GridControl.TotalSummary>
+                <dxg:GridControl.GroupSummary>
+                    <dxg:GridSummaryItem SummaryType="Count"/>
+                </dxg:GridControl.GroupSummary>
+                <dxg:GridControl.View>
+                <dxg:TableView Name="tableView" AllowEditing="False" ShowTotalSummary="True" AllowPerPixelScrolling="True" AutoWidth="True" ShowIndicator="False"
+                                   ShowGroupPanel="False" ShowSearchPanelMode="Never" NavigationStyle="Row" ShowFilterPanelMode="Never" AllowMoveColumnToDropArea="False">
+                    <dxmvvm:Interaction.Behaviors>
+                        <cview:PrintableControlPreviewService IsLandscape ="True"/>
+                    </dxmvvm:Interaction.Behaviors>
+                </dxg:TableView>
+                </dxg:GridControl.View>
+            </dxg:GridControl>
+    </DockPanel>
+</UserControl>
+
+
+

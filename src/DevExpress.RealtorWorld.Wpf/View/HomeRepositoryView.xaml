@@ -1,0 +1,136 @@
+<UserControl x:Class="DevExpress.RealtorWorld.Xpf.View.HomeRepositoryView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:ViewModel="clr-namespace:DevExpress.RealtorWorld.Xpf.ViewModel"
+        xmlns:View="clr-namespace:DevExpress.RealtorWorld.Xpf.View"
+        xmlns:Helpers="clr-namespace:DevExpress.RealtorWorld.Xpf.Helpers"
+        xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        xmlns:Controls="clr-namespace:DevExpress.RealtorWorld.Xpf.Controls"
+        mc:Ignorable="d"
+        d:DesignHeight="614.239" d:DesignWidth="1326.896">
+
+    <UserControl.DataContext>
+        <ViewModel:HomeRepositoryViewModel/>
+    </UserControl.DataContext>
+
+    <dxwui:PageAdornerControl Header="Listings">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <View:NavigatorView/>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border BorderBrush="#FF515151" BorderThickness="1" Padding="0">
+                    <Helpers:TileLayoutControlExt ItemsSource="{Binding Entities}" Padding="12" BreakFlowToFit="False" ItemTemplate="{StaticResource HomeTileTemplate}" SelectedItem="{Binding SelectedHome, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AllowItemMoving="False"/>
+                </Border>
+                <Grid Grid.Column="1" Margin="12,0,10,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Width="420" Helpers:ZoomHelper.SupressZoomFactor="135">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Border BorderBrush="#50000000" BorderThickness="1" Background="#FFE3E3E3" Padding="5" Height="280" Helpers:ZoomHelper.SupressZoomFactor="135">
+                            <dxwui:FlipView ItemsSource="{Binding SelectedHomePhotos}" ItemTemplate="{StaticResource HomePhotoTemplate}" Padding="0" IsAnimationEnabled="True">
+                                <!--BEGIN WPF-->
+                                <dxwui:FlipView.IsManipulationEnabled>
+                                    <System:Boolean>True</System:Boolean>
+                                </dxwui:FlipView.IsManipulationEnabled>
+                                <!--END WPF-->
+                            </dxwui:FlipView>
+                        </Border>
+                        <ScrollViewer Grid.Row="1" BorderBrush="#FF515151" BorderThickness="1" Margin="0,12,0,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Padding="12" Background="#FF444444">
+                            <!--BEGIN WPF-->
+                            <ScrollViewer.IsManipulationEnabled>
+                                <System:Boolean>True</System:Boolean>
+                            </ScrollViewer.IsManipulationEnabled>
+                            <ScrollViewer.PanningMode>
+                                <PanningMode>VerticalOnly</PanningMode>
+                            </ScrollViewer.PanningMode>
+                            <!--END WPF-->
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.ColumnSpan="2" Grid.Row="1" Margin="0,10,0,0">
+                                    <TextBlock x:Name="AddressEdit" FontSize="19" Foreground="#FFF78A09" TextWrapping="Wrap" HorizontalAlignment="Left" Text="{Binding SelectedHome.Address}" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock x:Name="BedroomsEdit" Text="{Binding SelectedHome.Beds}" />
+                                                <TextBlock Text="bedrooms," Margin="4,0,4,0" />
+                                                <TextBlock x:Name="BathroomsEdit" Text="{Binding SelectedHome.Baths}" />
+                                                <TextBlock Text="bathrooms" Margin="4,0,0,0" />
+                                            </StackPanel>
+                                            <WrapPanel Orientation="Horizontal">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="House size"  Margin="0,0,4,0" />
+                                                    <TextBlock x:Name="HouseSizeEdit" Text="{Binding SelectedHome.HouseSize, Converter={StaticResource HouseSizeFormatConverter}}" />
+                                                    <TextBlock Text="," Margin="0,0,4,0" />
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="lot size" Margin="0,0,4,0" />
+                                                    <TextBlock x:Name="LotSizeEdit" Text="{Binding SelectedHome.LotSize, Converter={StaticResource LotSizeFormatConverter}}" />
+                                                </StackPanel>
+                                            </WrapPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Built in" Margin="0,0,4,0" />
+                                                <TextBlock x:Name="YearBuiltEdit" Text="{Binding SelectedHome.YearBuilt}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <Border Background="#FFF78A09" Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock FontSize="21" Margin="10,4" x:Name="PriceEdit" Text="{Binding SelectedHome.Price, Converter={StaticResource Currency0FormatConverter}}" />
+                                        </Border>
+                                    </Grid>
+                                    <TextBlock x:Name="FeaturesEdit" Margin="0,15,0,0" Text="{Binding SelectedHome.Features, Converter={StaticResource ListFormatConverter}}" />
+                                </StackPanel>
+                                <Button Command="{Binding NavigateToAgentCommand}" CommandParameter="{Binding SelectedHomeAgent.ID}" Style="{StaticResource EmptyButton}" Cursor="Hand">
+                                    <Grid Grid.Row="0" Cursor="Hand" Background="Transparent">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="1" Margin="20,0,0,20" VerticalAlignment="Center">
+                                            <TextBlock FontSize="19" Text="Agent" Foreground="#FFF78A09" />
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock FontSize="16" x:Name="AgentFirstNameEdit" Text="{Binding SelectedHomeAgent.FirstName}" />
+                                                <TextBlock FontSize="16" x:Name="AgentLastNameEdit" Text="{Binding SelectedHomeAgent.LastName}" Margin="6,0,0,0" />
+                                            </StackPanel>
+                                            <TextBlock x:Name="AgentPhoneEdit" Text="{Binding SelectedHomeAgent.Phone}" />
+                                            <TextBlock x:Name="AgentEmailEdit" Text="{Binding SelectedHomeAgent.Email}" />
+                                        </StackPanel>
+                                        <Border BorderBrush="#50000000" BorderThickness="1" Background="#FFE3E3E3" Padding="5" HorizontalAlignment="Left" VerticalAlignment="Top" Height="120" Width="100">
+                                            <dxe:ImageEdit Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" ShowBorder="False" IsReadOnly="True" EditValue="{Binding SelectedHomeAgent.Photo}" />
+                                        </Border>
+                                    </Grid>
+                                </Button>
+                            </Grid>
+                        </ScrollViewer>
+                    </Grid>
+                    <Controls:ImageScrollViewer x:Name="LayoutEdit" Grid.Column="1" Source="{Binding SelectedHomeLayout.Image, Converter={StaticResource ImageSourceConverter}}" Padding="0" Margin="12,0,0,0" />
+                </Grid>
+            </Grid>
+        </Grid>
+    </dxwui:PageAdornerControl>
+</UserControl>

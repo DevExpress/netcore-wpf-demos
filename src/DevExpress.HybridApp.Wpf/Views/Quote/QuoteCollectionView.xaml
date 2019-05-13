@@ -1,0 +1,231 @@
+<UserControl x:Class="DevExpress.DevAV.Views.QuoteCollectionView"
+        xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+        xmlns:dxm="http://schemas.devexpress.com/winfx/2008/xaml/map"
+        xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+        xmlns:dxpg="http://schemas.devexpress.com/winfx/2008/xaml/pivotgrid"
+        xmlns:dxcr="http://schemas.devexpress.com/winfx/2008/xaml/charts/rangecontrolclient"
+        xmlns:dxet="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
+        xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+        xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+        xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"
+        xmlns:conv="clr-namespace:DevExpress.DevAV.Converters"
+        xmlns:base="clr-namespace:DevExpress.DevAV"             
+        xmlns:devav="clr-namespace:DevExpress.DevAV"
+        mc:Ignorable="d"
+        d:DesignHeight="400" d:DesignWidth="600"
+        DataContext="{dxmvvm:ViewModelSource viewmodel:QuoteCollectionViewModel}">
+
+    <UserControl.Resources>
+        <conv:AbsoluteToLocalConverter x:Key="converter" MinValue="20" MaxValue="50"/>
+        <base:AddressToGeoPointConverter x:Key="AddressToGeoPointConverter"/>
+        <conv:HalfValueConverter x:Key="HalfValueConverter" NegativeValue="True"/>
+        <dxmvvm:BooleanToObjectConverter x:Key="boolToMaxWidthConverter" FalseValue="4000" TrueValue="0"/>
+        <Style x:Key="RangeControlStyle" TargetType="{x:Type dxe:RangeControl}">
+            <Setter Property="ShowLabels" Value="False"/>
+        </Style>
+        <dxe:EditRangeToFilterCriteriaConverter x:Key="EditRangeToFilterCriteriaConverter"/>
+        <ControlTemplate x:Key="{dxet:ProgressBarEditThemeKey ResourceKey=PanelLeftSideHorizontalTemplate, IsThemeIndependent=True}" TargetType="{x:Type ContentControl}">
+            <Border Background="#FF00879C" />
+        </ControlTemplate>
+    </UserControl.Resources>
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="OPPORTUNITIES" Style="{StaticResource TextBlockTitleBlueStyle}"/>
+        <dxwui:AppBar DockPanel.Dock="Bottom" HideMode="AlwaysVisible">
+            <dxwui:AppBarToggleButton x:Name="pivotTableViewButton" Label="Pivot Table"
+                                      IsChecked="{Binding ElementName=mapViewButton, Path=IsChecked, Converter={dxmvvm:BooleanNegationConverter}, Mode=TwoWay}"
+                                      Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/PivotTable.png"/>
+            <dxwui:AppBarToggleButton x:Name="mapViewButton" Label="Map View" IsChecked="False"
+                                      Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/MapView.png"/>
+        </dxwui:AppBar>
+        <dxlc:LayoutControl Orientation="Vertical" AllowItemSizing="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="42,0,42,2" Padding="2" dx:ScrollBarExtensions.AllowMouseScrolling="False" >
+            <dxlc:LayoutControl.Resources>
+                <Style TargetType="dxlc:LayoutItem">
+                    <Setter Property="ElementSpace" Value="55"/>
+                </Style>
+            </dxlc:LayoutControl.Resources>
+            <dxlc:LayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,20"
+                                 dxlc:LayoutControl.AllowVerticalSizing="False" dxlc:LayoutControl.AllowHorizontalSizing="False">
+                <Grid VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="28"/>
+                        <ColumnDefinition Width="*" MaxWidth="{Binding IsChecked, ElementName=hideButton, Converter={dxmvvm:BooleanToObjectConverter FalseValue='4000', TrueValue='0'}}"/>
+                    </Grid.ColumnDefinitions>
+                    <dx:LoadingDecorator Grid.Column="0" IsSplashScreenShown="{Binding IsLoading}">
+                        <dxpg:PivotGridControl x:Name="pivotGrid" Grid.Column="0" RowTreeMinHeight="35"  FieldHeight="35" ShowBorder="True" RowFieldValuesAlignment="Center"
+                                                           RowTotalsHeightFactor="1" RowTreeMinWidth="150" RowTreeOffset="80" AllowDrag="False"
+                                                           ShowColumnHeaders="False" ShowFilterHeaders="False" AutoExpandGroups="True"
+                                                           ColumnFieldValuesAlignment="Center" DataSource="{Binding Entities}"
+                                                           AllowPrefilter="False" ShowPrefilterPanelMode="Never"
+                                                           PrefilterCriteria="{Binding Source={x:Reference rangeControl}, Path=SelectionRange, Mode=OneWay, Converter={StaticResource EditRangeToFilterCriteriaConverter}, ConverterParameter=Date}"
+                                                           CustomSummary="CustomSummary"
+                                                           HorizontalContentAlignment="Center" ShowColumnGrandTotalHeader="False" SizeChanged="pivotGridSizeChanged"
+                                                           Visibility="{Binding Source={x:Reference pivotTableViewButton}, Path=IsChecked, Mode=OneWay, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+                            <dxpg:PivotGridControl.Fields>
+                                <dxpg:PivotGridField x:Name="fieldState" FieldName="State" Area="RowArea" AllowFilter="False" AreaIndex="0" Caption="State"/>
+                                <dxpg:PivotGridField x:Name="fieldCity" FieldName="City" Area="RowArea" AllowFilter="False" AreaIndex="1" Caption="City">
+                                </dxpg:PivotGridField>
+                                <dxpg:PivotGridField x:Name="fieldNumber" FieldName="Number" Area="RowArea" AllowFilter="False" AreaIndex="2" Caption="Quote Number" Visible="False"/>
+                                <dxpg:PivotGridField x:Name="fieldQuote" FieldName="Total" Area="DataArea" MinWidth="180" AllowFilter="False" AreaIndex="0" Caption="Opportunities">
+                                </dxpg:PivotGridField>
+                                <dxpg:PivotGridField x:Name="fieldDate" FieldName="Date" Area="RowArea" AllowFilter="False" AreaIndex="3" Caption="Date" Visible="False"/>
+                                <dxpg:PivotGridField x:Name="fieldOpportunity" FieldName="Opportunity" Area="DataArea" MinWidth="150" AllowFilter="False"
+                                                     AreaIndex="1" Caption="Opportunities percent" Visible="False"/>
+                                <dxpg:PivotGridField x:Name="fieldMoneyOpportunity" FieldName="MoneyOpportunity" Area="DataArea" MinWidth="200" AllowFilter="True"
+                                                     AreaIndex="2" Caption="MoneyOpportunities" Visible="False"/>
+                                <dxpg:PivotGridField x:Name="fieldPercentage" FieldName="Percentage" Area="DataArea"
+                                                                 AllowFilter="True" AreaIndex="3" Caption="Percentage" SummaryType="Custom" MinWidth="100">
+                                    <dxpg:PivotGridField.CellTemplate>
+                                        <DataTemplate>
+                                            <dxe:ProgressBarEdit ContentDisplayMode="Value" Maximum="100" Height="18" ShowBorder="False" Value="{Binding Path=Value, Mode=OneWay,
+                                                        Converter={dxmvvm:TypeCastConverter}}" DisplayFormatString="{}{0:0} %" EditMode="InplaceInactive"/>
+                                        </DataTemplate>
+                                    </dxpg:PivotGridField.CellTemplate>
+                                </dxpg:PivotGridField>
+                            </dxpg:PivotGridControl.Fields>
+                        </dxpg:PivotGridControl>
+                    </dx:LoadingDecorator>
+                    <dxm:MapControl Grid.Column="0" SelectionMode="Single"
+                                    Visibility="{Binding ElementName=mapViewButton, Path=IsChecked, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+                        <dxmvvm:Interaction.Behaviors>
+                            <common:ZoomToFitMapBehavior PaddingFactor="0.25"/>
+                            <dxmvvm:FunctionBindingBehavior Target="{Binding Data, ElementName=dataSourceLayer}" Property="DataSource" Function="UpdateMapItems" Arg1="{Binding SelectionRangeStart, ElementName=rangeControl}" Arg2="{Binding SelectionRangeEnd, ElementName=rangeControl}"/>
+                        </dxmvvm:Interaction.Behaviors>
+                        <dxm:ImageLayer>
+                            <dxm:BingMapDataProvider Kind="Road" BingKey="{Binding DevExpressBingKey, Source={StaticResource MapUtils}}" />
+                        </dxm:ImageLayer>
+                        <dxm:VectorLayer x:Name="dataSourceLayer" SelectedItem="{Binding SelectedMapItem, Mode=TwoWay}" EnableSelection="True" AllowResetSelection="False">
+                            <dxm:VectorLayer.Data>
+                                <dxm:ListSourceDataAdapter>
+                                    <dxm:ListSourceDataAdapter.Mappings>
+                                        <dxm:MapItemMappingInfo Latitude="Address.Latitude" Longitude="Address.Longitude"/>
+                                    </dxm:ListSourceDataAdapter.Mappings>
+                                    <dxm:ListSourceDataAdapter.ItemSettings>
+                                        <dxm:MapCustomElementSettings>
+                                            <dxm:MapCustomElementSettings.ContentTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel UseLayoutRounding="True">
+                                                        <Border Name="border" BorderThickness="1" CornerRadius="50"
+                                                        Background="#FFC66829"
+                                                        Height="{Binding AbsSize, Converter={StaticResource converter}}" Width="{Binding AbsSize, Converter={StaticResource converter}}">
+                                                            <Border.RenderTransform>
+                                                                <TranslateTransform X="{Binding ElementName=border, Path=ActualWidth, Converter={StaticResource HalfValueConverter}}" Y="{Binding ElementName=border, Path=ActualHeight, Converter={StaticResource HalfValueConverter}}"/>
+                                                            </Border.RenderTransform>
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <DataTemplate.Triggers>
+                                                        <DataTrigger Binding="{Binding Path=DataContext.IsSelected, RelativeSource={RelativeSource AncestorType=dxm:MapItemPresenter}}" Value="True">
+                                                            <Setter TargetName="border" Property="BorderBrush" Value="#FF2F51A5"/>
+                                                            <Setter TargetName="border" Property="Background" Value="#FF2F51A5"/>
+                                                        </DataTrigger>
+                                                    </DataTemplate.Triggers>
+                                                </DataTemplate>
+                                            </dxm:MapCustomElementSettings.ContentTemplate>
+                                        </dxm:MapCustomElementSettings>
+                                    </dxm:ListSourceDataAdapter.ItemSettings>
+                                </dxm:ListSourceDataAdapter>
+                            </dxm:VectorLayer.Data>
+                        </dxm:VectorLayer>
+                        <dxm:VectorLayer EnableSelection="False">
+                            <dxm:VectorLayer.Data>
+                                <dxm:MapItemStorage>
+                                    <dxm:MapCustomElement x:Name="toolTipElement"
+                                              Location="{Binding Path=SelectedMapItem.Address, Converter={StaticResource AddressToGeoPointConverter}}"
+                                              Content="{Binding Path=SelectedMapItem}"
+                                              IsHitTestVisible="False">
+                                        <dxm:MapCustomElement.ContentTemplate>
+                                            <DataTemplate>
+                                                <Grid Name="root" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                    <Grid.RenderTransform>
+                                                        <TranslateTransform Y="-120" X="-26"/>
+                                                    </Grid.RenderTransform>
+                                                    <Grid Margin="3,3,0,-3" Opacity="0.15">
+                                                        <Border Background="#FF000000" Margin="0,0,0,27" />
+                                                        <Path Stretch="Fill" Fill="#FF000000" Data="F1 M 0,30L 9,0L 20,1.90735e-006L 0,30 Z "  Width="22" Height="32" Margin="23,0,0,2" HorizontalAlignment="Left" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" >
+                                                            <Path.RenderTransform>
+                                                                <RotateTransform Angle="7"/>
+                                                            </Path.RenderTransform>
+                                                        </Path>
+                                                    </Grid>
+                                                    <Grid Margin="0,0,3,0" Opacity="0.5">
+                                                        <Border Background="#FF000000" Margin="0,0,0,27" />
+                                                        <Path Stretch="Fill" Fill="#FF000000" Data="F1 M 0,30L 9,0L 20,1.90735e-006L 0,30 Z "  Width="22" Height="32" Margin="24,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                                                    </Grid>
+                                                    <Grid Margin="0,0,3,0">
+                                                        <Path Stretch="Fill" Fill="#FFFFFFFF" Data="F1 M 2.66667,24L 9.86667,0L 18.6667,0L 2.66667,24 Z " Width="18" Height="26" Margin="26,0,0,4" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                                                        <Border Background="#FFFFFFFF" Margin="1,1,1,28">
+                                                            <StackPanel TextBlock.TextAlignment="Center" TextBlock.Foreground="#FF8D8D8D" Margin="20,10">
+                                                                <StackPanel Margin="0,10">
+                                                                    <TextBlock Text="TOTAL OPPORTUNITIES"/>
+                                                                    <TextBlock Text="{Binding Total, StringFormat={}{0:c}}" FontSize="18" Foreground="#FFCE7100" FontWeight="Bold"/>
+                                                                </StackPanel>
+                                                                <TextBlock Text="{Binding Address.City}"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Grid>
+                                                </Grid>
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                                        <Setter TargetName="root" Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
+                                            </DataTemplate>
+                                        </dxm:MapCustomElement.ContentTemplate>
+                                    </dxm:MapCustomElement>
+                                </dxm:MapItemStorage>
+                            </dxm:VectorLayer.Data>
+                        </dxm:VectorLayer>
+                    </dxm:MapControl>
+                    <ToggleButton x:Name="hideButton" Grid.Column="1"
+                              IsChecked="False"
+                              Style="{DynamicResource ResourceKey=HideButtonStyle}"/>
+                    <dxc:ChartControl Name="chart" Grid.Column="2" BorderThickness="0" Margin="0,-5,0,-15" Palette="{StaticResource chartsPalette}">
+                        <dxc:ChartControl.Diagram>
+                            <dxc:SimpleDiagram2D>
+                                <dxc:SimpleDiagram2D.Series>
+                                    <dxc:FunnelSeries2D x:Name="Series" ArgumentDataMember="StageName"
+                                                                        ValueDataMember="Summary" LegendTextPattern="{}{A}" ToolTipPointPattern="{}{A}: ({VP:P0})" ToolTipEnabled="True">
+                                        <dxmvvm:Interaction.Behaviors>
+                                            <dxmvvm:FunctionBindingBehavior Property="DataSource" Function="GetOpportunitiesInfo" Arg1="{Binding SelectionRangeStart, ElementName=rangeControl}" Arg2="{Binding SelectionRangeEnd, ElementName=rangeControl}"/>
+                                        </dxmvvm:Interaction.Behaviors>
+                                        <dxc:FunnelSeries2D.Label>
+                                            <dxc:SeriesLabel Visible="True"
+                                                                            dxc:FunnelSeries2D.LabelPosition="Center"
+                                                                            TextPattern="{}{V:C2}"/>
+                                        </dxc:FunnelSeries2D.Label>
+                                    </dxc:FunnelSeries2D>
+                                </dxc:SimpleDiagram2D.Series>
+                            </dxc:SimpleDiagram2D>
+                        </dxc:ChartControl.Diagram>
+                        <dxc:ChartControl.Legend >
+                            <dxc:Legend Orientation="Horizontal" HorizontalPosition="Center" VerticalPosition="BottomOutside" BorderThickness="0" Margin="0,-10,0,0"/>
+                        </dxc:ChartControl.Legend>
+                    </dxc:ChartControl>
+                </Grid>
+            </dxlc:LayoutItem>
+            <dxlc:LayoutItem Height="100">
+                <dxe:RangeControl Name="rangeControl" ShowRangeBar="False" Style="{StaticResource RangeControlStyle}" AllowZoom="False">
+                    <dxcr:DateTimeChartRangeControlClient
+                                        SnapAlignment="Month"
+                                        ItemsSource="{Binding AverageQuotes}" ArgumentDataMember="Date" 
+                                        ValueDataMember="Total" ShowArgumentLabels="True"
+                                        ArgumentLabelFormatString="{}{0:MMMM/yyyy}" >
+                        <dxcr:DateTimeChartRangeControlClient.View>
+                            <dxcr:RangeControlClientAreaView ShowMarkers="False"/>
+                        </dxcr:DateTimeChartRangeControlClient.View>
+                    </dxcr:DateTimeChartRangeControlClient>
+                </dxe:RangeControl>
+            </dxlc:LayoutItem>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,85 @@
+<UserControl x:Class="DevExpress.DevAV.Views.PeekCollectionView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        mc:Ignorable="d" 
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <dxmvvm:DataTemplateByTypeNameSelector x:Key="ItemTemplateSelector">
+            <dxmvvm:DataTemplateByTypeNameSelector.Templates>
+                <DataTemplate x:Key="Employee">
+                    <ContentControl Background="Transparent">
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" EventName="MouseDoubleClick" />
+                        </dxmvvm:Interaction.Behaviors>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="12" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <dxe:ImageEdit EditValue="{Binding Picture.Data}" IsReadOnly="True" Width="36" Height="36" Stretch="UniformToFill" />
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{Binding FullName}" FontSize="16" />
+                                <TextBlock Text="{Binding Title}" FontSize="12" />
+                            </StackPanel>
+                        </Grid>
+                    </ContentControl>
+                </DataTemplate>
+                <DataTemplate x:Key="Customer">
+                    <ContentControl Background="Transparent">
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" EventName="MouseDoubleClick" />
+                        </dxmvvm:Interaction.Behaviors>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="12" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <dxe:ImageEdit EditValue="{Binding Logo}" IsReadOnly="True" Width="36" Height="36" Stretch="UniformToFill" />
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{Binding Name}" FontSize="16" />
+                                <TextBlock Text="{Binding Phone}" FontSize="12" />
+                            </StackPanel>
+                        </Grid>
+                    </ContentControl>
+                </DataTemplate>
+                <DataTemplate x:Key="Product">
+                    <ContentControl Background="Transparent">
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" EventName="MouseDoubleClick" />
+                        </dxmvvm:Interaction.Behaviors>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="12" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <dxe:ImageEdit EditValue="{Binding PrimaryImage.Data}" IsReadOnly="True" Width="36" Height="36" Stretch="UniformToFill" />
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="{Binding Name}" FontSize="16" />
+                                <TextBlock Text="{Binding SalePrice}" FontSize="12" />
+                            </StackPanel>
+                        </Grid>
+                    </ContentControl>
+                </DataTemplate>
+            </dxmvvm:DataTemplateByTypeNameSelector.Templates>
+        </dxmvvm:DataTemplateByTypeNameSelector>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <dxe:SelectorEditColumnProvider x:Name="columnProvider" OwnerEdit="{Binding ElementName=listBoxEdit}" ItemsSourceType="{Binding SelectedEntity, Converter={dxmvvm:ReflectionConverter ConvertMethod=GetType}}"  />
+        <dxe:SearchControl x:Name="searchControl" ColumnProvider="{Binding ElementName=columnProvider}" ShowCloseButton="False" Margin="0" ImmediateMRUPopup="False"/>
+        <TextBlock Text="{Binding Path=(dxmvvm:ViewModelExtensions.DocumentTitle), RelativeSource={RelativeSource Self}}" Grid.Row="1" Margin="0,5" FontSize="16" />
+        <dxe:ListBoxEdit x:Name="listBoxEdit" Grid.Row="2" ItemsSource="{Binding Entities}" SelectedItem="{Binding SelectedEntity}" ShowBorder="False" Padding="0" 
+                         FilterCriteria="{Binding FilterCriteria, ElementName=searchControl}" ItemTemplateSelector="{StaticResource ItemTemplateSelector}" />
+    </Grid>
+</UserControl>

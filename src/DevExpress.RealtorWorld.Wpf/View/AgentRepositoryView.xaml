@@ -1,0 +1,124 @@
+<UserControl x:Class="DevExpress.RealtorWorld.Xpf.View.AgentRepositoryView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:ViewModel="clr-namespace:DevExpress.RealtorWorld.Xpf.ViewModel"
+        xmlns:View="clr-namespace:DevExpress.RealtorWorld.Xpf.View"
+        xmlns:Helpers="clr-namespace:DevExpress.RealtorWorld.Xpf.Helpers"
+        xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        mc:Ignorable="d"
+        d:DesignHeight="614.239" d:DesignWidth="1326.896">
+
+    <UserControl.DataContext>
+        <ViewModel:AgentRepositoryViewModel/>
+    </UserControl.DataContext>
+
+    <dxwui:PageAdornerControl Header="Agents">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <View:NavigatorView/>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border BorderBrush="#FF515151" BorderThickness="1" Padding="0">
+                    <Helpers:TileLayoutControlExt ItemsSource="{Binding Entities}" Padding="12" BreakFlowToFit="False" ItemTemplate="{StaticResource AgentTileTemplate}" SelectedItem="{Binding SelectedAgent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AllowItemMoving="False"/>
+                </Border>
+                <Grid Grid.Column="1" Margin="12,0,10,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="119*"/>
+                        <ColumnDefinition Width="330*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.4*" />
+                        <RowDefinition Height="12" />
+                        <RowDefinition Height="0.6*" MaxHeight="400" />
+                    </Grid.RowDefinitions>
+                    <dxg:GridControl x:Name="HomesEdit" Grid.ColumnSpan="2" ItemsSource="{Binding SelectedAgentHomes}" SelectedItem="{Binding SelectedHome, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <dxg:GridControl.View>
+                            <dxg:TableView AutoWidth="True" AllowPerPixelScrolling="True" ShowGroupPanel="False" AllowFilterEditor="False" ShowGroupedColumns="True"
+                                    BestFitMode="Smart" BestFitArea="All" ShowHorizontalLines="False" AllowEditing="False" NavigationStyle="Row" AllowHorizontalScrollingVirtualization="False" FadeSelectionOnLostFocus="False"
+                                    ShowIndicator="False">
+                                <dxmvvm:Interaction.Triggers>
+                                    <Helpers:KeyDownEventToCommand EventName="KeyDown" Key="Enter" Command="{Binding NavigateToHomeCommand}" CommandParameter="{Binding Path=SelectedHome.ID}" />
+                                    <dxmvvm:EventToCommand EventName="RowDoubleClick" Command="{Binding NavigateToHomeCommand}" CommandParameter="{Binding Path=SelectedHome.ID}" />
+                                </dxmvvm:Interaction.Triggers>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn FieldName="PhotoImage" Header="Photo" AllowColumnFiltering="False" FixedWidth="True" Width="100">
+                                <dxg:GridColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <dxe:ImageEdit IsReadOnly="True" ShowBorder="False" Source="{Binding Path=RowData.Row.Photo}" Stretch="Uniform" Margin="3" />
+                                    </DataTemplate>
+                                </dxg:GridColumn.CellTemplate>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn FieldName="Address" Header="Address" Width="536" />
+                            <dxg:GridColumn FieldName="Beds" Header="Bedrooms" Width="160" />
+                            <dxg:GridColumn FieldName="Baths" Header="Bathrooms" Width="160" />
+                            <dxg:GridColumn FieldName="HouseSize" Header="House Size" Width="160">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat='{}{0:n0} Sq Ft' />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn FieldName="Price" Header="Price" Width="160">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="C0" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                        </dxg:GridControl.Columns>
+                    </dxg:GridControl>
+                    <dxc:ChartControl x:Name="SoldsEdit" Grid.Row="2"  VerticalAlignment="Bottom" AnimationMode="OnDataChanged"
+                            Palette="{StaticResource CustomPalette}" Grid.ColumnSpan="2" DataSource="{Binding SelectedAgentStatisticData.Points}">
+                        <dxc:ChartControl.Titles>
+                            <dxc:Title Dock="Top" HorizontalAlignment="Center" Content="{Binding Path=SelectedAgentFullName, Converter={StaticResource HomesSoldByFormatConverter}}" />
+                        </dxc:ChartControl.Titles>
+                        <dxc:ChartControl.Legend>
+                            <dxc:Legend HorizontalPosition="Right" VerticalPosition="Top" Foreground="#FFE3E3E3" />
+                        </dxc:ChartControl.Legend>
+                        <dxc:ChartControl.Diagram>
+                            <dxc:XYDiagram2D BarDistance="0.04" EnableAxisXNavigation="True" SeriesDataMember="Region">
+                                <dxc:XYDiagram2D.AxisY>
+                                    <dxc:AxisY2D Interlaced="False" MinorCount="1">
+                                        <dxc:AxisY2D.NumericScaleOptions>
+                                            <dxc:ContinuousNumericScaleOptions GridSpacing="2" AutoGrid="False"/>
+                                        </dxc:AxisY2D.NumericScaleOptions>
+                                    </dxc:AxisY2D>
+                                </dxc:XYDiagram2D.AxisY>
+                                <dxc:XYDiagram2D.AxisX>
+                                    <dxc:AxisX2D Interlaced="False" TickmarksMinorVisible="False">
+                                        <dxc:AxisX2D.NumericScaleOptions>
+                                            <dxc:ManualNumericScaleOptions GridSpacing="1" AutoGrid="False"/>
+                                        </dxc:AxisX2D.NumericScaleOptions>
+                                        <dxc:AxisX2D.VisualRange>
+                                            <dxc:Range MinValue="{Binding YearRangeMinValue, Mode=TwoWay}" MaxValue="{Binding YearRangeMaxValue, Mode=TwoWay}" />
+                                        </dxc:AxisX2D.VisualRange>
+                                    </dxc:AxisX2D>
+                                </dxc:XYDiagram2D.AxisX>
+                                <dxc:XYDiagram2D.SeriesTemplate>
+                                    <dxc:BarSideBySideSeries2D AnimationAutoStartMode="SetStartState" ValueDataMember="Value" ArgumentDataMember="Year" ArgumentScaleType="Numerical" ValueScaleType="Numerical" LabelsVisibility="True">
+                                        <dxc:BarSideBySideSeries2D.Label>
+                                            <dxc:SeriesLabel Indent="20" ResolveOverlappingMode="Default" ConnectorThickness="1" />
+                                        </dxc:BarSideBySideSeries2D.Label>
+                                        <dxc:BarSideBySideSeries2D.Model>
+                                            <dxc:BorderlessSimpleBar2DModel />
+                                        </dxc:BarSideBySideSeries2D.Model>
+                                    </dxc:BarSideBySideSeries2D>
+                                </dxc:XYDiagram2D.SeriesTemplate>
+                            </dxc:XYDiagram2D>
+                        </dxc:ChartControl.Diagram>
+                    </dxc:ChartControl>
+                </Grid>
+            </Grid>
+        </Grid>
+    </dxwui:PageAdornerControl>
+</UserControl>

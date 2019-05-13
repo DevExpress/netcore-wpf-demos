@@ -1,0 +1,135 @@
+<UserControl x:Class="DevExpress.MailClient.View.TasksView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:viewmodel="clr-namespace:DevExpress.MailClient.ViewModel"
+        xmlns:behaviors="clr-namespace:DevExpress.MailClient.Behaviors"
+        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+        xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        mc:Ignorable="d" d:DataContext="{dxmvvm:ViewModelSource viewmodel:TasksViewModel}"
+        d:DesignHeight="800" d:DesignWidth="1000"
+        dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DevExpress.MailClient.Xpf;component/Resources/GridTemplates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <dxmvvm:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter"/>
+            <dx:EnumToBoolConverter x:Key="EnumToBooleanConverter"/>
+            <Style x:Key="gridControlMVVMStyle" TargetType="{x:Type dxg:GridControl}">
+                <Setter Property="ItemsSource" Value="{Binding ItemsSource}"/>
+                <Setter Property="ColumnsSource" Value="{Binding Columns}"/>
+                <Setter Property="AutoExpandAllGroups" Value="True"/>
+                <Setter Property="SelectedItem" Value="{Binding SelectedItem, Mode=TwoWay}"/>
+                <Setter Property="FilterString" Value="{Binding FilterString, Mode=TwoWay}"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:NotificationService UseWin8NotificationsIfAvailable="False"
+                                    PredefinedNotificationTemplate="ShortHeaderAndLongText"/>
+        <dx:DialogService >
+            <dx:DialogService.DialogStyle>
+                <Style TargetType="dx:DXDialogWindow">
+                    <Setter Property="Icon" Value="/DevExpress.MailClient.Xpf;component/Images/AppIcon/AppIcon.ico"/>
+                    <Setter Property="ResizeMode" Value="NoResize"/>
+                    <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+                </Style>
+            </dx:DialogService.DialogStyle>
+        </dx:DialogService>
+    </dxmvvm:Interaction.Behaviors>
+
+    <dxb:BarManager CreateStandardLayout="False">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <dxlc:LayoutControl Grid.Row="1">
+                <dxg:GridControl x:Name="grid" Grid.Row="1" Style="{StaticResource gridControlMVVMStyle}" ColumnGeneratorStyle="{StaticResource columnGeneratorStyle}" DesignTimeShowSampleData="False">
+                    <dxmvvm:Interaction.Behaviors>
+                        <behaviors:GridUpdateLockerBehavior IsLocked="{Binding IsLoading}"/>
+                    </dxmvvm:Interaction.Behaviors>
+                    <dxg:GridControl.View>
+                        <dxg:TableView ShowSearchPanelMode="Always" AllowPerPixelScrolling="True" CellValueChanging="TableView_CellValueChanging" ShowGroupPanel="False" AutoWidth="True" AllowConditionalFormattingMenu="True">
+                            <dxg:TableView.FormatConditions>
+                                <dxg:FormatCondition Expression="[Overdue]" PredefinedFormatName="RedText"/>
+                                <dxg:FormatCondition Expression="(Not [Complete]) And ([Priority]='High')" PredefinedFormatName="BoldText"/>
+                                <dxg:FormatCondition Expression="([Status]='Completed') Or ([Status]='Deferred')">
+                                    <dx:Format Foreground="Gray"/>
+                                </dxg:FormatCondition>
+                                <dxg:FormatCondition Expression="[Status]='WaitingOnSomeoneElse'">
+                                    <dx:Format Foreground="Orange"/>
+                                </dxg:FormatCondition>
+                                <dxg:FormatCondition PredefinedFormatName="StrikethroughText" Expression="[Status]='Completed'"/>
+                            </dxg:TableView.FormatConditions>
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand EventName="RowDoubleClick" Command="{Binding EditTaskCommand}"/>
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxg:TableView>
+                    </dxg:GridControl.View>
+                    <dxg:GridControl.GroupSummary>
+                        <dxg:GridSummaryItem SummaryType="Count"/>
+                    </dxg:GridControl.GroupSummary>
+                    <dxg:GridControl.TotalSummary>
+                        <dxg:GridSummaryItem SummaryType="Count"/>
+                        <dxg:GridSummaryItem SummaryType="Custom"/>
+                    </dxg:GridControl.TotalSummary>
+                </dxg:GridControl>
+            </dxlc:LayoutControl>
+            <dxr:RibbonControl DockPanel.Dock="Top" RibbonStyle="Office2010" Name="ribbonControl">
+                <dxr:RibbonDefaultPageCategory MergeOrder="-2" Caption="Default Category">
+                    <dxr:RibbonPage Caption="Tasks" MergeOrder="-2">
+                        <dxr:RibbonPageGroup Caption="New / Edit">
+                            <dxb:BarButtonItem Content="New Task" Command="{Binding CreateNewTaskCommand}" LargeGlyph="{dx:DXImageOffice2013 Image=NewTask_32x32.png}" />
+                            <dxb:BarButtonItem Content="Edit Task" Command="{Binding EditTaskCommand}" LargeGlyph="{dx:DXImageOffice2013 Image=EditTask_32x32.png}" IsEnabled="{Binding SelectedItem, Converter={StaticResource ObjectToBooleanConverter}}" />
+                            <dxb:BarItemLinkSeparator/>
+                            <dxb:BarButtonItem Content="Delete" Command="{Binding DeleteTaskCommand}" IsEnabled="{Binding SelectedItem, Converter={StaticResource ObjectToBooleanConverter}}" LargeGlyph="{dx:DXImageOffice2013 Image=Delete_32x32.png}"/>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Follow Up" ShowCaptionButton="False">
+                            <dxb:BarCheckItem Content="Today" Command="{Binding FollowUp_TodayCommand}" Glyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Today_Flag.png"
+                                IsEnabled="{Binding SelectedItem, Converter={StaticResource ObjectToBooleanConverter}}"
+                                IsChecked="{Binding SelectedItem.FlagStatus, ConverterParameter=Today, Converter={StaticResource EnumToBooleanConverter}, Mode=OneWay}"/>
+                            <dxb:BarCheckItem Content="Tomorrow" Command="{Binding FollowUp_TomorrowCommand}" Glyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Tomorrow_Flag.png"
+                                IsEnabled="{Binding SelectedItem, Converter={StaticResource ObjectToBooleanConverter}}"
+                                IsChecked="{Binding SelectedItem.FlagStatus, ConverterParameter=Tomorrow, Converter={StaticResource EnumToBooleanConverter}, Mode=OneWay}"/>
+                            <dxb:BarCheckItem Content="This Week" Command="{Binding FollowUp_ThisWeekCommand}" Glyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/ThisWeek_Flag.png"
+                                IsEnabled="{Binding SelectedItem, Converter={StaticResource ObjectToBooleanConverter}}"
+                                IsChecked="{Binding SelectedItem.FlagStatus, ConverterParameter=ThisWeek, Converter={StaticResource EnumToBooleanConverter}, Mode=OneWay}"/>
+                            <dxb:BarCheckItem Content="Next Week" Command="{Binding FollowUp_NextWeekCommand}" Glyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/NextWeek_Flag.png" 
+                                IsEnabled="{Binding SelectedItem, Converter={StaticResource ObjectToBooleanConverter}}"
+                                IsChecked="{Binding SelectedItem.FlagStatus, ConverterParameter=NextWeek, Converter={StaticResource EnumToBooleanConverter}, Mode=OneWay}"/>
+                            <dxb:BarCheckItem Content="No Date" Command="{Binding FollowUp_NoDateCommand}" Glyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/NoDate_Flag.png"
+                                IsEnabled="{Binding SelectedItem, Converter={StaticResource ObjectToBooleanConverter}}"
+                                IsChecked="{Binding SelectedItem.FlagStatus, ConverterParameter=NoDate, Converter={StaticResource EnumToBooleanConverter}, Mode=OneWay}"/>
+                            <dxb:BarCheckItem Content="Custom" Command="{Binding FollowUp_CustomCommand}" Glyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Custom_Flag.png"
+                                IsEnabled="{Binding SelectedItem, Converter={StaticResource ObjectToBooleanConverter}}"
+                                IsChecked="{Binding SelectedItem.FlagStatus, ConverterParameter=Custom, Converter={StaticResource EnumToBooleanConverter}, Mode=OneWay}"/>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Current View">
+                            <dxb:BarCheckItem IsChecked="{Binding CheckedItemType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=List}" Content="List"  Command="{Binding SetListViewCommand}" LargeGlyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/ListByDate_32x32.png"/>
+                            <dxb:BarCheckItem IsChecked="{Binding CheckedItemType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=ToDoItem}" Content="ToDoList" Command="{Binding SetToDoListViewCommand}" LargeGlyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/ToDoList_32x32.png"/>
+                            <dxb:BarCheckItem IsChecked="{Binding CheckedItemType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=CompletedItem}" Content="Completed" Command="{Binding SetCompletedViewCommand}" LargeGlyph="{dx:DXImageOffice2013 Image=Apply_32x32.png}"/>
+                            <dxb:BarCheckItem IsChecked="{Binding CheckedItemType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=TodayItem}" Content="Today" Command="{Binding SetTodayViewCommand}" LargeGlyph="{dx:DXImageOffice2013 Image=Today_32x32.png}"/>
+                            <dxb:BarCheckItem IsChecked="{Binding CheckedItemType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=PrioritizedItem}" Content="Prioritized" Command="{Binding SetPrioritizedViewCommand}" LargeGlyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Prioritized_32x32.png"/>
+                            <dxb:BarCheckItem IsChecked="{Binding CheckedItemType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=OverdueItem}" Content="Overdue" Command="{Binding SetOverdueViewCommand}" LargeGlyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Overdue_32x32.png"/>
+                            <dxb:BarCheckItem IsChecked="{Binding CheckedItemType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=SimpleListItem}" Content="Simple List" Command="{Binding SetSimpleListViewCommand}" LargeGlyph="{dx:DXImageOffice2013 Image=TextBox_32x32.png}"/>
+                            <dxb:BarCheckItem IsChecked="{Binding CheckedItemType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=DeferredItem}" Content="Deferred" Command="{Binding SetDeferredViewCommand}" LargeGlyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/deferred32.png" Glyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/deferred16.png"/>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                    <dxr:RibbonPage Caption="View" MergeOrder="-1">
+                        <dxr:RibbonPageGroup Caption="Print">
+                            <dxb:BarButtonItem Content="Print Preview" Command="{Binding ElementName=grid, Path=View.Commands.ShowPrintPreview}" LargeGlyph="{dx:DXImageOffice2013 Image=Print_32x32.png}"/>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                </dxr:RibbonDefaultPageCategory>
+            </dxr:RibbonControl>
+        </Grid>
+    </dxb:BarManager>
+</UserControl>

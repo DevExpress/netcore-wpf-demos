@@ -1,0 +1,43 @@
+<UserControl x:Class="DevExpress.DevAV.Views.OrderRevenueReportView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxp="http://schemas.devexpress.com/winfx/2008/xaml/printing"
+             xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:local="clr-namespace:DevExpress.DevAV.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="900">
+
+    <UserControl.Resources>
+        <Style x:Key="previewControlStyle" TargetType="dxp:DocumentPreviewControl" x:Shared="false">
+            <Setter Property="CommandProvider">
+                <Setter.Value>
+                    <dxp:DocumentCommandProvider>
+                        <dxp:DocumentCommandProvider.RibbonActions>
+                            <dxb:InsertAction Index="0">
+                                <dxr:RibbonPageGroup Caption="Actions">
+                                    <dxb:BarButtonItem Content="Designer"
+                                                   Command="{Binding Path=(dxp:DocumentPreviewControl.ActualViewer).DataContext.ShowDesignerCommand, RelativeSource={RelativeSource Mode=Self}}"
+                                                   LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.Xpf.ReportDesigner.v19.1;component/Images/Svg/ReportGroup/Designer.svg'}" />
+                                </dxr:RibbonPageGroup>
+                            </dxb:InsertAction>
+                        </dxp:DocumentCommandProvider.RibbonActions>
+                    </dxp:DocumentCommandProvider>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding OnLoadedCommand}" />
+        <dx:DXSplashScreenService x:Name="splashScreenService" ShowSplashScreenOnLoading="True" ViewTemplate="{StaticResource silentWaitIndicator}" SplashScreenStartupLocation="CenterOwner" OwnerSearchMode="IgnoreAssociatedObject"/>
+    </dxmvvm:Interaction.Behaviors>
+    <Grid>
+        <dxp:DocumentPreviewControl Name="viewer" Style="{StaticResource previewControlStyle}" 
+                                    DocumentSource="{Binding Report}" />
+    </Grid>
+</UserControl>

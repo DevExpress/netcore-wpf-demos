@@ -1,0 +1,208 @@
+<UserControl x:Class="DevExpress.MailClient.View.NewMessageContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxre="http://schemas.devexpress.com/winfx/2008/xaml/richedit"
+             xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+             xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:viewmodel="clr-namespace:DevExpress.MailClient.ViewModel"
+             mc:Ignorable="d" d:DataContext="{dxmvvm:ViewModelSource viewmodel:MailViewModel}"
+             d:DesignHeight="350" d:DesignWidth="850">
+    <UserControl.Resources>
+        <dxre:RichEditUICommand x:Key="commands" />
+        <dxre:RichEditStringIdConverter x:Key="stringIdConverter" />
+        <dxre:MhtToContentConverter x:Key="MhtToContentConverter"/>
+        <dxmvvm:BooleanNegationConverter x:Key="BooleanNegationConverter"/>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dx:DXMessageBoxService/>
+        <dxmvvm:CurrentWindowService ClosingCommand="{Binding SaveMessageOnClosingConfirmationCommand}"/>
+    </dxmvvm:Interaction.Behaviors>
+    <dxb:BarManager Name="barManager">
+        <dxb:BarManager.Items>
+            <dxre:BarSplitButtonColorEditItem Command="{Binding FormatFontBackColor, Mode=OneTime, Source={StaticResource commands}}" x:Name="biFormatFontBackColor" IsVisible="False">
+                <dxre:BarSplitButtonColorEditItem.PopupControl>
+                    <dxb:PopupControlContainer>
+                        <dxe:ColorEdit EditValue="{Binding EditValue, ElementName=biFormatFontBackColor, Mode=TwoWay}" ShowBorder="False" ColumnCount="5" ChipSize="Large" ChipMargin="3" ShowDefaultColorButton="false" ShowMoreColorsButton="False" ShowNoColorButton="True">
+                            <dxe:ColorEdit.Palettes>
+                                <dxre:CharactersBackgroundColorPaletteCollection />
+                            </dxe:ColorEdit.Palettes>
+                        </dxe:ColorEdit>
+                    </dxb:PopupControlContainer>
+                </dxre:BarSplitButtonColorEditItem.PopupControl>
+            </dxre:BarSplitButtonColorEditItem>
+            <dxre:BarSplitButtonColorEditItem Command="{Binding Path=FormatFontForeColor, Mode=OneTime, Source={StaticResource commands}}" Name="biFormatFontForeColor" IsVisible="False">
+                <dxre:BarSplitButtonColorEditItem.PopupControl>
+                    <dxb:PopupControlContainer>
+                        <dxe:ColorEdit EditValue="{Binding ElementName=biFormatFontForeColor, Mode=TwoWay, Path=EditValue}" ShowBorder="False" />
+                    </dxb:PopupControlContainer>
+                </dxre:BarSplitButtonColorEditItem.PopupControl>
+            </dxre:BarSplitButtonColorEditItem>
+            <dxre:BarSplitButtonColorEditItem Command="{Binding FormatParagraphBackColor, Mode=OneTime, Source={StaticResource commands}}" x:Name="biFormatParagraphBackColor" Glyph="{dx:DXImageOffice2013 Image=FillBackground_16x16.png}" RibbonStyle="SmallWithoutText">
+                <dxre:BarSplitButtonColorEditItem.PopupControl>
+                    <dxb:PopupControlContainer>
+                        <UserControl>
+                            <dxe:ColorEdit EditValue="{Binding EditValue, ElementName=biFormatParagraphBackColor, Mode=TwoWay}" ShowBorder="False" ShowDefaultColorButton="False" ShowNoColorButton="True" />
+                        </UserControl>
+                    </dxb:PopupControlContainer>
+                </dxre:BarSplitButtonColorEditItem.PopupControl>
+            </dxre:BarSplitButtonColorEditItem>
+        </dxb:BarManager.Items>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <dxr:RibbonControl x:Name="ribbon" Grid.Row="0" Grid.ColumnSpan="2" RibbonStyle="Office2010">
+                <dxr:RibbonControl.ToolbarItems>
+                    <dxb:BarButtonItem Command="{Binding EditUndo, Mode=OneTime, Source={StaticResource commands}}" RibbonStyle="Large" Glyph="{dx:DXImageOffice2013 Image=Undo_16x16.png}" />
+                    <dxb:BarButtonItem Command="{Binding EditRedo, Mode=OneTime, Source={StaticResource commands}}" RibbonStyle="Large" Glyph="{dx:DXImageOffice2013 Image=Redo_16x16.png}" />
+                </dxr:RibbonControl.ToolbarItems>
+                <dxr:RibbonControl.ApplicationMenu>
+                    <dxr:ApplicationMenu RightPaneWidth="100" ShowRightPane="false">
+                        <dxr:ApplicationMenu.Items>
+                            <dxb:BarButtonItem Content="Save message to drafts" Command="{Binding SaveMessageCommand}" LargeGlyph="{dx:DXImageOffice2013 Image=Save_32x32.png}"/>
+                            <dxb:BarButtonItem Content="Close" Command="{Binding CloseMessageWindowCommand}" LargeGlyph="{dx:DXImageOffice2013 Image=Close_32x32.png}"/>
+                        </dxr:ApplicationMenu.Items>
+                    </dxr:ApplicationMenu>
+                </dxr:RibbonControl.ApplicationMenu>
+                <dxr:RibbonDefaultPageCategory>
+                    <dxr:RibbonPage Caption="Home" Name="pageHome">
+                        <dxr:RibbonPageGroup Caption="Send" ShowCaptionButton="False">
+                            <dxb:BarButtonItem Content="Send message" Command="{Binding SendMessageCommand}" LargeGlyph="{dx:DXImageOffice2013 Image=Send_32x32.png}"
+                                               IsEnabled="{Binding (Validation.HasError), ElementName=emailAddressToEdit, Converter={StaticResource BooleanNegationConverter}}"/>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Clipboard" ShowCaptionButton="False">
+                            <dxb:BarButtonItem Command="{Binding EditPaste, Mode=OneTime, Source={StaticResource commands}}" Name="biEditPaste" Glyph="{dx:DXImageOffice2013 Image=Paste_16x16.png}" RibbonStyle="SmallWithText" />
+                            <dxb:BarButtonItem Command="{Binding EditCut, Mode=OneTime, Source={StaticResource commands}}" Name="biEditCut" Glyph="{dx:DXImageOffice2013 Image=Cut_16x16.png}" RibbonStyle="SmallWithText" />
+                            <dxb:BarButtonItem Command="{Binding EditCopy, Mode=OneTime, Source={StaticResource commands}}" Name="biEditCopy" Glyph="{dx:DXImageOffice2013 Image=Copy_16x16.png}" RibbonStyle="SmallWithText" />
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Font" CaptionButtonCommand="{Binding FormatFont, Mode=OneTime, Source={StaticResource commands}}">
+                            <dxr:BarButtonGroup>
+                                <dxb:BarEditItem Command="{Binding FormatFontName, Mode=OneTime, Source={StaticResource commands}}" Content="" EditWidth="150">
+                                    <dxb:BarEditItem.EditSettings>
+                                        <dxre:FontComboBoxEditSettings />
+                                    </dxb:BarEditItem.EditSettings>
+                                </dxb:BarEditItem>
+                                <dxb:BarEditItem Command="{Binding FormatFontSize, Mode=OneTime, Source={StaticResource commands}}" Content="" EditWidth="50">
+                                    <dxb:BarEditItem.EditSettings>
+                                        <dxre:RichEditFontSizeComboBoxEditSettings RichEditControl="{Binding ElementName=richEdit}" />
+                                    </dxb:BarEditItem.EditSettings>
+                                </dxb:BarEditItem>
+                            </dxr:BarButtonGroup>
+                            <dxr:BarButtonGroup>
+                                <dxb:BarButtonItem Command="{Binding FormatIncreaseFontSize, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=FontSizeIncrease_16x16.png}" RibbonStyle="SmallWithoutText"/>
+                                <dxb:BarButtonItem Command="{Binding FormatDecreaseFontSize, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=FontSizeDecrease_16x16.png}" RibbonStyle="SmallWithoutText"/>
+                            </dxr:BarButtonGroup>
+                            <dxr:BarButtonGroup>
+                                <dxb:BarButtonItem Command="{Binding FormatClearFormatting, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=ClearFormatting_16x16.png}"/>
+                            </dxr:BarButtonGroup>
+                            <dxr:BarButtonGroup>
+                                <dxb:BarCheckItem Command="{Binding FormatFontBold, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=Bold_16x16.png}" RibbonStyle="SmallWithoutText"/>
+                                <dxb:BarCheckItem Command="{Binding FormatFontItalic, Mode=OneTime, Source={StaticResource commands}}" RibbonStyle="SmallWithoutText" Glyph="{dx:DXImageOffice2013 Image=Italic_16x16.png}"/>
+                                <dxb:BarCheckItem Command="{Binding FormatFontUnderline, Mode=OneTime, Source={StaticResource commands}}" RibbonStyle="SmallWithoutText" Glyph="{dx:DXImageOffice2013 Image=Underline_16x16.png}"/>
+                                <dxb:BarCheckItem Command="{Binding FormatFontDoubleUnderline, Mode=OneTime, Source={StaticResource commands}}" RibbonStyle="SmallWithoutText" Glyph="{dx:DXImageOffice2013 Image=UnderlineDouble_16x16.png}"/>
+                                <dxb:BarCheckItem Command="{Binding FormatFontStrikeout, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=Strikeout_16x16.png}" RibbonStyle="SmallWithoutText"/>
+                                <dxb:BarCheckItem Command="{Binding FormatFontDoubleStrikeout, Mode=OneTime, Source={StaticResource commands}}" RibbonStyle="SmallWithoutText" Glyph="{dx:DXImageOffice2013 Image=StrikeoutDouble_16x16.png}"/>
+                                <dxb:BarCheckItem Command="{Binding FormatFontSuperscript, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=Superscript_16x16.png}" RibbonStyle="SmallWithoutText"/>
+                                <dxb:BarCheckItem Command="{Binding FormatFontSubscript, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=Subscript_16x16.png}" RibbonStyle="SmallWithoutText"/>
+                                <dxb:BarSubItem Command="{Binding EditChangeCase, Mode=OneTime, Source={StaticResource commands}}">
+                                    <dxb:BarButtonItem Command="{Binding EditMakeUpperCase, Mode=OneTime, Source={StaticResource commands}}"/>
+                                    <dxb:BarButtonItem Command="{Binding EditMakeLowerCase, Mode=OneTime, Source={StaticResource commands}}"/>
+                                    <dxb:BarButtonItem Command="{Binding EditToggleCase, Mode=OneTime, Source={StaticResource commands}}"/>
+                                </dxb:BarSubItem>
+                            </dxr:BarButtonGroup>
+                            <dxr:BarButtonGroup Name="biFontColor">
+                                <dxr:BarButtonGroup.ItemLinks>
+                                    <dxre:BarSplitButtonColorEditItemLink BarItemName="biFormatFontBackColor" />
+                                    <dxre:BarSplitButtonColorEditItemLink BarItemName="biFormatFontForeColor" />
+                                </dxr:BarButtonGroup.ItemLinks>
+                            </dxr:BarButtonGroup>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Paragraph" CaptionButtonCommand="{Binding FormatParagraph, Mode=OneTime, Source={StaticResource commands}}">
+                            <dxr:BarButtonGroup>
+                                <dxb:BarCheckItem Command="{Binding FormatBulletedList, Mode=OneTime, Source={StaticResource commands}}" LargeGlyph="{dx:DXImageOffice2013 Image=ListBullets_16x16.png}" RibbonStyle="SmallWithoutText" />
+                                <dxb:BarCheckItem Command="{Binding FormatNumberingList, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=ListNumbers_16x16.png}" RibbonStyle="SmallWithoutText" />
+                                <dxb:BarCheckItem Command="{Binding FormatMultilevelList, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=ListMultilevel_16x16.png}" RibbonStyle="SmallWithoutText"/>
+                            </dxr:BarButtonGroup>
+                            <dxr:BarButtonGroup>
+                                <dxb:BarButtonItem Command="{Binding FormatDecreaseIndent, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=IndentDecrease_16x16.png}" RibbonStyle="SmallWithoutText"/>
+                                <dxb:BarButtonItem Command="{Binding FormatIncreaseIndent, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=IndentIncrease_16x16.png}"/>
+                            </dxr:BarButtonGroup>
+                            <dxr:BarButtonGroup>
+                                <dxb:BarCheckItem Command="{Binding ViewShowWhitespace, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=ShowHidden_16x16.png}" RibbonStyle="SmallWithoutText"/>
+                            </dxr:BarButtonGroup>
+                            <dxr:BarButtonGroup>
+                                <dxb:BarCheckItem Command="{Binding FormatParagraphAlignLeft, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=AlignLeft_16x16.png}" RibbonStyle="SmallWithoutText"/>
+                                <dxb:BarCheckItem Command="{Binding FormatParagraphAlignCenter, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=AlignCenter_16x16.png}" RibbonStyle="SmallWithoutText"/>
+                                <dxb:BarCheckItem Command="{Binding FormatParagraphAlignRight, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=AlignRight_16x16.png}" RibbonStyle="SmallWithoutText"/>
+                                <dxb:BarCheckItem Command="{Binding FormatParagraphAlignJustify, Mode=OneTime, Source={StaticResource commands}}" Glyph="{dx:DXImageOffice2013 Image=AlignJustify_16x16.png}" RibbonStyle="SmallWithText"/>
+                            </dxr:BarButtonGroup>
+                            <dxr:BarButtonGroup>
+                                <dxb:BarSubItem Command="{Binding FormatParagraphLineSpacing, Mode=OneTime, Source={StaticResource commands}}">
+                                    <dxb:BarCheckItem Command="{Binding FormatParagraphLineSpacingSingle, Mode=OneTime, Source={StaticResource commands}}"/>
+                                    <dxb:BarCheckItem Command="{Binding FormatParagraphLineSpacingSesquialteral, Mode=OneTime, Source={StaticResource commands}}"/>
+                                    <dxb:BarCheckItem Command="{Binding FormatParagraphLineSpacingDouble, Mode=OneTime, Source={StaticResource commands}}"/>
+                                    <dxb:BarButtonItem Command="{Binding FormatParagraphLineSpacingCustomize, Mode=OneTime, Source={StaticResource commands}}"/>
+                                    <dxb:BarButtonItem Command="{Binding FormatParagraphAddSpacingBefore, Mode=OneTime, Source={StaticResource commands}}"/>
+                                    <dxb:BarButtonItem Command="{Binding FormatParagraphRemoveSpacingBefore, Mode=OneTime, Source={StaticResource commands}}"/>
+                                    <dxb:BarButtonItem Command="{Binding FormatParagraphAddSpacingAfter, Mode=OneTime, Source={StaticResource commands}}"/>
+                                    <dxb:BarButtonItem Command="{Binding FormatParagraphRemoveSpacingAfter, Mode=OneTime, Source={StaticResource commands}}"/>
+                                </dxb:BarSubItem>
+                                <dxre:BarSplitButtonColorEditItemLink BarItemName="biFormatParagraphBackColor"/>
+                            </dxr:BarButtonGroup>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Editing" ShowCaptionButton="False">
+                            <dxb:BarButtonItem Command="{Binding EditFind, Mode=OneTime, Source={StaticResource commands}}" LargeGlyph="{dx:DXImageOffice2013 Image=Find_32x32.png}" Glyph="{dx:DXImageOffice2013 Image=Find_16x16.png}"/>
+                            <dxb:BarButtonItem Command="{Binding EditReplace, Mode=OneTime, Source={StaticResource commands}}" LargeGlyph="{dx:DXImageOffice2013 Image=Replace_32x32.png}" Glyph="{dx:DXImageOffice2013 Image=Replace_16x16.png}"/>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Proofing">
+                            <dxb:BarButtonItem Command="{Binding CheckSpelling, Mode=OneTime, Source={StaticResource commands}}" RibbonStyle="Large" Glyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Mail/spell16.png" LargeGlyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Mail/spell32.png"/>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                    <dxr:RibbonPage Caption="Insert" Name="pageInsert">
+                        <dxr:RibbonPageGroup Caption="Tables" ShowCaptionButton="False">
+                            <dxb:BarButtonItem Command="{Binding InsertTable, Mode=OneTime, Source={StaticResource commands}}" LargeGlyph="{dx:DXImageOffice2013 Image=Grid_32x32.png}" Glyph="{dx:DXImageOffice2013 Image=Grid_16x16.png}"/>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Illustrations" ShowCaptionButton="False">
+                            <dxb:BarButtonItem Command="{Binding InsertPicture, Mode=OneTime, Source={StaticResource commands}}" LargeGlyph="{dx:DXImageOffice2013 Image=Image_32x32.png}" Glyph="{dx:DXImageOffice2013 Image=Image_16x16.png}"/>
+                            <dxb:BarButtonItem Command="{Binding InsertFloatingPicture, Mode=OneTime, Source={StaticResource commands}}" LargeGlyph="{dx:DXImageOffice2013 Image=Image_32x32.png}" Glyph="{dx:DXImageOffice2013 Image=Image_16x16.png}"/>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Links" ShowCaptionButton="False">
+                            <dxb:BarButtonItem Command="{Binding InsertHyperlink, Mode=OneTime, Source={StaticResource commands}}" LargeGlyph="{dx:DXImageOffice2013 Image=ViewOnWeb_32x32.png}" Glyph="{dx:DXImageOffice2013 Image=ViewOnWeb_16x16.png}"/>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="{Binding Source={StaticResource stringIdConverter}, ConverterParameter=Caption_GroupText, Converter={StaticResource stringIdConverter}, Mode=OneTime}" Name="grpText" ShowCaptionButton="False">
+                            <dxb:BarButtonItem Command="{Binding InsertTextBox, Mode=OneTime, Source={StaticResource commands}}" LargeGlyph="{dx:DXImageOffice2013 Image=TextBox_32x32.png}" Glyph="{dx:DXImageOffice2013 Image=TextBox_32x32.png}"/>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Symbols" ShowCaptionButton="False">
+                            <dxb:BarButtonItem Command="{Binding InsertSymbol, Mode=OneTime, Source={StaticResource commands}}" Glyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Mail/Symbol_16x16.png" LargeGlyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Mail/Symbol_32x32.png"/>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                </dxr:RibbonDefaultPageCategory>
+            </dxr:RibbonControl>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="To:" Margin="12,12,4,4" HorizontalAlignment="Right"/>
+            <dxe:TextEdit x:Name="emailAddressToEdit"  Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,12,12,4" EditValue="{Binding NewMessage.To, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Subject:" Margin="12,12,4,4" HorizontalAlignment="Right"/>
+            <dxe:TextEdit Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,12,12,4" EditValue="{Binding NewMessage.Subject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Border Grid.Row="3" Grid.ColumnSpan="2" BorderThickness="0,1,0,0" Margin="0,8,0,0">
+                <Border.BorderBrush>
+                    <DynamicResource ResourceKey="{dxt:BrushesThemeKey ResourceKey=PanelBorder}"/>
+                </Border.BorderBrush>
+                <dxre:RichEditControl BarManager="{Binding ElementName=barManager, Mode=OneTime}" x:Name="richEdit" Loaded="OnRichEditLoaded"
+                                      Ribbon="{Binding ElementName=ribbon, Mode=OneTime}" ActiveViewType="Simple" ShowBorder="False"
+                                      Content="{Binding NewMessage.Text, Converter={StaticResource MhtToContentConverter}, Mode=TwoWay}"/>
+            </Border>
+        </Grid>
+    </dxb:BarManager>
+</UserControl>

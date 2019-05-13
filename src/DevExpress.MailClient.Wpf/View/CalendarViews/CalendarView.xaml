@@ -1,0 +1,36 @@
+<UserControl x:Class="DevExpress.MailClient.View.CalendarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dxsch="http://schemas.devexpress.com/winfx/2008/xaml/scheduling"
+             xmlns:viewmodel="clr-namespace:DevExpress.MailClient.ViewModel"
+             mc:Ignorable="d" d:DataContext="{dxmvvm:ViewModelSource viewmodel:CalendarViewModel}"
+             d:DesignHeight="399" d:DesignWidth="886">
+    <dxb:BarManager x:Name="barManager">
+        <dxsch:SchedulerControl Name="schedulerControl1" CommandBarStyle="Ribbon" ActiveViewType="WorkWeekView">
+            <dxmvvm:Interaction.Behaviors>
+                <dxmvvm:EventToCommand Command="{Binding InitializeCommand}" CommandParameter="{Binding ElementName=schedulerControl1}"/>
+            </dxmvvm:Interaction.Behaviors>
+            <dxsch:SchedulerControl.DataSource>
+                <dxsch:DataSource AppointmentsSource="{Binding ItemsSource}">
+                    <dxsch:DataSource.AppointmentMappings>
+                        <dxsch:AppointmentMappings
+                                Start="StartDate" 
+                                End="EndDate" 
+                                AllDay="AllDay"
+                                Description="Description"
+                                LabelId="Label"
+                                Location="Location"
+                                Subject="Subject" 
+                                RecurrenceInfo="RecurrenceInfo"
+                                StatusId="Status"
+                                Type="EventType"/>
+                    </dxsch:DataSource.AppointmentMappings>
+                </dxsch:DataSource>
+            </dxsch:SchedulerControl.DataSource>
+        </dxsch:SchedulerControl>
+    </dxb:BarManager>
+</UserControl>

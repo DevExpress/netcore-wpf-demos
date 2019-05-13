@@ -1,0 +1,214 @@
+<UserControl x:Class="DevExpress.MailClient.View.ContactsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"                 
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:view="clr-namespace:DevExpress.MailClient.View"
+    xmlns:viewmodel="clr-namespace:DevExpress.MailClient.ViewModel"
+    mc:Ignorable="d" d:DataContext="{dxmvvm:ViewModelSource viewmodel:ContactsViewModel}"
+    d:DesignHeight="700" d:DesignWidth="1000">
+    <UserControl.Resources>
+        <dx:EnumToVisibilityConverter x:Key="enumToVisibilityConverter" Invert="True"/>
+        <view:EmptyPhotoConverter x:Key="EmptyPhotoConverter"/>
+        <dx:EnumToObjectConverter x:Key="personPrefixToImageSourceConverter">
+            <dx:EnumToObjectConverter.Values>
+                <dx:EnumObjectProvider x:Key="Dr" Value="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Doctor.png" />
+                <dx:EnumObjectProvider x:Key="Mr" Value="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Mr.png" />
+                <dx:EnumObjectProvider x:Key="Ms" Value="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Ms.png" />
+                <dx:EnumObjectProvider x:Key="Miss" Value="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Miss.png" />
+                <dx:EnumObjectProvider x:Key="Mrs" Value="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Tasks/Mrs.png" />
+            </dx:EnumToObjectConverter.Values>
+        </dx:EnumToObjectConverter>
+        <dx:EnumToBoolConverter x:Key="ViewTypeToBoolConverter"/>
+        <DataTemplate x:Key="cardTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Border BorderThickness="1" BorderBrush="#3F000000" VerticalAlignment="Top" Grid.RowSpan="3">
+                    <dxe:ImageEdit Stretch="UniformToFill" Source="{Binding DataContext.Photo, Converter={StaticResource EmptyPhotoConverter}}" ShowMenu="False" ShowBorder="False"/>
+                </Border>
+                <StackPanel Grid.Column="1" Orientation="Vertical" Margin="12,0,0,12">
+                    <TextBlock Text="ADDRESS" Opacity="0.65"/>
+                    <TextBlock Text="{Binding DataContext.Address}" TextWrapping="Wrap"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Vertical" Margin="12,0,0,12">
+                    <TextBlock Text="EMAIL" Opacity="0.65"/>
+                    <TextBlock Text="{Binding DataContext.Email}" TextWrapping="Wrap"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Vertical" Margin="12,0,0,12">
+                    <TextBlock Text="PHONE" Opacity="0.65"/>
+                    <TextBlock Text="{Binding DataContext.Phone}" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <dxg:TableView x:Key="TableView" AllowEditing="False" AutoWidth="True" ShowAutoFilterRow="False" ShowSearchPanelMode="Always"  SearchPanelNullText="Search contacts (Ctrl + F)"
+                       ShowGroupedColumns="False" ShowGroupPanel="False">
+            <dxmvvm:Interaction.Behaviors>
+                <dxmvvm:EventToCommand EventName="RowDoubleClick" Command="{Binding EditContactCommand}"/>
+            </dxmvvm:Interaction.Behaviors>
+        </dxg:TableView>
+        <dxg:CardView x:Key="CardView" AllowEditing="False" ShowGroupPanel="False" CardTemplate="{StaticResource cardTemplate}"
+                      CardHeaderBinding="{Binding Data.Name.FullName, RelativeSource={RelativeSource Self}}" />
+        <dxmvvm:ObjectToObjectConverter x:Key="ContactsViewConverter" DefaultTarget="{StaticResource TableView}">
+            <dxmvvm:MapItem Source="CardView" Target="{StaticResource CardView}"/>
+        </dxmvvm:ObjectToObjectConverter>
+    </UserControl.Resources>
+
+    <dxmvvm:Interaction.Behaviors>
+        <dx:DialogService>
+            <dx:DialogService.ViewTemplate>
+                <DataTemplate>
+                    <view:EditContactView/>
+                </DataTemplate>
+            </dx:DialogService.ViewTemplate>
+            <dx:DialogService.DialogStyle>
+                <Style TargetType="dx:DXDialogWindow">
+                    <Setter Property="Icon" Value="/DevExpress.MailClient.Xpf;component/Images/AppIcon/AppIcon.ico"/>
+                    <Setter Property="ResizeMode" Value="NoResize"/>
+                    <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+                </Style>
+            </dx:DialogService.DialogStyle>
+        </dx:DialogService>
+    </dxmvvm:Interaction.Behaviors>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <dxr:RibbonControl x:Name="contactRibbon" Grid.Row="0" RibbonStyle="Office2010">
+            <dxr:RibbonDefaultPageCategory>
+                <dxr:RibbonPage Caption="Contacts" MergeOrder="-2">
+                    <dxr:RibbonPageGroup Caption="New/Edit" ShowCaptionButton="False">
+                        <dxb:BarButtonItem Content="New Contact" Command="{Binding CreateNewContactCommand}" LargeGlyph="{dx:DXImageOffice2013 Image=NewContact_32x32.png}"/>
+                        <dxb:BarButtonItem Content="Edit Contact" Command="{Binding EditContactCommand}" LargeGlyph="{dx:DXImageOffice2013 Image=EditContact_32x32.png}"/>
+                        <dxb:BarItemLinkSeparator/>
+                        <dxb:BarButtonItem Content="Delete" Command="{Binding DeleteContactCommand}" Glyph="{dx:DXImageOffice2013 Image=Delete_16x16.png}" LargeGlyph="{dx:DXImageOffice2013 Image=Delete_32x32.png}"/>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Current View">
+                        <dxr:RibbonGalleryBarItem x:Name="bLayout">
+                            <dxr:RibbonGalleryBarItem.Gallery>
+                                <dxb:Gallery ColCount="4" ItemCaptionHorizontalAlignment="Center" ItemGlyphLocation="Top" ItemGlyphVerticalAlignment="Center" ItemGlyphHorizontalAlignment="Center">
+                                    <dxb:Gallery.Groups>
+                                        <dxb:GalleryItemGroup>
+                                            <dxb:GalleryItem Caption="List" Command="{Binding SetTableViewCommand}" IsChecked="{Binding CurrentViewType, ConverterParameter=TableView, Converter={StaticResource ViewTypeToBoolConverter}}"
+                                                 Glyph="/DevExpress.MailClient.Xpf;component/Images/Contacts/List_32x32.png"/>
+                                            <dxb:GalleryItem Caption="By Alphabet" Command="{Binding SetTableViewByNameCommand}" IsChecked="{Binding CurrentViewType, ConverterParameter=TableViewByName, Converter={StaticResource ViewTypeToBoolConverter}}"
+                                                 Glyph="{dx:DXImageOffice2013 Image=SortAsc_32x32.png}"/>
+                                            <dxb:GalleryItem Caption="By State" Command="{Binding SetTableViewByStateCommand}" IsChecked="{Binding CurrentViewType, ConverterParameter=TableViewByState, Converter={StaticResource ViewTypeToBoolConverter}}"
+                                                 Glyph="/DevExpress.MailClient.Xpf;component/Images/Contacts/ByState_32x32.png"/>
+                                            <dxb:GalleryItem Caption="Card" Command="{Binding SetCardViewCommand}" IsChecked="{Binding CurrentViewType, ConverterParameter=CardView, Converter={StaticResource ViewTypeToBoolConverter}}"
+                                                 Glyph="/DevExpress.MailClient.Xpf;component/Images/Contacts/Card_32x32.png"/>
+                                        </dxb:GalleryItemGroup>
+                                    </dxb:Gallery.Groups>
+                                </dxb:Gallery>
+                            </dxr:RibbonGalleryBarItem.Gallery>
+                        </dxr:RibbonGalleryBarItem>
+                    </dxr:RibbonPageGroup>
+                </dxr:RibbonPage>
+            </dxr:RibbonDefaultPageCategory>
+        </dxr:RibbonControl>
+
+        <dxlc:LayoutControl Margin="0" Padding="0" Grid.Row="1">
+            <dxg:GridControl x:Name="grid" ItemsSource="{Binding ItemsSource}" AutoExpandAllGroups="True" SelectedItem="{Binding CurrentContact, Mode=TwoWay}" DesignTimeShowSampleData="False" Margin="1"
+                                 View="{Binding CurrentViewType, Converter={StaticResource ContactsViewConverter}}">
+                <dxg:GridControl.Columns>
+                    <dxg:GridColumn FieldName="Prefix" Width="45" Header="" ColumnChooserHeaderCaption="Prefix">
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <dx:DXImage Source="{Binding Value, Converter={StaticResource personPrefixToImageSourceConverter}}" Width="16"/>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn Header="Name" Binding="{Binding Name.FullName}" GroupInterval="Alphabetical">
+                        <dxg:GridColumn.GroupIndex>
+                            <Binding Path="CurrentViewType" Mode="TwoWay">
+                                <Binding.Converter>
+                                    <dxmvvm:ObjectToObjectConverter DefaultTarget="-1">
+                                        <dxmvvm:MapItem Source="TableViewByName" Target="0"/>
+                                    </dxmvvm:ObjectToObjectConverter>
+                                </Binding.Converter>
+                            </Binding>
+                        </dxg:GridColumn.GroupIndex>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="Phone"/>
+                    <dxg:GridColumn Header="City" Binding="{Binding Path=Address.City}"/>
+                    <dxg:GridColumn Header="State" Binding="{Binding Path=Address.State}">
+                        <dxg:GridColumn.GroupIndex>
+                            <Binding Path="CurrentViewType" Mode="TwoWay">
+                                <Binding.Converter>
+                                    <dxmvvm:ObjectToObjectConverter DefaultTarget="-1">
+                                        <dxmvvm:MapItem Source="TableViewByState" Target="0"/>
+                                    </dxmvvm:ObjectToObjectConverter>
+                                </Binding.Converter>
+                            </Binding>
+                        </dxg:GridColumn.GroupIndex>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="Email" Width="230"/>
+                </dxg:GridControl.Columns>
+            </dxg:GridControl>
+            <Grid dxlc:LayoutControl.AllowHorizontalSizing="True" Width="250" Margin="4,0,0,0" 
+                      Visibility="{Binding CurrentViewType, Converter={StaticResource enumToVisibilityConverter}, ConverterParameter=CardView}">
+                <TextBlock Text="No contact selected" FontFamily="Segoe UI" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock.Opacity>
+                        <Binding Path="SelectedItem" ElementName="grid">
+                            <Binding.Converter>
+                                <dxmvvm:ObjectToObjectConverter DefaultTarget="0">
+                                    <dxmvvm:MapItem Source="{x:Null}" Target="0.5"/>
+                                </dxmvvm:ObjectToObjectConverter>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBlock.Opacity>
+                </TextBlock>
+                <Grid>
+                    <Grid.Opacity>
+                        <Binding Path="SelectedItem" ElementName="grid">
+                            <Binding.Converter>
+                                <dxmvvm:ObjectToObjectConverter DefaultTarget="1">
+                                    <dxmvvm:MapItem Source="{x:Null}" Target="0"/>
+                                </dxmvvm:ObjectToObjectConverter>
+                            </Binding.Converter>
+                        </Binding>
+                    </Grid.Opacity>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="#3f000000" Margin="0,0,0,23">
+                        <dxe:ImageEdit EditValue="{Binding SelectedItem.Photo, ElementName=grid, Converter={StaticResource EmptyPhotoConverter}}" IsReadOnly="True" ShowBorder="False"/>
+                    </Border>
+                    <TextBlock Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding SelectedItem.Name.FullName, ElementName=grid}" Margin="0,0,0,23" FontSize="20" FontWeight="SemiBold"/>
+                    <TextBlock Grid.Row="2" Opacity="0.65" Text="BIRTHDATE" Margin="0,0,4,2"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedItem.BirthDate, ElementName=grid, StringFormat={}{0:dd MMM yyyy}}" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="3" Opacity="0.65" Text="ADDRESS" Margin="0,0,4,2"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedItem.Address, ElementName=grid}" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="4" Opacity="0.65" Text="EMAIL" Margin="0,0,4,2"/>
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedItem.Email, ElementName=grid}" TextWrapping="Wrap"/>
+                    <TextBlock Grid.Row="5" Opacity="0.65" Text="PHONE" Margin="0,0,4,0"/>
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding SelectedItem.Phone, ElementName=grid}" TextWrapping="Wrap"/>
+                </Grid>
+            </Grid>
+        </dxlc:LayoutControl>
+    </Grid>
+</UserControl>

@@ -1,0 +1,19 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:dxmvvm ="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Helpers="clr-namespace:DevExpress.RealtorWorld.Xpf.Helpers">
+
+    <dxmvvm:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <Helpers:ListFormatConverter x:Key="ListFormatConverter" />
+    <Helpers:ImageSourceConverter x:Key="ImageSourceConverter" />
+    <Helpers:DecimalRangeConverter x:Key="DecimalRangeConverter" />
+    <dx:FormatStringConverter x:Key="BedsCountFormatConverter" FormatString="{}{0} Beds" />
+    <dx:FormatStringConverter x:Key="BathsCountFormatConverter" FormatString="{}{0} Baths" />
+    <dx:FormatStringConverter x:Key="CurrencyFormatConverter" FormatString="c" />
+    <dx:FormatStringConverter x:Key="Currency0FormatConverter" FormatString="c0" />
+    <dx:FormatStringConverter x:Key="HouseSizeFormatConverter" FormatString="{}{0:n0} Sq Ft" />
+    <dx:FormatStringConverter x:Key="LotSizeFormatConverter" FormatString="{}{0:n} Acres" />
+    <dx:FormatStringConverter x:Key="MonthFormatConverter" FormatString="MMMM, yyyy" />
+    <dx:FormatStringConverter x:Key="HomesSoldByFormatConverter" FormatString="{}Homes Sold by {0}" />
+</ResourceDictionary>

@@ -1,0 +1,165 @@
+<UserControl x:Class="DevExpress.DevAV.Views.OrderView"
+        xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+        xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+        xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:dxp="http://schemas.devexpress.com/winfx/2008/xaml/printing"
+        xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+        xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"
+        xmlns:dxpt="http://schemas.devexpress.com/winfx/2008/xaml/printing/themekeys"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        d:DesignHeight="800" d:DesignWidth="1000"
+        DataContext="{dxmvvm:ViewModelSource viewmodel:OrderViewModel}">
+    <UserControl.Resources>
+        <system:Double x:Key="editorHeight">35</system:Double>
+        <system:Double x:Key="editorFontSize">13</system:Double>
+        <SolidColorBrush x:Key="editorFontBrush" Color="#FF191919" />
+        <dxe:TextEditSettings x:Key="ColumnEditSettings" DisplayFormat="{}${0:n}"/>
+        <Style x:Key="discountSummaryContentStyle" TargetType="ContentPresenter">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock HorizontalAlignment="Right" Text="{Binding Column.TotalSummaryText, Mode=OneWay}" Margin="{StaticResource totalSummaryMargin}"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIMessageBoxService/>
+        <dxmvvm:EventToCommand Command="{Binding OnLoadedCommand}" />
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <dxwui:PageAdornerControl Header="{Binding Entity.InvoiceNumber}" FontSize="13" Foreground="#FF646464">
+            <dxwui:PageAdornerControl.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="5,-7,0,0">
+                        <TextBlock Text="SALE" FontSize="18" Foreground="#FF806464"/>
+                        <TextBlock Text="{Binding Converter={dxmvvm:FormatStringConverter FormatString='{}#{0}'}}" Margin="7,0,0,0" FontSize="18" Foreground="{StaticResource blueForegroundBrush}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </dxwui:PageAdornerControl.HeaderTemplate>
+            <dxlc:LayoutControl Orientation="Vertical" ItemSpace="5" Style="{StaticResource HybridLayoutControlStyle}">
+                <dxlc:LayoutControl.Resources>
+                    <Style TargetType="dxlc:LayoutItem">
+                        <Setter Property="ElementSpace" Value="55"/>
+                    </Style>
+                </dxlc:LayoutControl.Resources>
+                <dxlc:LayoutGroup Orientation="Vertical" HorizontalAlignment="Right">
+                    <dxlc:LayoutItem Label="ORDER DATE">
+                        <dxe:DateEdit EditValue="{Binding Entity.OrderDate, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}"
+                                      AllowNullInput="False"
+                                      Height="{StaticResource editorHeight}"
+                                      FontSize="{StaticResource editorFontSize}"
+                                      Foreground="{StaticResource editorFontBrush}"
+                                      IsReadOnly="True">
+                            <dxe:DateEdit.StyleSettings>
+                                <dxe:DateEditPickerStyleSettings />
+                            </dxe:DateEdit.StyleSettings>
+                        </dxe:DateEdit>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="COMPANY">
+                        <dxe:TextEdit EditValue="{Binding Entity.Customer.Name, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}"
+                                      Height="{StaticResource editorHeight}"
+                                      FontSize="{StaticResource editorFontSize}"
+                                      Foreground="{StaticResource editorFontBrush}"
+                                      IsReadOnly="True"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="STORE">
+                        <dxe:TextEdit EditValue="{Binding Entity.Store.Location, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}"
+                                      Height="{StaticResource editorHeight}"
+                                      FontSize="{StaticResource editorFontSize}"
+                                      Foreground="{StaticResource editorFontBrush}"
+                                      IsReadOnly="True"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="PURCHASE ORDER #">
+                        <dxe:TextEdit EditValue="{Binding Entity.PONumber, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}"
+                                      Height="{StaticResource editorHeight}"
+                                      FontSize="{StaticResource editorFontSize}"
+                                      Foreground="{StaticResource editorFontBrush}"
+                                      IsReadOnly="True"/>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutGroup Orientation="Vertical" VerticalAlignment="Bottom">
+                        <dxg:GridControl Height="250" Margin="0,0,0,5"
+                                     ItemsSource="{Binding Entity.OrderItems}"
+                                     FontSize="{StaticResource editorFontSize}"
+                                     Foreground="{StaticResource editorFontBrush}">
+                            <dxg:GridControl.Columns>
+                                <dxg:GridColumn FieldName="Product.Name" Header="Name" FixedWidth="False" AllowEditing="False"/>
+                                <dxg:GridColumn FieldName="ProductUnits" Header="Quantity" Width="88" FixedWidth="True" AllowEditing="False"/>
+                                <dxg:GridColumn FieldName="ProductPrice" Header="Unit Price" Width="100" FixedWidth="True" EditSettings="{StaticResource ColumnEditSettings}" AllowEditing="False"/>
+                                <dxg:GridColumn FieldName="Discount" Header="Discount" Width="108" FixedWidth="True" EditSettings="{StaticResource ColumnEditSettings}" AllowEditing="False" TotalSummaryContentStyle="{StaticResource discountSummaryContentStyle}"/>
+                            </dxg:GridControl.Columns>
+                            <dxg:GridControl.View>
+                                <dxg:TableView AutoWidth="True"
+                                               ShowTotalSummary="True"
+                                               ShowGroupPanel="False"
+                                               ShowFilterPanelMode="Never"
+                                               AllowMoveColumnToDropArea="False"
+                                               ShowIndicator="False">
+                                    <dxg:TableView.ColumnMenuCustomizations>
+                                        <dxb:RemoveBarItemAndLinkAction ItemName="{x:Static dxg:DefaultColumnMenuItemNames.GroupBox }"/>
+                                        <dxb:RemoveBarItemAndLinkAction ItemName="{x:Static dxg:DefaultColumnMenuItemNames.SearchPanel }"/>
+                                    </dxg:TableView.ColumnMenuCustomizations>
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                            <dxg:GridControl.TotalSummary>
+                                <dxg:GridSummaryItem SummaryType="Sum" FieldName="Total" ShowInColumn="Discount" DisplayFormat="{}${0:n}" />
+                            </dxg:GridControl.TotalSummary>
+                        </dxg:GridControl>
+                        <dxlc:LayoutGroup Orientation="Vertical" Width="220" HorizontalAlignment="Right">
+                            <dxlc:LayoutItem Label="SHIPPING">
+                                <dxe:TextEdit EditValue="{Binding Entity.ShippingAmount, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}"
+                                          Height="{StaticResource editorHeight}"
+                                          FontSize="{StaticResource editorFontSize}"
+                                          Foreground="{StaticResource editorFontBrush}"
+                                          DisplayFormatString="c"
+                                          HorizontalContentAlignment="Right"
+                                          IsReadOnly="True"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="GRAND TOTAL">
+                                <dxe:TextEdit EditValue="{Binding Entity.TotalAmount, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}"
+                                          Height="{StaticResource editorHeight}"
+                                          FontSize="{StaticResource editorFontSize}"
+                                          Foreground="{StaticResource editorFontBrush}"
+                                          DisplayFormatString="c"
+                                          HorizontalContentAlignment="Right"
+                                          IsReadOnly="True"/>
+                            </dxlc:LayoutItem>
+                        </dxlc:LayoutGroup>
+                    </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutControl>
+        </dxwui:PageAdornerControl>
+        <dxp:DocumentPreviewControl x:Name="documentViewer" Grid.Column="1" CommandBarStyle="None" CursorMode="HandTool" ShowPageMargins="False" Background="#FFE0E0E0">
+            <dxmvvm:Interaction.Behaviors>
+                <common:DocumentViewerReportService />
+            </dxmvvm:Interaction.Behaviors>
+        </dxp:DocumentPreviewControl>
+        <dxwui:AppBar Grid.Row="1" Grid.ColumnSpan="2" HideMode="AlwaysVisible">
+            <dxwui:AppBarButton Label="Close" Command="{Binding CloseCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Cancel.png"/>
+            <dxwui:AppBarSeparator/>
+            <dxwui:AppBarButton Label="Zoom In" Command="{Binding ZoomInCommand, ElementName=documentViewer}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/ZoomIn.png"/>
+            <dxwui:AppBarButton Label="Zoom Out" Command="{Binding ZoomOutCommand, ElementName=documentViewer}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/ZoomOut.png"/>
+        </dxwui:AppBar>
+    </Grid>
+</UserControl>

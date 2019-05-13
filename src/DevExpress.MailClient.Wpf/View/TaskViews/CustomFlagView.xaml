@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="DevExpress.MailClient.View.CustomFlagView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:viewmodel="clr-namespace:DevExpress.MailClient.ViewModel"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             mc:Ignorable="d" d:DataContext="{dxmvvm:ViewModelSource viewmodel:CustomFlagViewModel}"
+             Width="280">
+    <dxlc:LayoutControl>
+        <dxlc:LayoutGroup Orientation="Vertical">
+            <dxlc:LayoutItem Label="Start Date">
+                <dxe:DateEdit EditValue="{Binding StartDate}"/>
+            </dxlc:LayoutItem>
+            <dxlc:LayoutItem Label="End Date">
+                <dxe:DateEdit EditValue="{Binding DueDate}"/>
+            </dxlc:LayoutItem>
+        </dxlc:LayoutGroup>
+    </dxlc:LayoutControl>
+</UserControl>

@@ -1,0 +1,129 @@
+﻿<root>
+    <xsd:schema id="root"
+        xmlns=""
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string" />
+                            <xsd:attribute name="type" type="xsd:string" />
+                            <xsd:attribute name="mimetype" type="xsd:string" />
+                            <xsd:attribute ref="xml:space" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string" />
+                            <xsd:attribute name="name" type="xsd:string" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+                            <xsd:attribute ref="xml:space" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" />
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Command_New" xml:space="preserve">
+    <value>Создать</value>
+  </data>
+    <data name="Command_Edit" xml:space="preserve">
+    <value>Редактировать</value>
+  </data>
+    <data name="Command_Delete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+    <data name="Command_Refresh" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+    <data name="Command_Reports" xml:space="preserve">
+    <value>Отчеты</value>
+  </data>
+    <data name="Command_Add" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+    <data name="Command_Save" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+    <data name="Command_SaveAndClose" xml:space="preserve">
+    <value>Сохранить и закрыть</value>
+  </data>
+    <data name="Command_SaveAndNew" xml:space="preserve">
+    <value>Сохранить и создать новый</value>
+  </data>
+    <data name="Command_Reset" xml:space="preserve">
+    <value>Сбросить изменения</value>
+  </data>
+    <data name="Command_SaveAll" xml:space="preserve">
+    <value>Сохранить все</value>
+  </data>
+    <data name="Command_Close" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+    <data name="Command_Count" xml:space="preserve">
+    <value>Элементы: {0}</value>
+  </data>
+    <data name="Command_CustomizeLayout" xml:space="preserve">
+    <value>Изменить представление</value>
+  </data>
+    <data name="Command_SaveLayout" xml:space="preserve">
+    <value>Сохранить представление</value>
+  </data>
+    <data name="Command_ResetLayout" xml:space="preserve">
+    <value>Восстановить представление по умолчанию</value>
+  </data>
+    <data name="RibbonPage_Home" xml:space="preserve">
+    <value>Главная</value>
+  </data>
+    <data name="RibbonPage_View" xml:space="preserve">
+    <value>Вид</value>
+  </data>
+    <data name="RibbonPageGroup_Tasks" xml:space="preserve">
+    <value>Действия</value>
+  </data>
+    <data name="RibbonPageGroup_Layout" xml:space="preserve">
+    <value>Текущее представление</value>
+  </data>
+    <data name="RibbonPageGroup_Appearance" xml:space="preserve">
+    <value>Внешний вид</value>
+  </data>
+    <data name="LayoutPanel_Navigation" xml:space="preserve">
+    <value>Навигация</value>
+  </data>
+</root>

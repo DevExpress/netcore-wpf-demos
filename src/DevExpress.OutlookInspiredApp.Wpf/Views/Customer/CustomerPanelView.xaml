@@ -1,0 +1,53 @@
+<UserControl x:Class="DevExpress.DevAV.Views.CustomerPanelView"
+    xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:DevExpress.DevAV"
+    mc:Ignorable="d"
+    d:DesignHeight="663" d:DesignWidth="1183">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,5">
+            <Border Width="80" Height="80" DockPanel.Dock="Left" BorderThickness="1" BorderBrush="Black" Margin="0,0,15,0">
+                <Image Source="{Binding Logo}" Stretch="Fill"/>
+            </Border>
+            <StackPanel>
+                <TextBlock Text="{Binding Name}" FontSize="20"/>
+                <StackPanel>
+                    <TextBlock Text="HOME OFFICE" />
+                    <TextBlock Text="{Binding HomeOffice.Line}"/>
+                    <TextBlock Text="{Binding HomeOffice.CityLine}"/>
+                </StackPanel>
+            </StackPanel>
+        </DockPanel>
+        <ListView Grid.Row="1" ItemsSource="{Binding CustomerStores}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Width="130" Margin="5">
+                        <Image Width="110" Height="110" Source="{Binding Crest.LargeImage}" Stretch="Uniform" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding Address.City}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding Address.Line}" HorizontalAlignment="Center"/>
+                        <TextBlock HorizontalAlignment="Center">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{} {0} {1}">
+                                    <Binding Path="Address.State"/>
+                                    <Binding Path="Address.ZipCode"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ListView>
+    </Grid>
+</UserControl>

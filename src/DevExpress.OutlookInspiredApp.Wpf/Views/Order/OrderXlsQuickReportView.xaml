@@ -1,0 +1,22 @@
+<UserControl x:Class="DevExpress.DevAV.Views.OrderXlsQuickReportView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxsps="http://schemas.devexpress.com/winfx/2008/xaml/spreadsheet"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:local="clr-namespace:DevExpress.DevAV"             
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="900">
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding OnLoadedCommand}" />
+        <dx:DXSplashScreenService x:Name="splashScreenService" ShowSplashScreenOnLoading="True" ViewTemplate="{StaticResource silentWaitIndicator}" SplashScreenStartupLocation="CenterOwner" OwnerSearchMode="IgnoreAssociatedObject"/>
+    </dxmvvm:Interaction.Behaviors>
+
+    <dxsps:SpreadsheetControl x:Name="spreadsheetControl" CommandBarStyle="Ribbon" dx:ScrollBarExtensions.ScrollBarMode="Standard">
+        <dxmvvm:Interaction.Behaviors>
+            <local:InvoiceEditBehavior SpreadsheetDataSource="{Binding DocumentDataSource, Mode=OneWay}"/>
+        </dxmvvm:Interaction.Behaviors>
+    </dxsps:SpreadsheetControl>
+</UserControl>

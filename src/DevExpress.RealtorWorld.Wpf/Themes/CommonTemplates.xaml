@@ -1,0 +1,109 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Helpers="clr-namespace:DevExpress.RealtorWorld.Xpf.Helpers"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol">
+    
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/DevExpress.RealtorWorld.Xpf;component/Themes/Converters.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style x:Key="TileHoverAnimation" TargetType="Helpers:VisualStateControl">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Helpers:VisualStateControl">
+                    <ContentPresenter x:Name="PART_ContentPresenter" Opacity="0" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Cursor="{TemplateBinding Cursor}" Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0" Storyboard.TargetName="PART_ContentPresenter" Storyboard.TargetProperty="Opacity" To="1"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="0" Storyboard.TargetName="PART_ContentPresenter" Storyboard.TargetProperty="Opacity" To="1"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <DataTemplate x:Key="HomeTileTemplate">
+        <Helpers:TileExt Width="270" Height="140" Header="{Binding}" Content="{Binding}" VerticalHeaderAlignment="Stretch" Padding="0" Helpers:ZoomHelper.SupressZoomFactor="300">
+            <Helpers:TileExt.HeaderTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Helpers:VisualStateControl Style="{StaticResource TileHoverAnimation}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid>
+                                <Border Background="#f78a09" Opacity="0.25" />
+                                <Grid>
+                                    <Border Background="#f78a09" VerticalAlignment="Top" HorizontalAlignment="Right">
+                                        <StackPanel Margin="6,2,6,3">
+                                            <TextBlock FontSize="10" Text="{Binding Path=Beds, Converter={StaticResource BedsCountFormatConverter}}" />
+                                            <TextBlock FontSize="10" Text="{Binding Path=Baths, Converter={StaticResource BathsCountFormatConverter}}" />
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Background="#f78a09" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                                        <StackPanel Margin="10,0,10,1">
+                                            <TextBlock FontSize="28" Text="{Binding Path=Price, Converter={StaticResource Currency0FormatConverter}}" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+                        </Helpers:VisualStateControl>
+                        <Grid IsHitTestVisible="False" Visibility="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType=dxlc:Tile}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Border BorderBrush="#f78a09" Background="Transparent" BorderThickness="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </Helpers:TileExt.HeaderTemplate>
+            <dxlc:Tile.ContentTemplate>
+                <DataTemplate>
+                    <dxe:ImageEdit IsReadOnly="True" Stretch="UniformToFill" EditValue="{Binding Photo}" ShowBorder="False" />
+                </DataTemplate>
+            </dxlc:Tile.ContentTemplate>
+        </Helpers:TileExt>
+    </DataTemplate>
+    <DataTemplate x:Key="AgentTileTemplate">
+        <Helpers:TileExt Background="#4f4f4f" Width="270" Height="140" Content="{Binding}" Padding="0" Helpers:ZoomHelper.SupressZoomFactor="300">
+            <dxlc:Tile.ContentTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.3*" />
+                                <ColumnDefinition Width="0.7*" />
+                            </Grid.ColumnDefinitions>
+                            <dxe:ImageEdit IsReadOnly="True" ShowBorder="False" Stretch="UniformToFill" Source="{Binding Path=Photo}" Width="200" VerticalAlignment="Top" Grid.Column="1" Margin="-25,-50,-55,-30" Helpers:ZoomHelper.SupressZoomFactor="300" />
+                            <StackPanel Grid.ColumnSpan="2" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
+                                <StackPanel Orientation="Horizontal" Helpers:ZoomHelper.ChangeOrientationZoomFactor="105">
+                                    <TextBlock Text="{Binding Path=FirstName}" FontSize="16" Foreground="#FFFFFFFF" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding Path=LastName}" FontSize="16" Foreground="#FFFFFFFF" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding Phone}" Foreground="#FFFFFFFF"/>
+                            </StackPanel>
+                        </Grid>
+                        <Helpers:VisualStateControl Style="{StaticResource TileHoverAnimation}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Border Background="#f78a09" Opacity="0.25" />
+                        </Helpers:VisualStateControl>
+                        <Border BorderBrush="#f78a09" Background="Transparent" BorderThickness="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False"
+                                Visibility="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType=dxlc:Tile}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
+                </DataTemplate>
+            </dxlc:Tile.ContentTemplate>
+        </Helpers:TileExt>
+    </DataTemplate>
+    <DataTemplate x:Key="HomePhotoTemplate">
+        <dxe:ImageEdit IsReadOnly="True" EditValue="{Binding Path=Photo}" Stretch="UniformToFill" ShowBorder="False" />
+    </DataTemplate>
+</ResourceDictionary>

@@ -1,0 +1,32 @@
+<UserControl x:Class="DevExpress.DevAV.Views.PrintableControlPrintPreview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxp="http://schemas.devexpress.com/winfx/2008/xaml/printing"
+             xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="800">
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIMessageBoxService/>
+        <dxmvvm:EventToCommand Command="{Binding OnLoadedCommand}" />
+    </dxmvvm:Interaction.Behaviors>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <dxp:DocumentPreviewControl x:Name="documentViewer" CommandBarStyle="None" CursorMode="HandTool" ShowPageMargins="False" DocumentSource="{Binding Link}"/>
+        <dxwui:AppBar Grid.Row="1" HideMode="AlwaysVisible">
+            <dxwui:AppBarButton Label="Close" Command="{Binding CloseCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Cancel.png"/>
+            <dxwui:AppBarSeparator />
+            <dxwui:AppBarButton Label="Print" Command="{Binding PrintDirectCommand, ElementName=documentViewer}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Print.png"/>
+            <dxwui:AppBarSeparator/>
+            <dxwui:AppBarButton Label="Zoom In" Command="{Binding ZoomInCommand, ElementName=documentViewer}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/ZoomIn.png"/>
+            <dxwui:AppBarButton Label="Zoom Out" Command="{Binding ZoomOutCommand, ElementName=documentViewer}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/ZoomOut.png"/>
+        </dxwui:AppBar>
+    </Grid>
+</UserControl>

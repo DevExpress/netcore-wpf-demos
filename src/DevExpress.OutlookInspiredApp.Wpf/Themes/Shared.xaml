@@ -1,0 +1,231 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:view="clr-namespace:DevExpress.DevAV.Views"
+    xmlns:controls="clr-namespace:DevExpress.DevAV.Controls"
+    xmlns:dxdv="http://schemas.devexpress.com/winfx/2008/xaml/documentviewer"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxp="http://schemas.devexpress.com/winfx/2008/xaml/printing"                    
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style TargetType="dxr:RibbonControl">
+        <Setter Property="ToolbarShowMode" Value="ShowAbove"/>
+    </Style>
+    <view:ObjectsEqualityConverter x:Key="objectsEqualityConverter"/>
+    <view:ObjectsEqualityConverter x:Key="objectsEqualityInverseConverter" Inverse="True"/>
+    <Style TargetType="ContentControl">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    </Style>
+    <dxmvvm:ObjectToObjectConverter x:Key="RibbonStyleToGlyphConverter">
+        <dxmvvm:MapItem Source="Office2010" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/RibbonStyle/Office2010.svg'}"/>
+        <dxmvvm:MapItem Source="OfficeSlim" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/RibbonStyle/OfficeSlim.svg'}"/>
+        <dxmvvm:MapItem Source="TabletOffice" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/RibbonStyle/TabletOffice.svg'}"/>
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ObjectToObjectConverter x:Key="SettingsToVisibilityConverter" DefaultTarget="Visible">
+        <dxmvvm:MapItem Source="{x:Null}" Target="Collapsed" />
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ObjectToObjectConverter x:Key="RibbonStyleToCaptionConverter" DefaultTarget="Visible">
+        <dxmvvm:MapItem Source="Office2007" Target="Office 2007"/>
+        <dxmvvm:MapItem Source="Office2010" Target="Office Classic"/>
+        <dxmvvm:MapItem Source="OfficeSlim" Target="Office Slim"/>
+        <dxmvvm:MapItem Source="TabletOffice" Target="Tablet Office"/>
+    </dxmvvm:ObjectToObjectConverter>
+    <Style TargetType="view:RibbonStyleSelectorItem">
+        <Setter Property="RibbonStyle" Value="SmallWithText"/>
+        <Setter Property="Content" Value="{Binding SelectedRibbonStyle, RelativeSource={RelativeSource Self}, Converter={StaticResource RibbonStyleToCaptionConverter}}"/>
+        <Setter Property="ActAsDropDown" Value="True"/>
+        <Setter Property="Glyph" Value="{Binding SelectedRibbonStyle, RelativeSource={RelativeSource Self}, Converter={StaticResource RibbonStyleToGlyphConverter}}"/>
+        <Setter Property="MergeType" Value="Replace" />
+        <Setter Property="PopupTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <dxb:GalleryControl Name="galleryControl">
+                        <dxb:Gallery AllowFilter="False" ItemDescriptionHorizontalAlignment="Left" AutoHideGallery="True" ItemCheckMode="Single" ColCount="1">
+                            <dxb:GalleryItemGroup Caption="Classic">
+                                <dxb:GalleryItem Caption="Office Classic" Description="MS Office Classic style Ribbon" IsChecked="{Binding Selector.SelectedRibbonStyle, Mode=TwoWay, Converter={StaticResource objectsEqualityConverter}, ConverterParameter=Office2010}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/RibbonStyle/Office2010.svg'}"/>
+                            </dxb:GalleryItemGroup>
+                            <dxb:GalleryItemGroup Caption="Tablet">
+                                <dxb:GalleryItem Caption="Tablet Office" Description="Emulates the UI found in MS Office for iPad" IsChecked="{Binding Selector.SelectedRibbonStyle, Mode=TwoWay, Converter={StaticResource objectsEqualityConverter}, ConverterParameter=TabletOffice}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/RibbonStyle/TabletOffice.svg'}"/>
+                                <dxb:GalleryItem Caption="Office Slim" Description="MS Office Store inspired Ribbon" IsChecked="{Binding Selector.SelectedRibbonStyle, Mode=TwoWay, Converter={StaticResource objectsEqualityConverter}, ConverterParameter=OfficeSlim}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/RibbonStyle/OfficeSlim.svg'}"/>
+                            </dxb:GalleryItemGroup>
+                        </dxb:Gallery>
+                    </dxb:GalleryControl>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <DataTemplate x:Key="waitIndicator">
+        <dx:WaitIndicator DeferedVisibility="True"/>
+    </DataTemplate>
+    <DataTemplate x:Key="silentWaitIndicator">
+        <dx:WaitIndicator DeferedVisibility="True" Name="waitIndicator">
+            <dx:WaitIndicator.Triggers>
+                <EventTrigger RoutedEvent="FrameworkElement.Unloaded">
+                    <BeginStoryboard>
+                        <Storyboard x:Name="board">
+                            <DoubleAnimation Storyboard.TargetName="waitIndicator" Storyboard.TargetProperty="Opacity" From="1.0" To="0" Duration="0:0:1.5" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </dx:WaitIndicator.Triggers>
+        </dx:WaitIndicator>
+    </DataTemplate>
+    <Style TargetType="Button" x:Key="BitmapButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ControlTemplate.Resources>
+                        <dxmvvm:ObjectToObjectConverter x:Key="ObjectToVisibilityConverter" DefaultTarget="Visible">
+                            <dxmvvm:MapItem Source="{x:Null}" Target="Collapsed"/>
+                        </dxmvvm:ObjectToObjectConverter>
+                    </ControlTemplate.Resources>
+                    <StackPanel Orientation="Vertical">
+                        <Image Stretch="None" Source="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}" HorizontalAlignment="Center"
+                                   Visibility="{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource ObjectToVisibilityConverter}}"/>
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="controls:CustomBackstageDocumentPreview">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:CustomBackstageDocumentPreview">
+                    <Grid Margin="5" Name="printGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Vertical" Grid.Column="1">
+                            <Grid>
+                                <StackPanel Visibility="{TemplateBinding IsPrintOptionsVisible, Converter={dxmvvm:BooleanToVisibilityConverter}}" Orientation="Vertical">
+                                    <TextBlock Text="Print" FontSize="40" Margin="0,30,0,20"/>
+                                    <StackPanel Orientation="Horizontal" IsEnabled="{TemplateBinding IsPrintersAvailable}">
+                                        <Button Height="90" Width="90" Margin="0,0,5,0"
+                                        Command="{Binding ElementName=documentViewer,  Path=PrintDirectCommand}"
+                                        CommandParameter="{Binding SelectedPrinter.Name, RelativeSource={RelativeSource TemplatedParent}}">
+                                            <StackPanel>
+                                                <Image  Source="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Print.svg'}" HorizontalAlignment="Center" Stretch="None"/>
+                                                <TextBlock Text="Print" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <TextBlock Text="Specify how you want the report to be printed" TextWrapping="WrapWithOverflow" Width="142" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <TextBlock Text="Printer" FontSize="22" Margin="0,17,0,5" />
+                                    <dxe:ComboBoxEdit ItemsSource="{TemplateBinding Printers}" EditValue="{Binding SelectedPrinter, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}"
+                                        IsTextEditable="False" ApplyItemTemplateToSelectedItem="True" IsEnabled="{TemplateBinding IsPrintersAvailable}">
+                                        <dxe:ComboBoxEdit.ItemTemplate>
+                                            <DataTemplate>
+                                                <DockPanel>
+                                                    <dx:DXImage Source="{Binding ImageUri, Converter={dxdv:UriToBitmapImageConverter}}" DockPanel.Dock="Left" Margin="3" Width="16" Height="16"/>
+                                                    <TextBlock Text="{Binding DisplayName}" DockPanel.Dock="Top" Margin="3"/>
+                                                    <TextBlock Text="{Binding Status}" DockPanel.Dock="Bottom" FontWeight="Light" Margin="3"/>
+                                                </DockPanel>
+                                            </DataTemplate>
+                                        </dxe:ComboBoxEdit.ItemTemplate>
+                                    </dxe:ComboBoxEdit>
+                                    <TextBlock Text="{TemplateBinding PrintersErrorMessage}" TextWrapping="Wrap" HorizontalAlignment="Left" MaxWidth="220"
+                                               Visibility="{TemplateBinding IsPrintersAvailable, Converter={dxmvvm:BooleanToVisibilityConverter Inverse=True}}"/>
+                                    <Button Content="Print Options" HorizontalAlignment="Left" Margin="0,7" 
+                                    Command="{Binding ElementName=documentViewer,  Path=PageSetupCommand}"/>
+                                </StackPanel>
+                                <StackPanel Visibility="{TemplateBinding IsPrintOptionsVisible, Converter={dxmvvm:BooleanToVisibilityConverter Inverse=True}}" Orientation="Vertical">
+                                    <TextBlock Text="Export" FontSize="40" Margin="0,30,0,20"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <dxe:ComboBoxEdit ShowBorder="False" ShowText="False" Height="90" Width="90" Margin="0,0,5,0" 
+                                                ItemsSource="{TemplateBinding ExportFormats}" EditValue="{Binding SelectedFormat, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}" 
+                                                PopupFooterButtons="OkCancel" ShowSizeGrip="False" >
+                                            <dxe:ComboBoxEdit.StyleSettings>
+                                                <dxe:RadioComboBoxStyleSettings />
+                                            </dxe:ComboBoxEdit.StyleSettings>
+                                            <dxe:ComboBoxEdit.Buttons>
+                                                <dxe:ButtonInfo IsLeft="True" ButtonKind="Simple" 
+                                            Command="{Binding ElementName=documentViewer, Path=ExportCommand}"
+                                            CommandParameter="{TemplateBinding SelectedFormat}">
+                                                    <StackPanel>
+                                                        <dx:DXImage Source="{dx:SvgImageSource Size='40,40', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Controls/Export.svg'}" HorizontalAlignment="Center" Stretch="None"/>
+                                                        <TextBlock Text="Export" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </dxe:ButtonInfo>
+                                            </dxe:ComboBoxEdit.Buttons>
+                                        </dxe:ComboBoxEdit>
+                                        <TextBlock Text="The DevExpress Reporting platform allows you to export any report to PDF, XLS, RTF and countless image file formats." 
+                            TextWrapping="WrapWithOverflow" Width="142" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                            <dxp:CustomSettingsHeaderedContentControl Header="{TemplateBinding CustomSettingsHeader}" Visibility="{TemplateBinding CustomSettings, Converter={StaticResource SettingsToVisibilityConverter}}" 
+                                                                      Content="{TemplateBinding CustomSettings}"/>
+                        </StackPanel>
+                        <dxp:DocumentPreviewControl Grid.Column="3" x:Name="documentViewer" CursorMode="HandTool" CommandBarStyle="None" ZoomMode="FitToWidth" 
+                                                     DocumentSource="{TemplateBinding DocumentSource}" ShowPageMargins="False"/>
+                        <Grid Grid.Row="1" Grid.Column="3" Margin="0,2,0,0">
+                            <Grid.Resources>
+                                <Style TargetType="Button">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                </Style>
+                            </Grid.Resources>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="15,0">
+                                <Button HorizontalAlignment="Center" Command="{Binding ElementName=documentViewer, Path=PreviousPageCommand}">
+                                    <Button.Template>
+                                        <ControlTemplate>
+                                            <dx:DXImage Source="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Controls/PagePrevious.svg'}"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <TextBox IsReadOnly="True" HorizontalAlignment="Center" Text="{Binding ElementName=documentViewer, Path=CurrentPageNumber}"/>
+                                <TextBlock Text="of" HorizontalAlignment="Center" Margin="3"/>
+                                <TextBlock HorizontalAlignment="Center" Margin="3" Text="{Binding ElementName=documentViewer, Path=PageCount}"/>
+                                <Button HorizontalAlignment="Center" Command="{Binding ElementName=documentViewer, Path=NextPageCommand}">
+                                    <Button.Template>
+                                        <ControlTemplate>
+                                            <dx:DXImage Source="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Controls/PageNext.svg'}"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <dxe:ProgressBarEdit VerticalAlignment="Center" Width="250" HorizontalAlignment="Left"  
+                                                     EditValue="{Binding ElementName=documentViewer, Path=Document.ProgressPosition, Mode=OneWay}"
+                                                     Visibility="{Binding ElementName=documentViewer, Path=Document.InProgress, Mode=OneWay, Converter={dxmvvm:BooleanToVisibilityConverter}}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <dxe:TrackBarEdit Minimum="0.1" Maximum="2.5" LargeStep="0.05" SmallStep="0.02" EditValue="{Binding ElementName=documentViewer, Path=ZoomFactor}" Width="150"
+                                  Margin="0,4,2,0" Foreground="Transparent">
+                                    <dxe:TrackBarEdit.StyleSettings>
+                                        <dxe:TrackBarZoomStyleSettings/>
+                                    </dxe:TrackBarEdit.StyleSettings>
+                                </dxe:TrackBarEdit>
+                                <Button HorizontalAlignment="Center" Margin="2" Command="{Binding ElementName=documentViewer, Path=PageSetupCommand}">
+                                    <Button.Template>
+                                        <ControlTemplate>
+                                            <dx:DXImage Source="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Controls/Pages.svg'}"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <Button HorizontalAlignment="Center" Margin="2" Command="{Binding ElementName=documentViewer, Path=ScaleCommand}">
+                                    <Button.Template>
+                                        <ControlTemplate>
+                                            <dx:DXImage Source="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Controls/Scale.svg'}"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>                    
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    
+</ResourceDictionary>

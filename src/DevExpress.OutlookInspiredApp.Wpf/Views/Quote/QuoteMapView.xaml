@@ -1,0 +1,162 @@
+<UserControl x:Class="DevExpress.DevAV.Views.QuoteMapView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+        xmlns:dxm="http://schemas.devexpress.com/winfx/2008/xaml/map"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+        xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"     
+        xmlns:local="clr-namespace:DevExpress.DevAV"
+        mc:Ignorable="d"
+        d:DesignHeight="345" d:DesignWidth="843">
+    <UserControl.Resources>
+        <local:AbsoluteToLocalConverter x:Key="converter" MinValue="20" MaxValue="50"/>
+        <local:AddressToGeoPointConverter x:Key="AddressToGeoPointConverter"/>
+        <local:HalfValueConverter x:Key="HalfValueConverter" NegativeValue="True"/>
+        <dxmvvm:ObjectToObjectConverter x:Key="StageToBrushConverter">
+            <dxmvvm:MapItem Source="High" Target="#FFC66829"/>
+            <dxmvvm:MapItem Source="Medium" Target="#FF4F87B8"/>
+            <dxmvvm:MapItem Source="Low" Target="#FFE3AA00"/>
+            <dxmvvm:MapItem Source="Unlikely" Target="#FF878787"/>
+        </dxmvvm:ObjectToObjectConverter>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dx:DXSplashScreenService ShowSplashScreenOnLoading="True" ViewTemplate="{StaticResource silentWaitIndicator}" SplashScreenStartupLocation="CenterOwner" OwnerSearchMode="IgnoreAssociatedObject"/>
+    </dxmvvm:Interaction.Behaviors>
+    <DockPanel LastChildFill="True">
+        <dxr:RibbonControl RibbonStyle="Office2019" DockPanel.Dock="Top" ShowApplicationButton="False" RibbonTitleBarVisibility="Collapsed" Name="ribbonControl">
+            <dxr:RibbonDefaultPageCategory Caption="defaultCategory">
+                <dxr:RibbonPage Caption="Contact">
+                    <dxr:RibbonPageGroup Caption="Close">
+                        <dxb:BarButtonItem Content="Close" Command="{Binding CloseCommand}"
+                                                   LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Close.svg'}"
+                                                   Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Close.svg'}"/>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Delete" IsEnabled="False">
+                        <dxb:BarButtonItem Content="Delete" Command="{Binding DeleteCommand}"
+                                    LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Delete.svg'}"
+                                    Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Delete.svg'}" />
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Opportunities">
+                        <dxb:BarCheckItem Content="High" IsChecked="{Binding IsHighStage, Mode=TwoWay}" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/High.svg'}"/>
+                        <dxb:BarCheckItem Content="Medium" IsChecked="{Binding IsMediumStage, Mode=TwoWay}" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Medium.svg'}"/>
+                        <dxb:BarCheckItem Content="Low" IsChecked="{Binding IsLowStage, Mode=TwoWay}" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Low.svg'}"/>
+                        <dxb:BarCheckItem Content="Unlikely" IsChecked="{Binding IsUnlikelyStage, Mode=TwoWay}" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Unlike.svg'}"/>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="DevExpress">
+                        <dxb:BarButtonItem Content="Getting Started" RibbonStyle="Large"
+                                    Command="{Binding LinksViewModel.GettingStartedCommand}"
+                                    Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/GettingStarted.svg'}"
+                                    LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/GettingStarted.svg'}"/>
+                        <dxb:BarButtonItem Content="Get Free Support" RibbonStyle="Large"
+                                    Command="{Binding LinksViewModel.GetFreeSupportCommand}"
+                                    Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Support.svg'}"
+                                    LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Support.svg'}"/>
+                        <dxb:BarButtonItem Content="Buy Now" RibbonStyle="Large"
+                                    Command="{Binding LinksViewModel.BuyNowCommand}"
+                                    Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buy.svg'}"
+                                    LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buy.svg'}"/>
+                        <dxb:BarButtonItem Content="About" RibbonStyle="Large"
+                                    Command="{Binding LinksViewModel.AboutCommand}"
+                                    Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/About.svg'}"
+                                    LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/About.svg'}"/>
+                    </dxr:RibbonPageGroup>
+                </dxr:RibbonPage>
+            </dxr:RibbonDefaultPageCategory>
+        </dxr:RibbonControl>
+        <dxr:RibbonStatusBarControl DockPanel.Dock="Bottom"/>
+        <dxm:MapControl SelectionMode="Single">
+            <dxmvvm:Interaction.Behaviors>
+                <common:ZoomToFitMapBehavior PaddingFactor="0.25"/>
+            </dxmvvm:Interaction.Behaviors>
+            <dxm:ImageLayer>
+                <dxm:BingMapDataProvider Kind="Road" BingKey="{x:Static viewmodel:MapViewModelBase.WpfBingKey}"/>
+            </dxm:ImageLayer>
+            <dxm:VectorLayer SelectedItem="{Binding SelectedItem, Mode=TwoWay}" EnableSelection="True" AllowResetSelection="False">
+                <dxm:VectorLayer.Data>
+                    <dxm:ListSourceDataAdapter DataSource="{Binding GrouppedMapItems}">
+                        <dxm:ListSourceDataAdapter.Mappings>
+                            <dxm:MapItemMappingInfo Latitude="Address.Latitude" Longitude="Address.Longitude"/>
+                        </dxm:ListSourceDataAdapter.Mappings>
+                        <dxm:ListSourceDataAdapter.ItemSettings>
+                            <dxm:MapCustomElementSettings>
+                                <dxm:MapCustomElementSettings.ContentTemplate>
+                                    <DataTemplate>
+                                        <StackPanel UseLayoutRounding="True">
+                                            <Border Name="border" BorderThickness="1" BorderBrush="LightGray" CornerRadius="50"
+                                                    Background="{Binding Path=DataContext.Stage, RelativeSource={RelativeSource AncestorType=dxm:MapControl}, Converter={StaticResource StageToBrushConverter}}"
+                                                    Height="{Binding AbsSize, Converter={StaticResource converter}}" Width="{Binding AbsSize, Converter={StaticResource converter}}">
+                                                <Border.RenderTransform>
+                                                    <TranslateTransform X="{Binding ElementName=border, Path=ActualWidth, Converter={StaticResource HalfValueConverter}}" Y="{Binding ElementName=border, Path=ActualHeight, Converter={StaticResource HalfValueConverter}}"/>
+                                                </Border.RenderTransform>
+                                            </Border>
+                                        </StackPanel>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding Path=DataContext.IsSelected, RelativeSource={RelativeSource AncestorType=dxm:MapItemPresenter}}" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="#FF2F51A5"/>
+                                                <Setter TargetName="border" Property="Background" Value="#FF2F51A5"/>
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </dxm:MapCustomElementSettings.ContentTemplate>
+                            </dxm:MapCustomElementSettings>
+                        </dxm:ListSourceDataAdapter.ItemSettings>
+                    </dxm:ListSourceDataAdapter>
+                </dxm:VectorLayer.Data>
+            </dxm:VectorLayer>
+            <dxm:VectorLayer EnableSelection="False">
+                <dxm:VectorLayer.Data>
+                    <dxm:MapItemStorage>
+                        <dxm:MapCustomElement x:Name="toolTipElement"
+                                              Location="{Binding Path=SelectedItem.Address, Converter={StaticResource AddressToGeoPointConverter}}"
+                                              Content="{Binding Path=SelectedItem}"
+                                              IsHitTestVisible="False">
+                            <dxm:MapCustomElement.ContentTemplate>
+                                <DataTemplate>
+                                    <Grid Name="root" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <Grid.RenderTransform>
+                                            <TranslateTransform Y="-120" X="-26"/>
+                                        </Grid.RenderTransform>
+                                        <Grid Margin="3,3,0,-3" Opacity="0.15">
+                                            <Border Background="#FF000000" Margin="0,0,0,27" />
+                                            <Path Stretch="Fill" Fill="#FF000000" Data="F1 M 0,30L 9,0L 20,1.90735e-006L 0,30 Z "  Width="22" Height="32" Margin="23,0,0,2" HorizontalAlignment="Left"                                                     VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" >
+                                                <Path.RenderTransform>
+                                                    <RotateTransform Angle="7"/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                        </Grid>
+                                        <Grid Margin="0,0,3,0" Opacity="0.5">
+                                            <Border Background="#FF000000" Margin="0,0,0,27" />
+                                            <Path Stretch="Fill" Fill="#FF000000" Data="F1 M 0,30L 9,0L 20,1.90735e-006L 0,30 Z "  Width="22" Height="32" Margin="24,0,0,0" HorizontalAlignment="Left"                                                      VerticalAlignment="Bottom" />
+                                        </Grid>
+                                        <Grid Margin="0,0,3,0">
+                                            <Path Stretch="Fill" Fill="#FFFFFFFF" Data="F1 M 2.66667,24L 9.86667,0L 18.6667,0L 2.66667,24 Z " Width="18" Height="26" Margin="26,0,0,4"                                                                      HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                                            <Border Background="#FFFFFFFF" Margin="1,1,1,28">
+                                                <StackPanel TextBlock.TextAlignment="Center" TextBlock.Foreground="#FF8D8D8D" Margin="20,10">
+                                                    <StackPanel Margin="0,10">
+                                                        <TextBlock Text="TOTAL"/>
+                                                        <TextBlock Text="{Binding Total, StringFormat={}{0:c}}" FontSize="18" Foreground="#FFCE7100" FontWeight="Bold"/>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{Binding Address.City}"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                    </Grid>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                            <Setter TargetName="root" Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </dxm:MapCustomElement.ContentTemplate>
+                        </dxm:MapCustomElement>
+                    </dxm:MapItemStorage>
+                </dxm:VectorLayer.Data>
+            </dxm:VectorLayer>
+        </dxm:MapControl>
+    </DockPanel>
+</UserControl>

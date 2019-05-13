@@ -1,0 +1,223 @@
+<UserControl x:Class="DevExpress.MailClient.View.MailView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxre="http://schemas.devexpress.com/winfx/2008/xaml/richedit"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:view="clr-namespace:DevExpress.MailClient.View"
+    xmlns:behaviors="clr-namespace:DevExpress.MailClient.Behaviors"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:viewmodel="clr-namespace:DevExpress.MailClient.ViewModel"
+    mc:Ignorable="d" DataContext="{dxmvvm:ViewModelSource viewmodel:MailViewModel}"
+    d:DesignHeight="800" d:DesignWidth="1000">
+    <UserControl.Resources>
+        <dxre:MhtToContentConverter x:Key="MhtToContentConverter"/>
+        <dxmvvm:ObjectToObjectConverter x:Key="CurrentRowToOpacityConverter" DefaultTarget="1">
+            <dxmvvm:MapItem Source="{x:Null}" Target="0"/>
+        </dxmvvm:ObjectToObjectConverter>
+        <dx:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
+        <dx:BoolToVisibilityInverseConverter x:Key="boolToVisibilityInverseConverter"/>
+        <dx:EnumToVisibilityConverter x:Key="enumToVisibilityConverter"/>
+        <Style TargetType="{x:Type dx:ThemedWindow}" x:Key="NewMessageWindowStyle">
+            <Setter Property="Height" Value="600"/>
+            <Setter Property="Width" Value="800"/>
+            <Setter Property="Icon" Value="/DevExpress.MailClient.Xpf;component/Images/AppIcon/AppIcon.ico"/>
+            <Setter Property="UseLayoutRounding" Value="True"/>
+        </Style>
+        <Style TargetType="{x:Type Image}" x:Key="columnImageStyle">
+            <Setter Property="Stretch" Value="None"/>
+            <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
+        </Style>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:WindowService WindowType="{x:Type dx:ThemedWindow}"
+                              Title="Message"
+                              WindowStartupLocation="CenterScreen"
+                              WindowShowMode="Dialog"
+                              WindowStyle="{StaticResource NewMessageWindowStyle}">
+            <dxmvvm:WindowService.ViewTemplate>
+                <DataTemplate>
+                    <view:NewMessageContent/>
+                </DataTemplate>
+            </dxmvvm:WindowService.ViewTemplate>
+        </dxmvvm:WindowService>
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <dxr:RibbonControl x:Name="mailRibbonControl">
+            <dxr:RibbonDefaultPageCategory Caption="Default Category">
+                <dxr:RibbonPage Caption="Mail" MergeOrder="-2">
+                    <dxr:RibbonPageGroup Caption="New/Respond">
+                        <dxb:BarButtonItem Content="New Mail" Command="{Binding CreateNewMessageCommand}" Glyph="{dx:DXImageOffice2013 Image=NewMail_16x16.png}" LargeGlyph="{dx:DXImageOffice2013 Image=NewMail_32x32.png}" />
+                        <dxb:BarButtonItem Content="Reply" Command="{Binding ReplyCommand}" RibbonStyle="SmallWithText" Glyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Mail/rec16.png" LargeGlyph="pack://application:,,,/DevExpress.MailClient.Xpf;component/Images/Mail/rec32.png" />
+                        <dxb:BarButtonItem Content="Forward" Command="{Binding ForwardCommand}" RibbonStyle="SmallWithText" Glyph="{dx:DXImageOffice2013 Image=Forward_16x16.png}" />
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Delete">
+                        <dxb:BarButtonItem Content="Delete" Command="{Binding DeleteCommand}" Glyph="{dx:DXImageOffice2013 Image=Delete_16x16.png}" LargeGlyph="{dx:DXImageOffice2013 Image=Delete_32x32.png}" />
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Tags">
+                        <dxb:BarButtonItem Content="Unread/Read" Command="{Binding ChangeUnreadStatusCommand}" Glyph="{dx:DXImageOffice2013 Image=Mail_16x16.png}" LargeGlyph="{dx:DXImageOffice2013 Image=Mail_32x32.png}" RibbonStyle="SmallWithText" />
+                        <dxb:BarSubItem Content="Priority" Glyph="/DevExpress.MailClient.Xpf;component/Images/Priority_16x16.png">
+                            <dxb:BarSubItem.Items>
+                                <dxb:BarButtonItem Content="Low priority" Command="{Binding SetLowPriorityCommand}" Glyph="/DevExpress.MailClient.Xpf;component/Images/Mail/Low.png" />
+                                <dxb:BarButtonItem Content="Medium priority" Command="{Binding SetMediumPriorityCommand}"/>
+                                <dxb:BarButtonItem Content="High priority" Command="{Binding SetHighPriorityCommand}" Glyph="/DevExpress.MailClient.Xpf;component/Images/Mail/High.png" />
+                            </dxb:BarSubItem.Items>
+                        </dxb:BarSubItem>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Layout">
+                        <dxb:BarButtonItem Content="Rotate Layout" Command="{Binding ChangeLayoutCommand}" Glyph="/DevExpress.MailClient.Xpf;component/Images/LayoutRotate_16x16.png" LargeGlyph="/DevExpress.MailClient.Xpf;component/Images/LayoutRotate_32x32.png" />
+                        <dxb:BarButtonItem Content="Flip Layout" Command="{Binding FlipLayoutCommand}" Glyph="/DevExpress.MailClient.Xpf;component/Images/LayoutFlip_16x16.png" LargeGlyph="/DevExpress.MailClient.Xpf;component/Images/LayoutFlip_32x32.png" />
+                        <dxb:BarCheckItem Content="Message preview" IsChecked="{Binding ShowMessagePreview, Mode=TwoWay}" LargeGlyph="{dx:DXImageOffice2013 Image=GroupFooter_32x32.png}" Glyph="{dx:DXImageOffice2013 Image=GroupFooter_16x16.png}" />
+                    </dxr:RibbonPageGroup>
+                </dxr:RibbonPage>
+            </dxr:RibbonDefaultPageCategory>
+        </dxr:RibbonControl>
+        <dxlc:LayoutControl Grid.Row="1" Orientation="{Binding LayoutOrientation}" StretchContentVertically="True" StretchContentHorizontally="True" Padding="0" Margin="0">
+            <dxmvvm:Interaction.Behaviors>
+                <behaviors:LayoutControlFlipBehavior LayoutMode="{Binding LayoutMode}"/>
+            </dxmvvm:Interaction.Behaviors>
+            <dxg:GridControl x:Name="grid" Margin="0,0,4,0" ItemsSource="{Binding ItemsSource}" SelectedItem="{Binding Path=CurrentMessage, Mode=TwoWay}" AutoExpandAllGroups="True" 
+                                 DesignTimeShowSampleData="False" MinWidth="150" MinHeight="150" behaviors:LayoutControlFlipBehavior.OrderIndex="1">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand EventName="CustomColumnDisplayText" Command="{Binding MailCustomColumnDisplayTextCommand}" PassEventArgsToCommand="True"/>
+                </dxmvvm:Interaction.Behaviors>
+                <dxg:GridControl.Columns>
+                    <dxg:GridColumn FieldName="Priority" Width="20" AllowResizing="False" FixedWidth="True" HorizontalHeaderContentAlignment="Right">
+                        <dxg:GridColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Image Style="{StaticResource columnImageStyle}" Width="13" Height="13" VerticalAlignment="Center" Source="/DevExpress.MailClient.Xpf;component/Images/Mail/High.png"/>
+                            </DataTemplate>
+                        </dxg:GridColumn.HeaderTemplate>
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel VerticalAlignment="Center">
+                                    <Image Style="{StaticResource columnImageStyle}" Width="13" Height="13" Source="/DevExpress.MailClient.Xpf;component/Images/Mail/High.png"
+                                               Visibility="{Binding RowData.Row.Priority, Converter={StaticResource enumToVisibilityConverter}, ConverterParameter=High}"/>
+                                    <Image Style="{StaticResource columnImageStyle}" Width="13" Height="13" Source="/DevExpress.MailClient.Xpf;component/Images/Mail/Low.png"
+                                               Visibility="{Binding RowData.Row.Priority, Converter={StaticResource enumToVisibilityConverter}, ConverterParameter=Low}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="IsUnread" Width="20" AllowResizing="False" FixedWidth="True">
+                        <dxg:GridColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Image Style="{StaticResource columnImageStyle}" Width="13" Height="13" VerticalAlignment="Center" Source="/DevExpress.MailClient.Xpf;component/Images/Mail/IsUnreadHeader.png"/>
+                            </DataTemplate>
+                        </dxg:GridColumn.HeaderTemplate>
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid VerticalAlignment="Center">
+                                    <Image Style="{StaticResource columnImageStyle}" Width="13" Height="13" Source="/DevExpress.MailClient.Xpf;component/Images/Mail/Read.png" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               Visibility="{Binding RowData.Row.IsUnread, Converter={StaticResource boolToVisibilityInverseConverter}}"/>
+                                    <Image Style="{StaticResource columnImageStyle}" Width="13" Height="13" Source="/DevExpress.MailClient.Xpf;component/Images/Mail/Unread.png" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               Visibility="{Binding RowData.Row.IsUnread, Converter={StaticResource boolToVisibilityConverter}}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="HasAttachment" Width="20" AllowResizing="False" FixedWidth="True">
+                        <dxg:GridColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Image Style="{StaticResource columnImageStyle}" Width="13" Height="13" Source="{dx:DXImageOffice2013 Image=Attachment_16x16.png}"/>
+                            </DataTemplate>
+                        </dxg:GridColumn.HeaderTemplate>
+                        <dxg:GridColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Style="{StaticResource columnImageStyle}" Width="13" Height="13" Source="{dx:DXImageOffice2013 Image=Attachment_16x16.png}"
+                                           Visibility="{Binding RowData.Row.HasAttachment, Converter={StaticResource boolToVisibilityConverter}}"/>
+                            </DataTemplate>
+                        </dxg:GridColumn.CellTemplate>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn FieldName="Subject" Header="Subject" ColumnFilterMode="DisplayText"/>
+                    <dxg:GridColumn FieldName="From" Header="From" Width="90"/>
+                    <dxg:GridColumn FieldName="Date" Header="Date" Width="85" GroupIndex="0" SortOrder="Descending" GroupInterval="DateRange"/>
+                </dxg:GridControl.Columns>
+                <dxg:GridControl.GroupSummary>
+                    <dxg:GridSummaryItem SummaryType="Count"/>
+                </dxg:GridControl.GroupSummary>
+                <dxg:GridControl.View>
+                    <dxg:TableView x:Name="view" HeaderPanelMinHeight="24" RowMinHeight="22" AutoWidth="True" AllowPerPixelScrolling="True"  ShowSearchPanelMode="Always" ShowGroupedColumns="True" AllowEditing="False" NavigationStyle="Row" ShowVerticalLines="False" 
+                                       ShowIndicator="False" UseLightweightTemplates="None" SearchPanelNullText="Search Current Mailbox (Ctrl + F)">
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand Event="dxg:TableView.RowDoubleClick" Command="{Binding OpenMessageCommand}"/>
+                        </dxmvvm:Interaction.Behaviors>
+                        <dxg:TableView.DataRowTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Vertical">
+                                    <dx:MeasurePixelSnapper>
+                                        <ContentPresenter x:Name="defaultRowPresenter" Content="{Binding}" ContentTemplate="{Binding View.DefaultDataRowTemplate}" />
+                                    </dx:MeasurePixelSnapper>
+                                    <dxe:TextEdit EditMode="InplaceInactive" Text="{Binding Path=DataContext.PlainText, Mode=OneWay}" MaxHeight="28" Foreground="Gray" TextTrimming="CharacterEllipsis"
+                                                      Visibility="{Binding Path=View.DataControl.DataContext.ShowMessagePreview, Converter={StaticResource boolToVisibilityConverter}}" Margin="{Binding Path=View.VisibleColumns, Converter={view:VisibleColumnsToMarginConverter}}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </dxg:TableView.DataRowTemplate>
+                        <dxg:TableView.CellStyle>
+                            <Style TargetType="{x:Type dxg:CellContentPresenter}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RowData.Row.IsUnread}" Value="True">
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </dxg:TableView.CellStyle>
+                    </dxg:TableView>
+                </dxg:GridControl.View>
+            </dxg:GridControl>
+            <Grid Margin="4,0,0,0" MinWidth="300" MinHeight="200" dxlc:LayoutControl.AllowHorizontalSizing="True" dxlc:LayoutControl.AllowVerticalSizing="True" 
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" behaviors:LayoutControlFlipBehavior.OrderIndex="2">
+                <TextBlock Text="No email selected" FontFamily="Segoe UI" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
+                <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid.Visibility>
+                        <Binding Path="CurrentMessage">
+                            <Binding.Converter>
+                                <dx:ObjectToVisibilityConverter HandleList="False"/>
+                            </Binding.Converter>
+                        </Binding>
+                    </Grid.Visibility>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!--<dxb:BarContainerControl Name="barContainer"/>-->
+                    <Border BorderThickness="0,0,0,1" BorderBrush="#FFD5D5D5" Background="White" Grid.Row="1" Margin="0,10,0,0">
+                        <ContentControl Foreground="Black">
+                            <Grid Opacity="{Binding Path=SelectedItem, ElementName=grid, Converter={StaticResource CurrentRowToOpacityConverter}}">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <dx:DXImage Height="72" Width="72" Margin="0,0,20,0" Source="{Binding Path=CurrentMessage.SenderPhoto}" 
+                                                    UseLayoutRounding="True" Stretch="UniformToFill" />
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="{Binding Path=CurrentMessage.Date}" FontSize="11" />
+                                            <TextBlock Text="{Binding Path=CurrentMessage.FullName}" FontSize="18" Margin="0,2" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding Path=CurrentMessage.Subject}" FontSize="16" FontWeight="Normal" Margin="0,2" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,3">
+                                        <TextBlock Text="To:" FontSize="11" TextWrapping="Wrap" Margin="0,0,10,0"/>
+                                        <TextBlock Text="{Binding Path=CurrentMessage.To}" FontSize="11" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </ContentControl>
+                    </Border>
+                    <dxre:RichEditControl x:Name="richEditControl" ReadOnly="True" Grid.Row="2"  ActiveViewType="Simple" ShowBorder="False" HorizontalScrollBarVisibility="Collapsed" HorizontalAlignment="Stretch"
+                                              Content="{Binding Path=CurrentMessage.Text, Converter={StaticResource MhtToContentConverter}}"/>
+                </Grid>
+            </Grid>
+        </dxlc:LayoutControl>
+    </Grid>
+</UserControl>

@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="DevExpress.RealtorWorld.Xpf.View.DraftView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:View="clr-namespace:DevExpress.RealtorWorld.Xpf.View"
+        mc:Ignorable="d" 
+        d:DesignHeight="581" d:DesignWidth="1169">
+
+    <dxwui:PageAdornerControl Header="">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <View:NavigatorView dxmvvm:ViewModelExtensions.ParentViewModel="{Binding}" />
+            <Image Grid.Row="1" Source="/DevExpress.RealtorWorld.Xpf;component/Images/UnderConstruction.png" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Grid>
+    </dxwui:PageAdornerControl>
+</UserControl>

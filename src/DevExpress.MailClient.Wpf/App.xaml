@@ -1,0 +1,5 @@
+﻿<Application x:Class="DevExpress.MailClient.Xpf.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="/DevExpress.MailClient.Xpf;component/MainWindow.xaml">
+</Application>

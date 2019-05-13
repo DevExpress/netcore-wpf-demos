@@ -1,0 +1,13 @@
+<dx:ThemedWindow x:Class="DevExpress.DevAV.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:view="clr-namespace:DevExpress.DevAV.Views"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    WindowStartupLocation="CenterScreen"
+    UseLayoutRounding="True" TitleAlignment="Center"
+    Loaded="MainWindowLoaded"
+    Title="DevAV" Icon="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/AppIcon.ico"
+    Width="1400" Height="891">
+
+    <view:DevAVDbView />
+</dx:ThemedWindow>
