@@ -1,6 +1,7 @@
 # .Net Core 3 WPF Demos
 
-This repository contains the DevExpress demo applications that target .Net Core 3: 
+This repository contains the DevExpress demo applications that target .Net Core 3:
+- Outlook-inspired App
 - Mail Client
 - Realtor World
 
