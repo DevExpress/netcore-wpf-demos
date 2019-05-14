@@ -1,0 +1,65 @@
+<UserControl x:Class="DevExpress.DevAV.Views.EmployeeMailMergeView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:dxi="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dxre="http://schemas.devexpress.com/winfx/2008/xaml/richedit" 
+        xmlns:views="clr-namespace:DevExpress.DevAV.Views"
+        mc:Ignorable="d"
+        xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+        d:DataContext="{dxmvvm:ViewModelSource Type=viewmodel:EmployeeQuickLetterViewModel}">
+
+    <views:MailMergeView RichEditDocumentSource="{Binding SelectedTemplate.Template}">
+        <views:MailMergeView.RichEditMailMergeOptions>
+            <dxre:DXRichEditMailMergeOptions ViewMergedData="True" DataSource="{Binding Entities}" ActiveRecord="{Binding ActiveRecord, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </views:MailMergeView.RichEditMailMergeOptions>
+        <views:MailMergeView.AdditionalParametersForm>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <DockPanel>
+                    <dxe:ImageEdit IsReadOnly="True" EditValue="{Binding SelectedEntity.Picture.Data}"  Width="96" Height="118" DockPanel.Dock="Left"/>
+                    <TextBlock Text="{Binding SelectedEntity.FullName}" DockPanel.Dock="Top" FontSize="24" Margin="5,0"/>
+                    <ContentControl Content="{Binding SelectedEntity}" DockPanel.Dock="Top">
+                        <ContentControl.ContentTemplateSelector>
+                            <dxi:TypeTemplateSelector FindDescendants="True">
+                                <dxi:TemplatesDictionary>
+                                    <DataTemplate x:Key="Employee">
+                                        <TextBlock Text="{Binding Title}" FontSize="20" Margin="5,0" VerticalAlignment="Top"/>
+                                    </DataTemplate>
+                                </dxi:TemplatesDictionary>
+                            </dxi:TypeTemplateSelector>
+                        </ContentControl.ContentTemplateSelector>
+                    </ContentControl>
+                    <ComboBox ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}" 
+                                                  DisplayMemberPath="Name" Margin="5" DockPanel.Dock="Bottom"/>
+                    <TextBlock Text="LETTER TEMPLATE" Margin="5" DockPanel.Dock="Bottom" VerticalAlignment="Bottom"/>
+                </DockPanel>
+                <TextBlock Text="SELECT A DIFFERENT EMPLOYEE" Grid.Row="1" Margin="5"/>
+                <dxe:ListBoxEdit ItemsSource="{Binding Entities}" SelectedItem="{Binding SelectedEntity, Mode=TwoWay}" Grid.Row="2" Margin="5">
+                    <dxe:ListBoxEdit.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <dxe:ImageEdit IsReadOnly="True" EditValue="{Binding Picture.Data}" Width="36" Height="36" Stretch="UniformToFill" Margin="0,0,12,0" />
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding FullName}" FontSize="16" />
+                                    <TextBlock Text="{Binding Title}" FontSize="12" />
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </dxe:ListBoxEdit.ItemTemplate>
+                </dxe:ListBoxEdit>
+            </Grid>
+        </views:MailMergeView.AdditionalParametersForm>
+    </views:MailMergeView>
+</UserControl>

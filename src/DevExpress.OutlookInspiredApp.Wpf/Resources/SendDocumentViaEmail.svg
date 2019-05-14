@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="SendDocumentViaEmail" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 x="0px" y="0px" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+<style type="text/css">
+	.Grey{fill:#838383;}
+	.Blue{fill:#4D82B8;}
+	.st0{opacity:0.75;}
+</style>
+<g class="st0">
+	<path class="Grey" d="M4,12H0v-2h4V12z M0,16h4v-2H0V16z M4,18H0v2h4V18z"/>
+</g>
+<rect x="24" y="8" class="Blue" width="4" height="4"/>
+<path class="Grey" d="M6,4v22h26V4H6z M30,24H8V6h22V24z M22,16H12v-2h10V16z M22,18H12v2h10V18z"/>
+</svg>

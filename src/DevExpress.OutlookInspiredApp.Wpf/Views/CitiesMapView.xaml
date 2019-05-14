@@ -1,0 +1,239 @@
+<UserControl x:Class="DevExpress.DevAV.Views.CitiesMapView"
+    xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxi="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+    xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxm="http://schemas.devexpress.com/winfx/2008/xaml/map"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+    xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"
+    DataContext="{dxmvvm:ViewModelSource Type=viewmodel:CustomerMapViewModel}"
+    mc:Ignorable="d"
+    d:DesignHeight="663" d:DesignWidth="1183">
+    <UserControl.Resources>
+        <dxmvvm:ObjectToObjectConverter x:Key="ThisMonthToIsCheckedConverter">
+            <dxmvvm:MapItem Target="True" Source="ThisMonth"/>
+            <dxmvvm:MapItem Target="False" Source="ThisYear"/>
+            <dxmvvm:MapItem Target="False" Source="Lifetime"/>
+        </dxmvvm:ObjectToObjectConverter>
+        <dxmvvm:ObjectToObjectConverter x:Key="YTDToIsCheckedConverter">
+            <dxmvvm:MapItem Target="False" Source="ThisMonth"/>
+            <dxmvvm:MapItem Target="True" Source="ThisYear"/>
+            <dxmvvm:MapItem Target="False" Source="Lifetime"/>
+        </dxmvvm:ObjectToObjectConverter>
+        <dxmvvm:ObjectToObjectConverter x:Key="LifetimeToIsCheckedConverter">
+            <dxmvvm:MapItem Target="False" Source="ThisMonth"/>
+            <dxmvvm:MapItem Target="False" Source="ThisYear"/>
+            <dxmvvm:MapItem Target="True" Source="Lifetime"/>
+        </dxmvvm:ObjectToObjectConverter>
+        <DataTemplate x:Key="toolTipTemplate1">
+            <DataTemplate.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Margin" Value="3"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                </Style>
+            </DataTemplate.Resources>
+            <StackPanel Orientation="Horizontal" Margin="3">
+                <dxe:ImageEdit Source="{Binding Crest.SmallImage}" Height="85" Width="85" IsReadOnly="True" Stretch="Fill" Margin="3"/>
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="City :"/>
+                        <TextBlock Text="{Binding Address.City}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="State: "/>
+                        <TextBlock Text="{Binding State.LongName}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Zipcode: "/>
+                        <TextBlock Text="{Binding Address.ZipCode}"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dx:DXMessageBoxService />
+        <dx:DXSplashScreenService ShowSplashScreenOnLoading="True" ViewTemplate="{StaticResource silentWaitIndicator}" SplashScreenStartupLocation="CenterOwner" OwnerSearchMode="IgnoreAssociatedObject"/>
+    </dxmvvm:Interaction.Behaviors>
+    <Grid x:Name="gridRoot">
+        <DockPanel>
+            <dxr:RibbonControl RibbonStyle="Office2019" DockPanel.Dock="Top" ShowApplicationButton="False" RibbonTitleBarVisibility="Collapsed" Name="ribbonControl">
+                <dxr:RibbonDefaultPageCategory Caption="defaultCategory">
+                    <dxr:RibbonPage Caption="Home">
+                        <dxr:RibbonPageGroup Caption="Save">
+                            <dxb:BarButtonItem Content="Close" Command="{Binding CloseCommand}"
+                                    LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Close.svg'}"
+                                    Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Close.svg'}" />
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup>
+                            <dxb:BarButtonItem Content="Delete" Command="{Binding DeleteCommand}"
+                                    LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Delete.svg'}"
+                                    Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Delete.svg'}" />
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Options">
+                            <dxb:BarButtonItem Command="{Binding StatisticsViewModel.ThisMonthFilterCommand}" Content="This Month" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/SalesPeriodMonth.svg'}" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/SalesPeriodMonth.svg'}"/>
+                            <dxb:BarButtonItem Command="{Binding StatisticsViewModel.YTDFilterCommand}" Content="This Year" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/SalesPeriodYear.svg'}" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/SalesPeriodYear.svg'}"/>
+                            <dxb:BarButtonItem Command="{Binding StatisticsViewModel.LifetimeFilterCommand}" Content="Lifetime" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/SalesPeriodLifetime.svg'}" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/SalesPeriodLifetime.svg'}"/>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="DevExpress">
+                            <dxb:BarButtonItem x:Name="GettingStartedBarButtonItem" Content="Getting Started" RibbonStyle="Large" Command="{Binding CitiesMapViewModel.LinksViewModel.GettingStartedCommand}" 
+                                        Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/GettingStarted.svg'}"
+                                        LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/GettingStarted.svg'}"/>
+                            <dxb:BarButtonItem x:Name="GetSupportBarButtonItem" Content="Get Free Support" RibbonStyle="Large" Command="{Binding CitiesMapViewModel.LinksViewModel.GetFreeSupportCommand}"
+                                        Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Support.svg'}"
+                                        LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Support.svg'}"/>
+                            <dxb:BarButtonItem x:Name="BuyNowBarButtonItem" Content="Buy Now" RibbonStyle="Large" Command="{Binding CitiesMapViewModel.LinksViewModel.BuyNowCommand}"
+                                     Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buy.svg'}"
+                                        LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buy.svg'}"/>
+                            <dxb:BarButtonItem x:Name="AboutBarButtonItem" Content="About" RibbonStyle="Large" Command="{Binding CitiesMapViewModel.LinksViewModel.AboutCommand}"
+                                        Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/About.svg'}"
+                                        LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/About.svg'}"/>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                </dxr:RibbonDefaultPageCategory>
+            </dxr:RibbonControl>
+            <dxr:RibbonStatusBarControl DockPanel.Dock="Bottom"/>
+            <dxlc:LayoutGroup Orientation="Horizontal">
+                <Border DataContext="{Binding CitiesMapViewModel}">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dx:DXMessageBoxService />
+                    </dxmvvm:Interaction.Behaviors>
+                    <dxm:MapControl SelectionMode="Single">
+                        <dxmvvm:Interaction.Behaviors>
+                            <common:ZoomToFitMapBehavior PaddingFactor="0.25"/>
+                        </dxmvvm:Interaction.Behaviors>
+                        <dxm:ImageLayer>
+                            <dxm:OpenStreetMapDataProvider/>
+                        </dxm:ImageLayer>
+                        <dxm:VectorLayer SelectedItem="{Binding DataContext.SelectedAddress, Mode=TwoWay, ElementName=statisticGrid}">
+                            <dxm:VectorLayer.Data>
+                                <dxm:ListSourceDataAdapter DataSource="{Binding Cities}">
+                                    <dxm:ListSourceDataAdapter.Mappings>
+                                        <dxm:MapItemMappingInfo Latitude="Location.Latitude" Longitude="Location.Longitude"/>
+                                    </dxm:ListSourceDataAdapter.Mappings>
+                                    <dxm:ListSourceDataAdapter.ItemSettings>
+                                        <dxm:MapCustomElementSettings>
+                                            <dxm:MapCustomElementSettings.ContentTemplate>
+                                                <DataTemplate>
+                                                    <dxc:ChartControl MaxHeight="70" MaxWidth="70" Background="{x:Null}" Visibility="{Binding IsVisible, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+                                                        <dxc:ChartControl.ToolTip>
+                                                            <ContentPresenter ContentTemplate="{StaticResource toolTipTemplate1}"/>
+                                                        </dxc:ChartControl.ToolTip>
+                                                        <dxc:ChartControl.Diagram>
+                                                            <dxc:SimpleDiagram2D>
+                                                                <dxc:SimpleDiagram2D.Series>
+                                                                    <dxc:PieSeries2D DataSource="{Binding Sales}" ArgumentDataMember="Name" ValueDataMember="Total" HoleRadiusPercent="0">
+                                                                        <dxc:PieSeries2D.Model>
+                                                                            <dxc:FlatPie2DModel/>
+                                                                        </dxc:PieSeries2D.Model>
+                                                                    </dxc:PieSeries2D>
+                                                                </dxc:SimpleDiagram2D.Series>
+                                                            </dxc:SimpleDiagram2D>
+                                                        </dxc:ChartControl.Diagram>
+                                                    </dxc:ChartControl>
+                                                </DataTemplate>
+                                            </dxm:MapCustomElementSettings.ContentTemplate>
+                                        </dxm:MapCustomElementSettings>
+                                    </dxm:ListSourceDataAdapter.ItemSettings>
+                                </dxm:ListSourceDataAdapter>
+                            </dxm:VectorLayer.Data>
+                        </dxm:VectorLayer>
+                        <dxm:InformationLayer>
+                            <dxm:InformationLayer.DataProvider>
+                                <dxm:BingSearchDataProvider ShowSearchPanel="False" BingKey="{x:Static viewmodel:MapViewModelBase.WpfBingKey}" x:Name="bingSearchDataProvider"/>
+                            </dxm:InformationLayer.DataProvider>
+                        </dxm:InformationLayer>
+                    </dxm:MapControl>
+                </Border>
+                <dxlc:LayoutGroup Orientation="Vertical" Width="550">
+                    <ContentControl Content="{Binding Entity}" Margin="3" Height="130">
+                        <ContentControl.ContentTemplateSelector>
+                            <dxi:TypeTemplateSelector FindDescendants="True">
+                                <dxi:TemplatesDictionary>
+                                    <DataTemplate x:Key="Customer">
+                                        <Grid Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <dxe:ImageEdit IsReadOnly="True" EditValue="{Binding Logo, Mode=OneTime}" Stretch="Uniform" Width="110" Height="120" Margin="5" Grid.RowSpan="4" />
+                                            <TextBlock Text="{Binding Name}" FontSize="20" Grid.Column="1" />
+                                            <TextBlock Text="HOME OFFICE" FontSize="18" Grid.Column="1" Grid.Row="1" />
+                                            <TextBlock Text="{Binding HomeOffice.Line}" Grid.Column="1" Grid.Row="2" />
+                                            <TextBlock Text="{Binding HomeOffice.CityLine}" Grid.Column="1" Grid.Row="3" />
+                                        </Grid>
+                                    </DataTemplate>
+                                    <DataTemplate x:Key="Product">
+                                        <Grid Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <dxe:ImageEdit IsReadOnly="True" EditValue="{Binding PrimaryImage.Data}" Stretch="Uniform" Width="110" Height="120" Margin="5" Grid.RowSpan="2" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="20" />
+                                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </dxi:TemplatesDictionary>
+                            </dxi:TypeTemplateSelector>
+                        </ContentControl.ContentTemplateSelector>
+                    </ContentControl>
+                    <dxlc:LayerSeparator Kind="Horizontal" Height="1"/>
+                    <Grid DataContext="{Binding StatisticsViewModel}" Grid.Column="1" Name="statisticGrid" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <dxlc:LayoutGroup Orientation="Horizontal" HorizontalAlignment="Right" Margin="15">
+                            <Button Content="This Month" Command="{Binding ThisMonthFilterCommand}" />
+                            <Button Content="YTD" Command="{Binding YTDFilterCommand}" />
+                            <Button Content="Lifetime" Command="{Binding LifetimeFilterCommand}" />
+                        </dxlc:LayoutGroup>
+                        <dxc:ChartControl x:Name="chart" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" EnableAnimation="True" BorderThickness="0" Grid.Row="1">
+                            <dxc:ChartControl.Diagram>
+                                <dxc:XYDiagram2D Rotated="True">
+                                    <dxc:XYDiagram2D.AxisX>
+                                        <dxc:AxisX2D Reverse="True" TickmarksMinorVisible="False">
+                                            <dxc:AxisX2D.Label>
+                                                <dxc:AxisLabel FontSize="10" />
+                                            </dxc:AxisX2D.Label>
+                                        </dxc:AxisX2D>
+                                    </dxc:XYDiagram2D.AxisX>
+                                    <dxc:XYDiagram2D.Series>
+                                        <dxc:BarSideBySideSeries2D DataSource="{Binding ActualStatistics}" ArgumentDataMember="Name" ValueDataMember="Total" ColorEach="True" >
+                                            <dxc:BarSideBySideSeries2D.Model>
+                                                <dxc:BorderlessSimpleBar2DModel/>
+                                            </dxc:BarSideBySideSeries2D.Model>
+                                            <dxc:BarSideBySideSeries2D.Label>
+                                                <dxc:SeriesLabel Visible="False"/>
+                                            </dxc:BarSideBySideSeries2D.Label>
+                                        </dxc:BarSideBySideSeries2D>
+                                    </dxc:XYDiagram2D.Series>
+                                </dxc:XYDiagram2D>
+                            </dxc:ChartControl.Diagram>
+                        </dxc:ChartControl>
+                    </Grid>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </DockPanel>
+    </Grid>
+</UserControl>

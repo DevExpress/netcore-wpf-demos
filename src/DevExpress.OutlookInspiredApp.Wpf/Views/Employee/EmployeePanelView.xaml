@@ -1,0 +1,154 @@
+<UserControl x:Class="DevExpress.DevAV.Views.EmployeePanelView"
+    xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+    xmlns:model="clr-namespace:DevExpress.DevAV;assembly=DevExpress.DevAV.v19.1.Data"
+    xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+    xmlns:local="clr-namespace:DevExpress.DevAV"
+    mc:Ignorable="d"
+    d:DesignHeight="663" d:DesignWidth="1183"
+    d:DataContext="{dxmvvm:ViewModelSource viewmodel:EmployeeContactsViewModel}">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dx:DXMessageBoxService x:Name="messageBoxService" />
+    </dxmvvm:Interaction.Behaviors>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Themes/Common.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <local:PictureConverter x:Key="PictureConverter" />
+            <dxmvvm:ObjectToObjectConverter x:Key="OrientationToSplitLineVisibilityConverter">
+                <dxmvvm:MapItem Source="Vertical" Target="Visible" />
+                <dxmvvm:MapItem Source="Horizontal" Target="Collapsed" />
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="EntityToOpacityConverter" DefaultTarget="1">
+                <dxmvvm:MapItem Source="{x:Null}" Target="0.5" />
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="EntityToVisibilityConverter" DefaultTarget="Collapsed">
+                <dxmvvm:MapItem Source="{x:Null}" Target="Visible" />
+            </dxmvvm:ObjectToObjectConverter>
+            <Style TargetType="dxg:TableView">
+                <Setter Property="AutoWidth" Value="True"/>
+                <Setter Property="ShowIndicator" Value="False"/>
+                <Setter Property="ShowVerticalLines" Value="False"/>
+                <Setter Property="DetailHeaderContent" Value="Sales"/>
+                <Setter Property="ShowGroupPanel" Value="False"/>
+                <Setter Property="AllowEditing" Value="False"/>
+                <Setter Property="AllowBestFit" Value="True"/>
+                <Setter Property="NavigationStyle" Value="Row"/>
+            </Style>
+            <Style x:Key="ShortBoldDate" TargetType="dxg:GridColumn">
+                <Setter Property="CellTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=Value, Converter={dxmvvm:FormatStringConverter FormatString='MM/dd/yyyy'}}" FontWeight="Bold" Margin="4,2"/>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid IsEnabled="{Binding Entity, Converter={dxmvvm:ObjectToBooleanConverter}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid Width="130" Height="130" Margin="0,0,8,0">
+            <dxe:ImageEdit IsReadOnly="True" EditValue="{Binding Entity.Picture, Converter={StaticResource PictureConverter}}" Stretch="Uniform" />
+            <dx:BackgroundPanel Opacity="0.8" Visibility="{Binding Entity, Converter={StaticResource EntityToVisibilityConverter}}" />
+        </Grid>
+        <Grid Grid.Column="1" Margin="0,22,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Opacity="{Binding Entity, Converter={StaticResource EntityToOpacityConverter}}" Margin="6,0,0,0">
+                <TextBlock Text="{Binding Entity.FullName}" FontSize="24" Margin="0,-5,0,0" />
+                <TextBlock Text="{Binding Entity.Title}" FontSize="20" Margin="0,5,0,0" />
+            </StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Top">
+                <StackPanel.Resources>
+                    <Style TargetType="dxwui:CommandButton">
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="AllowGlyphTheming" Value="True"/>
+                        <Setter Property="GlyphStretch" Value="None"/>
+                        <Setter Property="EllipseDiameter" Value="30"/>
+                        <Setter Property="Margin" Value="4,0"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="StrokeThickness" Value="2" />
+                    </Style>
+                </StackPanel.Resources>
+                <dxwui:CommandButton Command="{Binding MessageCommand}" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buttons/Glyph_Message.svg'}" />
+                <dxwui:CommandButton Command="{Binding PhoneCommand}" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buttons/Glyph_Phone.svg'}"/>
+                <dxwui:CommandButton Command="{Binding VideoCallCommand}" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buttons/Glyph_Video.svg'}"/>
+                <dxwui:CommandButton Command="{Binding MailToCommand}" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buttons/Glyph_Mail.svg'}"/>
+            </StackPanel>
+        </Grid>
+        <Border Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="#FFC6C6C6" BorderThickness="1" Height="1" Margin="0,10,0,10" />
+        <TabControl Grid.Row="2" Grid.ColumnSpan="2" Padding="0" BorderThickness="0">
+            <TabControl.Resources>
+                <Style TargetType="TabPanel">
+                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                </Style>
+            </TabControl.Resources>
+            <TabItem Header="EVALUATIONS">
+                <dxg:GridControl ItemsSource="{Binding Entity.Evaluations}" BorderThickness="0">
+                    <dxg:GridControl.View>
+                        <dxg:TableView UseLightweightTemplates="None">
+                            <dxg:TableView.DataRowTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Vertical">
+                                        <dx:MeasurePixelSnapper>
+                                            <ContentPresenter x:Name="defineRowPresenter" Content="{Binding}" ContentTemplate="{Binding View.DefaultDataRowTemplate}"/>
+                                        </dx:MeasurePixelSnapper>
+                                        <TextBlock Text="{Binding Row.Details}" Margin="5,0" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </dxg:TableView.DataRowTemplate>
+                        </dxg:TableView>
+                    </dxg:GridControl.View>
+                    <dxg:GridControl.Columns>
+                        <dxg:GridColumn FieldName="CreatedOn" Header="CREATED ON" Width="100" FixedWidth="True" Style="{StaticResource ShortBoldDate}">
+                        </dxg:GridColumn>
+                        <dxg:GridColumn FieldName="Subject" Header="SUBJECT" />
+                        <dxg:GridColumn FieldName="CreatedBy" Header="MANAGER" FilterEditorHeaderTemplate="{x:Null}" AllowColumnFiltering="False"/>
+                    </dxg:GridControl.Columns>
+                </dxg:GridControl>
+            </TabItem>
+            <TabItem Header="TASKS">
+                <dxg:GridControl ItemsSource="{Binding EntityTasks}"  BorderThickness="0">
+                    <dxg:GridControl.View>
+                        <dxg:TableView UseLightweightTemplates="None">
+                            <dxg:TableView.DataRowTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Vertical">
+                                        <dx:MeasurePixelSnapper>
+                                            <ContentPresenter x:Name="defineRowPresenter" Content="{Binding}" ContentTemplate="{Binding View.DefaultDataRowTemplate}"/>
+                                        </dx:MeasurePixelSnapper>
+                                        <TextBlock Text="{Binding Row.Description}" Margin="5,0" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </dxg:TableView.DataRowTemplate>
+                        </dxg:TableView>
+                    </dxg:GridControl.View>
+                    <dxg:GridControl.Columns>
+                        <dxg:GridColumn FieldName="DueDate" Header="DUE DATE" Width="100" FixedWidth="True" Style="{StaticResource ShortBoldDate}"/>
+                        <dxg:GridColumn FieldName="Subject" Header="SUBJECT" />
+                    </dxg:GridControl.Columns>
+                </dxg:GridControl>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

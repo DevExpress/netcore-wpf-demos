@@ -1,0 +1,410 @@
+<UserControl x:Class="DevExpress.DevAV.Views.EmployeeView"
+    xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+    xmlns:model="clr-namespace:DevExpress.DevAV;assembly=DevExpress.DevAV.v19.1.Data"
+    xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"
+    xmlns:view="clr-namespace:DevExpress.DevAV.Views"
+    xmlns:local="clr-namespace:DevExpress.DevAV"
+    xmlns:controls="clr-namespace:DevExpress.DevAV.Controls"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    mc:Ignorable="d"
+    UseLayoutRounding="True"
+    d:DesignHeight="663" d:DesignWidth="1183"
+    DataContext="{dxmvvm:ViewModelSource viewmodel:EmployeeViewModel}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Themes/Common.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <local:PictureConverter x:Key="PictureConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dx:DXMessageBoxService/>
+        <dx:WindowedDocumentUIService x:Name="EmployeeAssignService" DocumentShowMode="Dialog" WindowType="dx:ThemedWindow">
+            <dx:WindowedDocumentUIService.WindowStyle>
+                <Style TargetType="dx:ThemedWindow">
+                    <Setter Property="Width" Value="500" />
+                    <Setter Property="Height" Value="200" />
+                    <Setter Property="WindowStyle" Value="ToolWindow"/>
+                </Style>
+            </dx:WindowedDocumentUIService.WindowStyle>
+        </dx:WindowedDocumentUIService>
+    </dxmvvm:Interaction.Behaviors>
+    <DockPanel>
+        <dxr:RibbonControl x:Name="ribbonControl" RibbonStyle="Office2019" DockPanel.Dock="Top">
+            <dxr:RibbonControl.ApplicationMenu>
+                <dxr:BackstageViewControl x:Name="backstageView">
+                    <dxr:BackstageViewControl.Items>
+                        <dxr:BackstageTabItem Content="About">
+                            <dxr:BackstageTabItem.ControlPane>
+                                <view:AboutView />
+                            </dxr:BackstageTabItem.ControlPane>
+                        </dxr:BackstageTabItem>
+                        <dxr:BackstageTabItem Content="Export">
+                            <dxr:BackstageTabItem.ControlPane>
+                                <controls:CustomBackstageDocumentPreview OptionsMode="Export" CustomSettingsHeader="Settings"/>
+                            </dxr:BackstageTabItem.ControlPane>
+                        </dxr:BackstageTabItem>
+                        <dxr:BackstageTabItem Content="Print">
+                            <dxr:BackstageTabItem.ControlPane>
+                                <controls:CustomBackstageDocumentPreview CustomSettingsHeader="Settings"/>
+                            </dxr:BackstageTabItem.ControlPane>
+                        </dxr:BackstageTabItem>
+                        <dxr:BackstageSeparatorItem/>
+                        <dxr:BackstageButtonItem Content="Get Started" Command="{Binding LinksViewModel.GettingStartedCommand}"/>
+                        <dxr:BackstageButtonItem Content="Get Support" Command="{Binding LinksViewModel.GetFreeSupportCommand}"/>
+                        <dxr:BackstageButtonItem Content="Buy Now" Command="{Binding LinksViewModel.BuyNowCommand}"/>
+                    </dxr:BackstageViewControl.Items>
+                </dxr:BackstageViewControl>
+            </dxr:RibbonControl.ApplicationMenu>
+            <dxmvvm:Interaction.Behaviors>
+                <common:BackstageDocumentPreviewReportService x:Name="ExportService"
+                                    BackstageViewIsOpen="{Binding ElementName=ribbonControl, Path=ApplicationMenu.IsOpen}"
+                                    BackstageItem="{Binding ElementName=ribbonControl, Path=ApplicationMenu.Items[1]}"
+                                    BackstageDocumentPreview="{Binding ElementName=ribbonControl, Path=ApplicationMenu.Items[1].ControlPane}" />
+                <common:BackstageDocumentPreviewReportService x:Name="PrintService"
+                                    BackstageViewIsOpen="{Binding ElementName=ribbonControl, Path=ApplicationMenu.IsOpen}"
+                                    BackstageItem="{Binding ElementName=ribbonControl, Path=ApplicationMenu.Items[2]}"
+                                    BackstageDocumentPreview="{Binding ElementName=ribbonControl, Path=ApplicationMenu.Items[2].ControlPane}" />
+            </dxmvvm:Interaction.Behaviors>
+            <dxr:RibbonDefaultPageCategory Caption="defaultCategory">
+                <dxr:RibbonPage Caption="Home">
+                    <dxr:RibbonPageGroup Caption="Save">
+                        <dxb:BarButtonItem Content="Save" Command="{Binding SaveCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Save.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Save.svg'}" />
+                        <dxb:BarButtonItem Content="Save &amp; Close" Command="{Binding SaveAndCloseCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/SaveAndClose.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/SaveAndClose.svg'}" />
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Close">
+                        <dxb:BarButtonItem Content="Close" Command="{Binding CloseCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Close.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Close.svg'}" />
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup>
+                        <dxb:BarButtonItem Content="Reset Changes" Command="{Binding ResetCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/ResetChanges.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/ResetChanges.svg'}" />
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup>
+                        <dxb:BarButtonItem Content="Delete" Command="{Binding DeleteCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Delete.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Delete.svg'}" />
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Actions" IsEnabled="{Binding Entity.Id, Converter={dxmvvm:NumericToBooleanConverter}}" >
+                        <dxb:BarSubItem Content="Print" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Print.svg'}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Print.svg'}">
+                            <dxb:BarButtonItem Content="Employee Profile" Command="{Binding PrintEmployeeProfileCommand}" Glyph="{dx:SvgImageSource  Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/PrintItems/EmployeeProfile.svg'}"/>
+                            <dxb:BarButtonItem Content="Summary Report" Command="{Binding PrintSummaryReportCommand}" Glyph="{dx:SvgImageSource  Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/PrintItems/EmployeeSummary.svg'}"/>
+                            <dxb:BarButtonItem Content="Directory" Command="{Binding PrintDirectoryCommand}" Glyph="{dx:SvgImageSource  Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/PrintItems/EmployeeDirectory.svg'}"/>
+                            <dxb:BarButtonItem Content="Task List" Command="{Binding PrintTaskListCommand}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/TaskList.svg'}"/>
+                        </dxb:BarSubItem>
+                        <dxb:BarButtonItem Content="Meeting" Command="{Binding ShowSchedulerCommand}" CommandParameter="Meeting" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Meeting.svg'}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Meeting.svg'}"/>
+                        <dxb:BarButtonItem Content="Task" Command="{Binding EmployeeAssignedTasksDetails.NewCommand}" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Task.svg'}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Task.svg'}"/>
+                        <dxb:BarButtonItem Content="Mail Merge" Command="{Binding QuickLetter.ShowMailMergeCommand}" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MailMerge.svg'}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MailMerge.svg'}"/>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Quick Letter">
+                        <dxr:RibbonGalleryBarItem Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/TaskList.svg'}" Content="Quick Letter" IsEnabled="{Binding Entity.Id, Converter={dxmvvm:NumericToBooleanConverter}}">
+                            <dxr:RibbonGalleryBarItem.DropDownGallery>
+                                <dxb:Gallery ColCount="2" RowCount="3" ItemGlyphSize="16,16" IsItemDescriptionVisible="False" IsItemCaptionVisible="True"
+                                            AllowFilter="False" IsGroupCaptionVisible="False" SizeMode="None">
+                                    <dxb:GalleryItemGroup>
+                                        <dxb:GalleryItem Caption="Thank you note" Command="{Binding QuickLetter.QuickLetterCommand}" CommandParameter="Employee Thank You Note" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/ThankYou.svg'}"/>
+                                        <dxb:GalleryItem Caption="Employee Award" Command="{Binding QuickLetter.QuickLetterCommand}" CommandParameter="Employee of the Month" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Quickitems/EmployeeQuickAward.svg'}"/>
+                                        <dxb:GalleryItem Caption="Service Excellence" Command="{Binding QuickLetter.QuickLetterCommand}" CommandParameter="Employee Service Excellence" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Quickitems/EmployeeQuickExellece.svg'}"/>
+                                        <dxb:GalleryItem Caption="Probation Notice" Command="{Binding QuickLetter.QuickLetterCommand}" CommandParameter="Employee Probation Notice" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Quickitems/EmployeeQuickProbationNotice.svg'}"/>
+                                        <dxb:GalleryItem Caption="Welcome to DevAV" Command="{Binding QuickLetter.QuickLetterCommand}" CommandParameter="Welcome to DevAV" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Quickitems/EmployeeQuickWelcome.svg'}"/>
+                                    </dxb:GalleryItemGroup>
+                                </dxb:Gallery>
+                            </dxr:RibbonGalleryBarItem.DropDownGallery>
+                            <dxr:RibbonGalleryBarItem.Gallery>
+                                <dxb:Gallery ColCount="2" RowCount="2" ItemGlyphSize="16,16" IsItemDescriptionVisible="False" IsItemCaptionVisible="True" ItemMargin="0">
+                                    <dxb:GalleryItemGroup>
+                                        <dxb:GalleryItem Caption="Thank you note" Command="{Binding QuickLetter.QuickLetterCommand}" CommandParameter="Employee Thank You Note" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/ThankYou.svg'}"/>
+                                        <dxb:GalleryItem Caption="Employee Award" Command="{Binding QuickLetter.QuickLetterCommand}" CommandParameter="Employee of the Month" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Quickitems/EmployeeQuickAward.svg'}"/>
+                                        <dxb:GalleryItem Caption="Service Excellence" Command="{Binding QuickLetter.QuickLetterCommand}" CommandParameter="Employee Service Excellence" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Quickitems/EmployeeQuickExellece.svg'}"/>
+                                        <dxb:GalleryItem Caption="Probation Notice" Command="{Binding QuickLetter.QuickLetterCommand}" CommandParameter="Employee Probation Notice" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Quickitems/EmployeeQuickProbationNotice.svg'}"/>
+                                        <dxb:GalleryItem Caption="Welcome to DevAV" Command="{Binding QuickLetter.QuickLetterCommand}" CommandParameter="Welcome to DevAV" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Quickitems/EmployeeQuickWelcome.svg'}"/>
+                                    </dxb:GalleryItemGroup>
+                                </dxb:Gallery>
+                            </dxr:RibbonGalleryBarItem.Gallery>
+                        </dxr:RibbonGalleryBarItem>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="View">
+                        <dxb:BarButtonItem Content="Map it" Command="{Binding ShowMapCommand}" IsEnabled="{Binding Entity.Id, Converter={dxmvvm:NumericToBooleanConverter}}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Mapit.svg'}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Mapit.svg'}"/>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="DevExpress">
+                        <dxb:BarButtonItem Content="Getting Started" RibbonStyle="Large" Command="{Binding LinksViewModel.GettingStartedCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/GettingStarted.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/GettingStarted.svg'}"/>
+                        <dxb:BarButtonItem Content="Get Free Support" RibbonStyle="Large" Command="{Binding LinksViewModel.GetFreeSupportCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Support.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Support.svg'}"/>
+                        <dxb:BarButtonItem Content="Buy Now" RibbonStyle="Large" Command="{Binding LinksViewModel.BuyNowCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buy.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buy.svg'}"/>
+                        <dxb:BarButtonItem Content="About" RibbonStyle="Large" Command="{Binding LinksViewModel.AboutCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/About.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/About.svg'}"/>
+                    </dxr:RibbonPageGroup>
+                </dxr:RibbonPage>
+            </dxr:RibbonDefaultPageCategory>
+        </dxr:RibbonControl>
+        <dxr:RibbonStatusBarControl DockPanel.Dock="Bottom"/>
+        <dxlc:LayoutControl Orientation="Vertical" TextBlock.FontSize="11" VerticalAlignment="Stretch" StretchContentVertically="True" x:Name="layoutControl">
+            <dxmvvm:Interaction.Behaviors>
+                <dxmvvm:EventToCommand Event="{x:Static Binding.SourceUpdatedEvent}" Command="{Binding UpdateCommand}" />
+            </dxmvvm:Interaction.Behaviors>
+            <dxlc:LayoutGroup Orientation="Horizontal" x:Name="entityGroup">
+                <dxlc:LayoutGroup Orientation="Vertical" x:Name="imageGroup">
+                    <dxlc:LayoutGroup Orientation="Horizontal" VerticalAlignment="Stretch" Margin="5">
+                        <dxlc:LayoutGroup.Style>
+                            <Style TargetType="dxlc:LayoutGroup">
+                                <Setter Property="Height" Value="124"/>
+                                <Style.Triggers>
+                                    <Trigger Property="dx:ThemeManager.IsTouchEnabled" Value="True">
+                                        <Setter Property="Height" Value="238"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </dxlc:LayoutGroup.Style>
+                        <dxlc:LayoutGroup Orientation="Vertical">
+                            <dxlc:LayoutItem Label="First Name" AddColonToLabel="True">
+                                <dxe:TextEdit EditValue="{Binding Entity.FirstName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Last Name" AddColonToLabel="True">
+                                <dxe:TextEdit EditValue="{Binding Entity.LastName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Full Name" AddColonToLabel="True">
+                                <dxe:TextEdit EditValue="{Binding Entity.FullName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Birth Date" AddColonToLabel="True">
+                                <dxe:DateEdit EditValue="{Binding Entity.BirthDate, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}" />
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutGroup Orientation="Horizontal">
+                                <dxlc:LayoutItem Label="Title" AddColonToLabel="True">
+                                    <dxe:TextEdit EditValue="{Binding Entity.Title, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}" />
+                                </dxlc:LayoutItem>
+                                <dxlc:LayoutItem Label="Prefix" HorizontalAlignment="Right" AddColonToLabel="True">
+                                    <dxe:ComboBoxEdit EditValue="{Binding Entity.Prefix, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}" 
+                                                      MinWidth="75" MinHeight="22" IsTextEditable="False" ItemsSource="{dxe:EnumItemsSource EnumType={x:Type model:PersonPrefix}}">
+                                        <dxe:ComboBoxEdit.EditNonEditableTemplate>
+                                            <ControlTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <dx:DXImage Source="{Binding SelectedItem.Name, Converter={StaticResource personPrefixToImageConverter}}" Stretch="None" Margin="2,0"/>
+                                                    <TextBlock Text="{Binding SelectedItem.Name}" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </ControlTemplate>
+                                        </dxe:ComboBoxEdit.EditNonEditableTemplate>
+                                        <dxe:ComboBoxEdit.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <dx:DXImage Source="{Binding Name, Converter={StaticResource personPrefixToImageConverter}}" Stretch="None"/>
+                                                    <TextBlock Text="{Binding Name}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </dxe:ComboBoxEdit.ItemTemplate>
+                                    </dxe:ComboBoxEdit>
+                                </dxlc:LayoutItem>
+                            </dxlc:LayoutGroup>
+                        </dxlc:LayoutGroup>
+                        <dxlc:LayoutItem HorizontalAlignment="Right" VerticalAlignment="Stretch">
+                            <dxe:ImageEdit EditValue="{Binding Entity.Picture, Converter={StaticResource PictureConverter}, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}"/>
+                        </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup Orientation="Vertical"  VerticalAlignment="Top" Margin="5">
+                        <dxlc:LayoutItem Label="Address" AddColonToLabel="True">
+                            <dxe:TextEdit EditValue="{Binding Entity.Address.Line, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}"/>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="City" AddColonToLabel="True">
+                            <dxe:TextEdit EditValue="{Binding Entity.Address.City, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}"/>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutGroup Orientation="Horizontal">
+                            <dxlc:LayoutItem Label="State" AddColonToLabel="True">
+                                <dxe:ComboBoxEdit EditValue="{Binding Entity.Address.State, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}" IsTextEditable="False"
+                                                              ItemsSource="{dxe:EnumItemsSource EnumType={x:Type model:StateEnum}}"/>
+                            </dxlc:LayoutItem>
+                            <dxlc:LayoutItem Label="Zip Code" AddColonToLabel="True">
+                                <dxe:TextEdit MaskType="Simple" Mask="00000" EditValue="{Binding Entity.Address.ZipCode, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}"/>
+                            </dxlc:LayoutItem>
+                        </dxlc:LayoutGroup>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup Orientation="Vertical" VerticalAlignment="Top" Margin="5">
+                        <dxlc:LayoutItem Label="Home Phone" AddColonToLabel="True">
+                            <dxe:ButtonEdit IsTextEditable="True"
+                                            AllowDefaultButton="False"
+                                            MaskType="Simple"
+                                            Mask="(999)000-00-00"
+                                            MaskUseAsDisplayFormat="True"
+                                            EditValue="{Binding Entity.HomePhone, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}">
+                                <dxe:ButtonInfo GlyphKind="Custom" Command="{Binding Contacts.HomeCallCommand}">
+                                    <dx:DXImage Source="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buttons/Glyph_Phone.svg'}" Margin="3,0"/>
+                                </dxe:ButtonInfo>
+                            </dxe:ButtonEdit>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Mobile Phone" AddColonToLabel="True">
+                            <dxe:ButtonEdit IsTextEditable="True"
+                                            AllowDefaultButton="False"
+                                            MaskType="Simple"
+                                            Mask="(999)000-00-00"
+                                            MaskUseAsDisplayFormat="True"
+                                            EditValue="{Binding Entity.MobilePhone, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}">
+                                <dxe:ButtonInfo GlyphKind="Custom" Command="{Binding Contacts.MobileCallCommand}">
+                                    <dx:DXImage Source="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buttons/Glyph_Phone.svg'}" Margin="3,0"/>
+                                </dxe:ButtonInfo>
+                            </dxe:ButtonEdit>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Email" AddColonToLabel="True">
+                            <dxe:ButtonEdit IsTextEditable="True"
+                                            AllowDefaultButton="False"
+                                            MaskType="RegEx"
+                                            Mask="(\w|[\.\-])+@(\w|[\-]+\.)*(\w|[\-]){2,63}\.[a-zA-Z]{2,4}"
+                                            EditValue="{Binding Entity.Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}" 
+                                            ValidateOnTextInput="True">
+                                <dxe:ButtonInfo GlyphKind="Custom" Command="{Binding Contacts.MailToCommand}">
+                                    <dx:DXImage Source="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buttons/Glyph_Mail.svg'}" Margin="3,0"/>
+                                </dxe:ButtonInfo>
+                            </dxe:ButtonEdit>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Skype" AddColonToLabel="True">
+                            <dxe:ButtonEdit IsTextEditable="True" AllowDefaultButton="False" 
+                                            EditValue="{Binding Entity.Skype, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}">
+                                <dxe:ButtonInfo GlyphKind="Custom" Command="{Binding Contacts.VideoCallCommand}">
+                                    <dx:DXImage Source="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buttons/Glyph_Video.svg'}" Margin="3,0"/>
+                                </dxe:ButtonInfo>
+                            </dxe:ButtonEdit>
+                        </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Orientation="Vertical" Height="{Binding ActualHeight, ElementName=imageGroup}">
+                    <dxlc:LayoutGroup Orientation="Vertical">
+                        <dxlc:LayoutItem Label="Department" AddColonToLabel="True">
+                            <dxe:ComboBoxEdit EditValue="{Binding Path=Entity.Department, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}"
+                                              ItemsSource="{dxe:EnumItemsSource EnumType={x:Type model:EmployeeDepartment}}"
+                                              IsTextEditable="False"
+                                              ValueMember="Value"
+                                              DisplayMember="Name" />
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Status" AddColonToLabel="True">
+                            <dxe:ComboBoxEdit EditValue="{Binding Entity.Status, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}"
+                                              ItemsSource="{dxe:EnumItemsSource EnumType={x:Type model:EmployeeStatus}}"
+                                              IsTextEditable="False"
+                                              ValueMember="Value"
+                                              DisplayMember="Name" />
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Hire Date" AddColonToLabel="True">
+                            <dxe:DateEdit EditValue="{Binding Entity.HireDate, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True}" />
+                        </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutItem Label="Personal Profile" LabelPosition="Top" VerticalAlignment="Stretch" Margin="0,5" AddColonToLabel="True">
+                        <dxg:GridControl ItemsSource="{Binding EmployeeEvaluationsDetails.Entities}" MaxHeight="5000">
+                            <dxg:GridControl.Columns>
+                                <dxg:GridColumn FieldName="CreatedOn" Header="CREATED ON" Width="*"/>
+                                <dxg:GridColumn FieldName="Subject" Header="SUBJECT" Width="4*"/>
+                                <dxg:GridColumn FieldName="CreatedBy" Header="MANAGER" Width="2*"/>
+                            </dxg:GridControl.Columns>
+                            <dxg:GridControl.View>
+                                <dxg:TableView ShowGroupPanel="False" NavigationStyle="Row" AllowGrouping="False" 
+                                               AllowEditing="False" ShowVerticalLines="False" ShowIndicator="False">
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutItem Label="Tasks" LabelVerticalAlignment="Top" VerticalAlignment="Top" AddColonToLabel="True" MaxHeight="5000" Margin="5,13,0,0">
+                <dxlc:LayoutItem.Style>
+                    <Style TargetType="dxlc:LayoutItem">
+                        <Setter Property="Height">
+                            <Setter.Value>
+                                <MultiBinding Converter="{local:GridHeightConverter SummaryDistance=45}">
+                                    <Binding ElementName="layoutControl" Path="ActualHeight" />
+                                    <Binding ElementName="entityGroup" Path="ActualHeight" />
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="dx:ThemeManager.IsTouchEnabled" Value="True">
+                                <Setter Property="Height">
+                                    <Setter.Value>
+                                        <sys:Double>NaN</sys:Double>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </dxlc:LayoutItem.Style>
+                <dxg:GridControl ItemsSource="{Binding EmployeeAssignedTasksDetails.Entities}" SelectedItem="{Binding EmployeeAssignedTasksDetails.SelectedEntity}" 
+                                 SelectionMode="None">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand PassEventArgsToCommand="True" Command="{Binding EmployeeAssignedTasksDetails.EditCommand}" EventName="MouseDoubleClick">
+                            <dxmvvm:EventToCommand.EventArgsConverter>
+                                <dx:EventArgsToDataRowConverter/>
+                            </dxmvvm:EventToCommand.EventArgsConverter>
+                        </dxmvvm:EventToCommand>
+                    </dxmvvm:Interaction.Behaviors>
+                    <dxg:GridControl.Resources>
+                        <dxmvvm:ObjectToObjectConverter x:Key="PriorityToPictureConverter">
+                            <dxmvvm:MapItem Source="Low" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Priority/LowPriority.svg'}"/>
+                            <dxmvvm:MapItem Source="Normal" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Priority/NormalPriority.svg'}"/>
+                            <dxmvvm:MapItem Source="High" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Priority/MediumPriority.svg'}"/>
+                            <dxmvvm:MapItem Source="Urgent" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Priority/HighPriority.svg'}"/>
+                        </dxmvvm:ObjectToObjectConverter>
+                    </dxg:GridControl.Resources>
+                    <dxg:GridControl.Columns>
+                        <dxg:GridColumn FieldName="Priority" FixedWidth="True">
+                            <dxg:GridColumn.CellTemplate>
+                                <DataTemplate>
+                                    <dx:DXImage Source="{Binding Path=Value, Converter={StaticResource PriorityToPictureConverter}}" Stretch="None"/>
+                                </DataTemplate>
+                            </dxg:GridColumn.CellTemplate>
+                        </dxg:GridColumn>
+                        <dxg:GridColumn FieldName="DueDate" FixedWidth="True">
+                            <dxg:GridColumn.CellStyle>
+                                <Style>
+                                    <Setter Property="TextBlock.FontWeight" Value="Bold" />
+                                </Style>
+                            </dxg:GridColumn.CellStyle>
+                        </dxg:GridColumn>
+                        <dxg:GridColumn FieldName="Subject"/>
+                        <dxg:GridColumn FieldName="Completion">
+                            <dxg:GridColumn.EditSettings>
+                                <dxe:ProgressBarEditSettings ContentDisplayMode="Value" DisplayFormat="p0" IsPercent="True" />
+                            </dxg:GridColumn.EditSettings>
+                        </dxg:GridColumn>
+                    </dxg:GridControl.Columns>
+                    <dxg:GridControl.View>
+                        <dxg:TableView ShowGroupPanel="False" NavigationStyle="Row" AutoWidth="True" AllowEditing="False" RowDetailsVisibilityMode="Visible"
+                                       ShowVerticalLines="False" ShowIndicator="False">
+                            <dxg:TableView.RowDetailsTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=Row.Description}" Margin="3,0" TextWrapping="WrapWithOverflow" />
+                                </DataTemplate>
+                            </dxg:TableView.RowDetailsTemplate>
+                            <dxg:TableView.RowCellMenuCustomizations>
+                                <dxb:BarButtonItem Content="New" Command="{Binding View.DataContext.EmployeeAssignedTasksDetails.NewCommand}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/NewTask.svg'}"/>
+                                <dxb:BarButtonItem Content="Edit" Command="{Binding View.DataContext.EmployeeAssignedTasksDetails.EditCommand}" CommandParameter="{Binding Row.Row}"  Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Edit.svg'}"/>
+                                <dxb:BarButtonItem Content="Delete" Command="{Binding View.DataContext.EmployeeAssignedTasksDetails.DeleteCommand}" CommandParameter="{Binding Row.Row}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Delete.svg'}"/>
+                                <dxb:BarItemSeparator/>
+                                <dxb:BarButtonItem Content="Assign Task" Command="{Binding View.DataContext.EmployeeAssignedTasksDetails.AssignTaskCommand}" CommandParameter="{Binding Row.Row}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/AssignTask.svg'}"/>
+                            </dxg:TableView.RowCellMenuCustomizations>
+                        </dxg:TableView>
+                    </dxg:GridControl.View>
+                </dxg:GridControl>
+            </dxlc:LayoutItem>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,23 @@
+<UserControl x:Class="DevExpress.DevAV.Views.CustomFilterView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:view="clr-namespace:DevExpress.DevAV.Views"
+        mc:Ignorable="d"
+        d:DesignHeight="300" d:DesignWidth="300">
+    <DockPanel Margin="12,12,12,0">
+        <dxe:TextEdit NullText="Enter a name for your custom filter..." DockPanel.Dock="Bottom" EditValue="{Binding FilterName}"/>
+        <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Left" Margin="0,10">
+            <dxe:CheckEdit Content="Save for future use" EditValue="{Binding Save}"/>
+        </StackPanel>
+        <dxe:FilterControl x:Name="FilterControl" FilterCriteria="{Binding FilterCriteria, Mode=TwoWay}" MinWidth="500" MinHeight="200">
+            <dxmvvm:Interaction.Behaviors>
+                <dxmvvm:EventToCommand EventName="IsVisibleChanged" Command="{Binding ElementName=FilterControl, Path=ApplyFilterCommand}" />
+                <view:CustomFilterControlColumnsBehavior ObjectType="{Binding EntityType}" UpperCasePropertyNames="True" HiddenProperties="{Binding HiddenProperties}" AdditionalProperties="{Binding AdditionalProperties, Converter={dxmvvm:EnumerableConverter {dxmvvm:ReflectionConverter}}}"/>
+            </dxmvvm:Interaction.Behaviors>
+        </dxe:FilterControl>
+    </DockPanel>
+</UserControl>

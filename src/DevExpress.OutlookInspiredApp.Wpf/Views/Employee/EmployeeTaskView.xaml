@@ -1,0 +1,441 @@
+<UserControl x:Class="DevExpress.DevAV.Views.EmployeeTaskView"
+        xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+        xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+         xmlns:dxre="http://schemas.devexpress.com/winfx/2008/xaml/richedit" 
+        xmlns:dxga="http://schemas.devexpress.com/winfx/2008/xaml/gauges"
+        xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+        xmlns:devav="clr-namespace:DevExpress.DevAV;assembly=DevExpress.DevAV.v19.1.Data"
+        xmlns:local="clr-namespace:DevExpress.DevAV"
+        xmlns:view="clr-namespace:DevExpress.DevAV.Views"
+        xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"  
+        xmlns:controls="clr-namespace:DevExpress.DevAV.Controls"             
+        mc:Ignorable="d"
+        d:DesignHeight="640" d:DesignWidth="1154"
+        DataContext="{dxmvvm:ViewModelSource viewmodel:EmployeeTaskViewModel}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Themes/Common.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <local:PictureConverter x:Key="PictureConverter" />
+            <dxmvvm:ObjectToObjectConverter x:Key="PriorityToPictureConverter">
+                <dxmvvm:MapItem Source="Low" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Priority/LowPriority.svg'}"/>
+                <dxmvvm:MapItem Source="Normal" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Priority/NormalPriority.svg'}"/>
+                <dxmvvm:MapItem Source="High" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Priority/MediumPriority.svg'}"/>
+                <dxmvvm:MapItem Source="Urgent" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Priority/HighPriority.svg'}"/>
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="StatusToPictureConverter">
+                <dxmvvm:MapItem Source="Not Started" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/NotStarted.svg'}"/>
+                <dxmvvm:MapItem Source="Completed" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/Completed.svg'}"/>
+                <dxmvvm:MapItem Source="In Progress" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/InProgress.svg'}"/>
+                <dxmvvm:MapItem Source="Need Assistance" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/NeedAssistance.svg'}"/>
+                <dxmvvm:MapItem Source="Deferred" Target="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/Deferred.svg'}"/>
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="HighPriorityConverter" DefaultTarget="False" DefaultSource="Normal">
+                <dxmvvm:MapItem Source="High" Target="True"/>
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="LowPriorityConverter" DefaultTarget="False" DefaultSource="Normal">
+                <dxmvvm:MapItem Source="Low" Target="True"/>
+            </dxmvvm:ObjectToObjectConverter>
+
+            <dxmvvm:ObjectToObjectConverter x:Key="FollowUpTodayConverter" DefaultTarget="False">
+                <dxmvvm:MapItem Source="Today" Target="True"/>
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="FollowUpTomorrowConverter" DefaultTarget="False">
+                <dxmvvm:MapItem Source="Tomorrow" Target="True"/>
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="FollowUpThisWeekConverter" DefaultTarget="False">
+                <dxmvvm:MapItem Source="ThisWeek" Target="True"/>
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="FollowUpNextWeekConverter" DefaultTarget="False">
+                <dxmvvm:MapItem Source="NextWeek" Target="True"/>
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="FollowUpNoDateConverter" DefaultTarget="False">
+                <dxmvvm:MapItem Source="NoDate" Target="True"/>
+            </dxmvvm:ObjectToObjectConverter>
+            <dxmvvm:ObjectToObjectConverter x:Key="FollowUpCustomConverter" DefaultTarget="False">
+                <dxmvvm:MapItem Source="Custom" Target="True"/>
+            </dxmvvm:ObjectToObjectConverter>
+
+            <dxga:ObjectToRangeValueConverter x:Key="RangeValueConverter" />
+            <local:CategoryColorConverter x:Key="ColorConverter"/>
+            <local:SelectedItemsConverter x:Key="SelectedItemsConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:EventToCommand EventName="Unloaded" Command="{Binding UnloadedCommand}"/>
+        <dxmvvm:OpenFileDialogService Title="Attach file" RestorePreviouslySelectedDirectory="True" Multiselect="True"/>
+        <dx:DXMessageBoxService/>
+        <dx:DXSplashScreenService ShowSplashScreenOnLoading="True" ViewTemplate="{StaticResource silentWaitIndicator}" SplashScreenStartupLocation="CenterOwner" OwnerSearchMode="IgnoreAssociatedObject"/>
+    </dxmvvm:Interaction.Behaviors>
+    <DockPanel>
+        <dxr:RibbonControl x:Name="ribbonControl" RibbonStyle="Office2019" DockPanel.Dock="Top">
+            <dxr:RibbonControl.ApplicationMenu>
+                <dxr:BackstageViewControl x:Name="backstageView">
+                    <dxr:BackstageViewControl.Items>
+                        <dxr:BackstageTabItem Content="About">
+                            <dxr:BackstageTabItem.ControlPane>
+                                <view:AboutView />
+                            </dxr:BackstageTabItem.ControlPane>
+                        </dxr:BackstageTabItem>
+                        <dxr:BackstageTabItem Content="Export">
+                            <dxr:BackstageTabItem.ControlPane>
+                                <controls:CustomBackstageDocumentPreview OptionsMode="Export" CustomSettingsHeader="Settings"/>
+                            </dxr:BackstageTabItem.ControlPane>
+                        </dxr:BackstageTabItem>
+                        <dxr:BackstageTabItem Content="Print">
+                            <dxr:BackstageTabItem.ControlPane>
+                                <controls:CustomBackstageDocumentPreview CustomSettingsHeader="Settings"/>
+                            </dxr:BackstageTabItem.ControlPane>
+                        </dxr:BackstageTabItem>
+                        <dxr:BackstageSeparatorItem/>
+                        <dxr:BackstageButtonItem Content="Get Started" Command="{Binding LinksViewModel.GettingStartedCommand}"/>
+                        <dxr:BackstageButtonItem Content="Get Support" Command="{Binding LinksViewModel.GetFreeSupportCommand}"/>
+                        <dxr:BackstageButtonItem Content="Buy Now" Command="{Binding LinksViewModel.BuyNowCommand}"/>
+                    </dxr:BackstageViewControl.Items>
+                </dxr:BackstageViewControl>
+            </dxr:RibbonControl.ApplicationMenu>
+            <dxmvvm:Interaction.Behaviors>
+                <common:BackstageDocumentPreviewReportService x:Name="ExportService"
+                                    BackstageViewIsOpen="{Binding ElementName=ribbonControl, Path=ApplicationMenu.IsOpen}"
+                                    BackstageItem="{Binding ElementName=ribbonControl, Path=ApplicationMenu.Items[1]}"
+                                    BackstageDocumentPreview="{Binding ElementName=ribbonControl, Path=ApplicationMenu.Items[1].ControlPane}" />
+                <common:BackstageDocumentPreviewReportService x:Name="PrintService"
+                                    BackstageViewIsOpen="{Binding ElementName=ribbonControl, Path=ApplicationMenu.IsOpen}"
+                                    BackstageItem="{Binding ElementName=ribbonControl, Path=ApplicationMenu.Items[2]}"
+                                    BackstageDocumentPreview="{Binding ElementName=ribbonControl, Path=ApplicationMenu.Items[2].ControlPane}" />
+            </dxmvvm:Interaction.Behaviors>
+            <dxr:RibbonDefaultPageCategory Caption="defaultCategory">
+                <dxr:RibbonPage Caption="Home" IsSelected="True">
+                    <dxr:RibbonPageGroup Caption="Save">
+                        <dxb:BarButtonItem Content="Save" Command="{Binding SaveCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Save.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Save.svg'}" />
+                        <dxb:BarButtonItem Content="Save &amp; Close" Command="{Binding SaveAndCloseCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/SaveAndClose.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/SaveAndClose.svg'}" />
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Close">
+                        <dxb:BarButtonItem Content="Close" Command="{Binding CloseCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Close.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Close.svg'}" />
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup>
+                        <dxb:BarButtonItem Content="Reset Changes" Command="{Binding ResetCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/ResetChanges.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/ResetChanges.svg'}" />
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup>
+                        <dxb:BarButtonItem Content="Delete" Command="{Binding DeleteCommand}"
+                                Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Delete.svg'}"
+                                LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Delete.svg'}" />
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Actions">
+                        <dxb:BarButtonItem Content="Print" Command="{Binding PrintTaskDetailCommand}" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Print.svg'}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Print.svg'}"/>
+                        <dxb:BarButtonItem Content="Mark Complete" Command="{Binding MarkCompleteCommand}" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MarkComplete.svg'}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MarkComplete.svg'}"/>
+                        <dxb:BarButtonItem Content="Attach File" Command="{Binding AttachFilesCommand}" CommandParameter="{x:Null}" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/AttachFile.svg'}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/AttachFile.svg'}"/>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="Tags">
+                        <dxb:BarSplitButtonItem Content="Categorize" ActAsDropDown="True" RibbonStyle="Large">
+                            <dxb:BarSplitButtonItem.GlyphTemplate>
+                                <DataTemplate>
+                                    <Canvas Name="canvas" Width="16" Height="16">
+                                        <dx:DXImage Name="image" Source="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Categorize.svg'}"/>
+                                        <Border Name="border" Width="14" Height="2" Canvas.Left="1" Canvas.Top="14">
+                                            <Border.Background>
+                                                <SolidColorBrush Color="{Binding Entity.Category, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ColorConverter}}"/>
+                                            </Border.Background>
+                                        </Border>
+                                    </Canvas>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Path=CurrentRibbonStyle, RelativeSource={RelativeSource AncestorType={x:Type dxb:IBarItemLinkControl}}}" Value="Large">
+                                            <Setter TargetName="canvas" Property="Width" Value="32"/>
+                                            <Setter TargetName="canvas" Property="Height" Value="32"/>
+                                            <Setter TargetName="image" Property="Source" Value="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Categorize.svg'}"/>
+                                            <Setter TargetName="border" Property="Width" Value="30"/>
+                                            <Setter TargetName="border" Property="Height" Value="4"/>
+                                            <Setter TargetName="border" Property="Canvas.Left" Value="1"/>
+                                            <Setter TargetName="border" Property="Canvas.Top" Value="30"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </dxb:BarSplitButtonItem.GlyphTemplate>
+                            <dxb:BarSplitButtonItem.PopupControl>
+                                <dxb:PopupControlContainer>
+                                    <dxe:ColorEdit x:Name="colorEdit" EditValue="{Binding Entity.Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ColorConverter}}" DefaultColor="Transparent" DefaultColorButtonContent="No category" ShowMoreColorsButton="False" CloseOwnerPopupOnClick="True" ShowBorder="False"/>
+                                </dxb:PopupControlContainer>
+                            </dxb:BarSplitButtonItem.PopupControl>
+                        </dxb:BarSplitButtonItem>
+                        <dxb:BarSubItem Content="Follow Up" LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/FollowUp.svg'}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/FollowUp.svg'}">
+                            <dxb:BarCheckItem IsChecked="{Binding Entity.FollowUp, Converter={StaticResource FollowUpTodayConverter}, Mode=TwoWay}" Content="Today" Command="{Binding FollowUpCommand}" CommandParameter="Today" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/Today.svg'}"/>
+                            <dxb:BarCheckItem IsChecked="{Binding Entity.FollowUp, Converter={StaticResource FollowUpTomorrowConverter}, Mode=TwoWay}" Content="Tomorrow" Command="{Binding FollowUpCommand}" CommandParameter="Tomorrow" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/Tomorrow.svg'}"/>
+                            <dxb:BarCheckItem IsChecked="{Binding Entity.FollowUp, Converter={StaticResource FollowUpThisWeekConverter}, Mode=TwoWay}" Content="This Week" Command="{Binding FollowUpCommand}" CommandParameter="ThisWeek" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/ThisWeek.svg'}"/>
+                            <dxb:BarCheckItem IsChecked="{Binding Entity.FollowUp, Converter={StaticResource FollowUpNextWeekConverter}, Mode=TwoWay}" Content="Next Week" Command="{Binding FollowUpCommand}" CommandParameter="NextWeek" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/NextWeek.svg'}"/>
+                            <dxb:BarCheckItem IsChecked="{Binding Entity.FollowUp, Converter={StaticResource FollowUpNoDateConverter}, Mode=TwoWay}" Content="No Date" Command="{Binding FollowUpCommand}" CommandParameter="NoDate" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/NoDate.svg'}"/>
+                            <dxb:BarCheckItem IsChecked="{Binding Entity.FollowUp, Converter={StaticResource FollowUpCustomConverter}, Mode=TwoWay}" Content="Custom" Command="{Binding FollowUpCommand}" CommandParameter="Custom" Glyph="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Tasks/Custom.svg'}"/>
+                        </dxb:BarSubItem>
+                        <dxb:BarCheckItem Content="Private" IsChecked="{Binding Entity.Private, Mode=TwoWay}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Private.svg'}"/>
+                        <dxb:BarCheckItem Content="High Importance" IsChecked="{Binding ElementName=PriorityEditor, Path=EditValue, Mode=TwoWay, Converter={StaticResource HighPriorityConverter}}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/HighImportance.svg'}"/>
+                        <dxb:BarCheckItem Content="Low Importance" IsChecked="{Binding ElementName=PriorityEditor, Path=EditValue, Mode=TwoWay, Converter={StaticResource LowPriorityConverter}}" Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/LowImportance.svg'}"/>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="DevExpress">
+                        <dxb:BarButtonItem Content="Getting Started" RibbonStyle="Large" Command="{Binding LinksViewModel.GettingStartedCommand}"
+                                        Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/GettingStarted.svg'}"
+                                        LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/GettingStarted.svg'}"/>
+                        <dxb:BarButtonItem Content="Get Free Support" RibbonStyle="Large" Command="{Binding LinksViewModel.GetFreeSupportCommand}"
+                                        Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Support.svg'}"
+                                        LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Support.svg'}"/>
+                        <dxb:BarButtonItem Content="Buy Now" RibbonStyle="Large" Command="{Binding LinksViewModel.BuyNowCommand}"
+                                        Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buy.svg'}"
+                                        LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buy.svg'}"/>
+                        <dxb:BarButtonItem Content="About" RibbonStyle="Large" Command="{Binding LinksViewModel.AboutCommand}"
+                                        Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/About.svg'}"
+                                        LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/About.svg'}"/>
+                    </dxr:RibbonPageGroup>
+                </dxr:RibbonPage>
+            </dxr:RibbonDefaultPageCategory>
+        </dxr:RibbonControl>
+        <dxlc:LayoutControl>
+            <dxmvvm:Interaction.Behaviors>
+                <dxmvvm:EventToCommand Event="{x:Static Binding.SourceUpdatedEvent}" Command="{Binding UpdateCommand}" />
+            </dxmvvm:Interaction.Behaviors>
+            <dxlc:LayoutControl.Resources>
+                <Style TargetType="dxlc:LayoutItem">
+                    <Setter Property="ElementSpace" Value="40" />
+                </Style>
+                <Style x:Key="VerticalLayoutItem" TargetType="dxlc:LayoutItem" />
+                <Style x:Key="InnerLayoutGroup" TargetType="dxlc:LayoutGroup" />
+                <Style TargetType="dxlc:LayoutGroup">
+                    <Setter Property="ItemSpace" Value="22" />
+                </Style>
+                <Style x:Key="PairLayoutGroup" TargetType="dxlc:LayoutGroup">
+                    <Setter Property="ItemSpace" Value="10" />
+                </Style>
+            </dxlc:LayoutControl.Resources>
+            <dxlc:LayoutGroup Orientation="Vertical">
+                <dxlc:LayoutGroup Orientation="Vertical" Style="{StaticResource InnerLayoutGroup}">
+                    <dxlc:LayoutItem Label="Subject">
+                        <dxe:TextEdit EditValue="{Binding Entity.Subject, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" />
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem Label="Assigned To">
+                        <dxe:ComboBoxEdit IsTextEditable="True" ValidateOnTextInput="True" ValidateOnEnterKeyPressed="True" ImmediatePopup="True" IncrementalFiltering="True" AutoComplete="True" ItemsSource="{Binding EntityContextLookUpEmployees}" 
+                                              EditValue="{Binding AssignedEmployees, Converter={StaticResource SelectedItemsConverter}, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}">
+                            <dxe:ComboBoxEdit.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <dx:DXImage Source="{Binding Prefix, Converter={StaticResource personPrefixToImageConverter}}" Stretch="None"/>
+                                        <TextBlock Text="{Binding FullNameBindable}" VerticalAlignment="Center" FontSize="14" Margin="3,0,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </dxe:ComboBoxEdit.ItemTemplate>
+                            <dxe:ComboBoxEdit.StyleSettings>
+                                <dxe:TokenComboBoxStyleSettings NewTokenPosition="Far">
+                                    <dxe:TokenComboBoxStyleSettings.TokenBorderTemplate>
+                                        <ControlTemplate>
+                                            <Border Background="Transparent"/>
+                                        </ControlTemplate>
+                                    </dxe:TokenComboBoxStyleSettings.TokenBorderTemplate>
+                                </dxe:TokenComboBoxStyleSettings>
+                            </dxe:ComboBoxEdit.StyleSettings>
+                        </dxe:ComboBoxEdit>
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Orientation="Horizontal">
+                    <dxlc:LayoutGroup Orientation="Vertical" Style="{StaticResource InnerLayoutGroup}" HorizontalAlignment="Left" MinWidth="320">
+                        <dxlc:LayoutItem Label="Start Date" >
+                            <dxe:DateEdit x:Name="startDate" EditValue="{Binding Entity.StartDate, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}"/>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Status">
+                            <dxe:ComboBoxEdit EditValue="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}"
+                                                  ItemsSource="{dxe:EnumItemsSource EnumType={x:Type devav:EmployeeTaskStatus}}" IsTextEditable="False" MinHeight="22">
+                                <dxe:ComboBoxEdit.EditNonEditableTemplate>
+                                    <ControlTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <dx:DXImage Source="{Binding SelectedItem.Name, Converter={StaticResource StatusToPictureConverter}}" Margin="5,0"/>
+                                            <TextBlock Text="{Binding SelectedItem.Name}" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </ControlTemplate>
+                                </dxe:ComboBoxEdit.EditNonEditableTemplate>
+                                <dxe:ComboBoxEdit.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <dx:DXImage Source="{Binding Name, Converter={StaticResource StatusToPictureConverter}}" Margin="5,0"/>
+                                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </dxe:ComboBoxEdit.ItemTemplate>
+                            </dxe:ComboBoxEdit>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Reminder">
+                            <dxe:CheckEdit x:Name="setReminder" EditValue="{Binding Entity.Reminder, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}"/>
+                        </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutGroup x:Name="itemsGroup" Orientation="Vertical" HorizontalAlignment="Left" Style="{StaticResource InnerLayoutGroup}" MinWidth="290" >
+                        <dxlc:LayoutItem Label="Due Date" >
+                            <dxe:DateEdit x:Name="dueDate" EditValue="{Binding Entity.DueDate, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}"
+                                      MinValue="{Binding ElementName=startDate, Path=EditValue}"/>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Priority">
+                            <dxe:ComboBoxEdit x:Name="PriorityEditor" IsTextEditable="False" ItemsSource="{dxe:EnumItemsSource EnumType={x:Type devav:EmployeeTaskPriority}}" 
+                                                  EditValue="{Binding Entity.Priority, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}"
+                                                  MinWidth="100" MinHeight="22">
+                                <dxe:ComboBoxEdit.EditNonEditableTemplate>
+                                    <ControlTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <dx:DXImage Source="{Binding SelectedItem.Name, Converter={StaticResource PriorityToPictureConverter}}" Stretch="None" Margin="5,0"/>
+                                            <TextBlock Text="{Binding SelectedItem.Name}" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </ControlTemplate>
+                                </dxe:ComboBoxEdit.EditNonEditableTemplate>
+                                <dxe:ComboBoxEdit.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <dx:DXImage Source="{Binding Name, Converter={StaticResource PriorityToPictureConverter}}" Stretch="None" Margin="5,0"/>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </dxe:ComboBoxEdit.ItemTemplate>
+                            </dxe:ComboBoxEdit>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Reminder Date" IsEnabled="{Binding ElementName=setReminder,Path=IsChecked}">
+                            <dxe:DateEdit x:Name="reminderDate" EditValue="{Binding Entity.ReminderDateTime, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, Mode=TwoWay}"/>
+                        </dxlc:LayoutItem>
+                        <dxlc:LayoutItem Label="Reminder Time" IsEnabled="{Binding ElementName=setReminder,Path=IsChecked}" >
+                            <dxe:TextEdit EditValue="{Binding ReminderTime, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True, Mode=TwoWay}" 
+                                              MaskUseAsDisplayFormat="True" MaskType="DateTime" Mask="t" />
+                        </dxlc:LayoutItem>
+                    </dxlc:LayoutGroup>
+                    <dxlc:LayoutItem Style="{StaticResource VerticalLayoutItem}" Height="{Binding ElementName=itemsGroup, Path=ActualHeight}">
+                        <ListView ItemsSource="{Binding FilesInfo, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" 
+                                      SelectedItem="{Binding SelectedFile, Mode=TwoWay}"
+                                      HorizontalContentAlignment="Center" ItemTemplate="{StaticResource fileViewTemplate}" 
+                                      ScrollViewer.VerticalScrollBarVisibility="Disabled" AllowDrop="True">
+                            <ListView.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding OpenFileCommand}"/>
+                                <KeyBinding Key="Delete" Command="{Binding DeleteFileCommand}"/>
+                            </ListView.InputBindings>
+                            <ListView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Insert File..." Command="{Binding AttachFilesCommand}" CommandParameter="{x:Null}">
+                                        <MenuItem.Icon>
+                                            <dx:DXImage Stretch="None" Source="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/AddFile.svg'}"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem  Header="Delete File" Command="{Binding DeleteFileCommand}">
+                                        <MenuItem.Icon>
+                                            <dx:DXImage Stretch="None" Source="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Delete.svg'}"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </ListView.ContextMenu>
+                            <ListView.Style>
+                                <Style TargetType="ItemsControl">
+                                    <Style.Triggers>
+                                        <Trigger Property="HasItems" Value="false">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Grid Background="White">
+                                                            <TextBlock Text="Drag and drop to attach the files" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ListView.Style>
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand Command="{Binding OpenFileCommand}" EventName="MouseDoubleClick"/>
+                                <dxmvvm:EventToCommand Command="{Binding AttachFilesCommand}" EventName="Drop" PassEventArgsToCommand="True"/>
+                            </dxmvvm:Interaction.Behaviors>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Vertical" VerticalAlignment="Center"  />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                        </ListView>
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup>
+                    <dxlc:LayoutItem Label=" " LabelVerticalAlignment="Top" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
+                        <dxre:RichEditControl Name="richEdit" CommandBarStyle="Ribbon" dxb:MergingProperties.ElementMergingBehavior="InternalWithExternal" HorizontalScrollBarVisibility="Collapsed" VerticalScrollBarVisibility="Collapsed" >
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:DependencyPropertyBehavior PropertyName="RtfText" EventName="RtfTextChanged" Binding="{Binding RtfTextDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <dxmvvm:DependencyPropertyBehavior PropertyName="Text" EventName="TextChanged" Binding="{Binding TextDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <local:SpellCheckerRichEditBehavior/>
+                            </dxmvvm:Interaction.Behaviors>
+                            <dxre:RichEditControl.RibbonActions>
+                                <dxb:RemoveAction ElementName="{x:Static dxre:DefaultBarItemNames.RibbonPage_Insert}" />
+                                <dxb:RemoveAction ElementName="{x:Static dxre:DefaultBarItemNames.RibbonPage_PageLayout}" />
+                                <dxb:RemoveAction ElementName="{x:Static dxre:DefaultBarItemNames.RibbonPage_References}" />
+                                <dxb:RemoveAction ElementName="{x:Static dxre:DefaultBarItemNames.RibbonPage_Review}" />
+                                <dxb:RemoveAction ElementName="{x:Static dxre:DefaultBarItemNames.RibbonPage_View}" />
+                                <dxb:RemoveAction ElementName="{x:Static dxre:DefaultBarItemNames.RibbonPage_File}" />
+                                <dxb:RemoveAction ElementName="{x:Static dxre:DefaultBarItemNames.RibbonPage_MailMerge}" />
+                                <dxb:UpdateAction ElementName="{x:Static dxre:DefaultBarItemNames.RibbonPage_Home}" 
+                                                  Property="{x:Static dxr:RibbonPage.CaptionProperty}" Value="Format Text"/>
+                                <dxb:UpdateAction ElementName="{x:Static dxre:DefaultBarItemNames.RibbonPage_Home}" 
+                                                  Property="{x:Static dxr:RibbonPage.IsSelectedProperty}" Value="False"/>
+                            </dxre:RichEditControl.RibbonActions>
+                        </dxre:RichEditControl>
+                    </dxlc:LayoutItem>
+                    <dxlc:LayoutItem MaxWidth="200">
+                        <Border Background="White" BorderBrush="#FFABABAB" BorderThickness="1">
+                            <Grid>
+                                <dxga:CircularGaugeControl HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-40,0,-40,0">
+                                    <dxga:CircularGaugeControl.Model>
+                                        <dxga:CircularFutureModel />
+                                    </dxga:CircularGaugeControl.Model>
+                                    <dxga:CircularGaugeControl.Scales>
+                                        <dxga:ArcScale StartValue="0" ShowMajorTickmarks="False" ShowMinorTickmarks="False" EndValue="100" ShowLabels="True" StartAngle="-90" EndAngle="270" MajorIntervalCount="10" MinorIntervalCount="5">
+                                            <dxga:ArcScale.LabelOptions>
+                                                <dxga:ArcScaleLabelOptions ShowFirst="False" Offset="-60" />
+                                            </dxga:ArcScale.LabelOptions>
+                                            <dxga:ArcScale.Needles>
+                                                <dxga:ArcScaleNeedle IsInteractive="True" Value="{Binding Completion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                    <dxga:ArcScaleNeedle.Presentation>
+                                                        <dxga:FutureArcScaleNeedlePresentation Fill="Transparent"/>
+                                                    </dxga:ArcScaleNeedle.Presentation>
+                                                </dxga:ArcScaleNeedle>
+                                            </dxga:ArcScale.Needles>
+                                            <dxga:ArcScale.Ranges>
+                                                <dxga:ArcScaleRange StartValue="0" EndValue="{Binding Entity.Completion, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RangeValueConverter}}">
+                                                    <dxga:ArcScaleRange.Presentation>
+                                                        <dxga:DefaultArcScaleRangePresentation Fill="#FF4D82B8"/>
+                                                    </dxga:ArcScaleRange.Presentation>
+                                                    <dxga:ArcScaleRange.Options>
+                                                        <dxga:RangeOptions Offset="-83" Thickness="12"/>
+                                                    </dxga:ArcScaleRange.Options>
+                                                </dxga:ArcScaleRange>
+                                                <dxga:ArcScaleRange StartValue="{Binding Entity.Completion, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RangeValueConverter}}" EndValue="100">
+                                                    <dxga:ArcScaleRange.Presentation>
+                                                        <dxga:DefaultArcScaleRangePresentation Fill="#FFA8A8A8"/>
+                                                    </dxga:ArcScaleRange.Presentation>
+                                                    <dxga:ArcScaleRange.Options>
+                                                        <dxga:RangeOptions Offset="-83" Thickness="12"/>
+                                                    </dxga:ArcScaleRange.Options>
+                                                </dxga:ArcScaleRange>
+                                            </dxga:ArcScale.Ranges>
+                                        </dxga:ArcScale>
+                                    </dxga:CircularGaugeControl.Scales>
+                                </dxga:CircularGaugeControl>
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Entity.Completion, StringFormat={}{0}%}" 
+                                               Foreground="#FF4D82B8" FontSize="18"/>
+                            </Grid>
+                        </Border>
+                    </dxlc:LayoutItem>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</UserControl>

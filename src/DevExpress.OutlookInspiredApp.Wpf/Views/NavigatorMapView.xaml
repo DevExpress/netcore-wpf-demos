@@ -1,0 +1,240 @@
+<UserControl x:Class="DevExpress.DevAV.Views.NavigatorMapView"
+    xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+    xmlns:dxm="http://schemas.devexpress.com/winfx/2008/xaml/map"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:local="clr-namespace:DevExpress.DevAV"
+    xmlns:devAv ="clr-namespace:DevExpress.DevAV.ViewModels"
+    mc:Ignorable="d"
+    x:Name="root"
+    d:DesignHeight="663" d:DesignWidth="1183">
+    <dxmvvm:Interaction.Behaviors>
+        <dx:DXMessageBoxService />
+        <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding OnLoadedCommand}" />
+        <dx:DXSplashScreenService ShowSplashScreenOnLoading="True" ViewTemplate="{StaticResource silentWaitIndicator}" SplashScreenStartupLocation="CenterOwner" OwnerSearchMode="IgnoreAssociatedObject"/>
+    </dxmvvm:Interaction.Behaviors>
+    <Grid UseLayoutRounding="True" SnapsToDevicePixels="True">
+        <DockPanel>
+            <dxr:RibbonControl RibbonStyle="Office2019" DockPanel.Dock="Top" ShowApplicationButton="False" RibbonTitleBarVisibility="Collapsed" Name="ribbonControl">
+                <dxr:RibbonDefaultPageCategory Caption="defaultCategory">
+                    <dxr:RibbonPage Caption="Contact">
+                        <dxr:RibbonPageGroup Caption="Save">
+                            <dxb:BarButtonItem Content="Save &amp; Close" Command="{Binding SaveAndCloseCommand}"
+                                    LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/SaveAndClose.svg'}"
+                                    Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/SaveAndClose.svg'}" />
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Close">
+                            <dxb:BarButtonItem Content="Close" Command="{Binding CloseCommand}"
+                                                   LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Close.svg'}"
+                                                   Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Close.svg'}"/>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Route Options">
+                            <dxb:BarCheckItem Content="Driving" Command="{Binding CalculateRouteDrivingCommand}" GroupIndex="45"
+                                                  LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Driving.svg'}"
+                                                  Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Driving.svg'}"/>
+                            <dxb:BarCheckItem Content="Walking" Command="{Binding CalculateRouteWalkingCommand}" GroupIndex="45"
+                                                  LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Walking.svg'}"
+                                                  Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Walking.svg'}"
+                                                  IsVisible="{Binding IsWalkingAvailable}"/>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="DevExpress">
+                            <dxb:BarButtonItem Content="Getting Started" RibbonStyle="Large"
+                                    Command="{Binding LinksViewModel.GettingStartedCommand}"
+                                    Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/GettingStarted.svg'}"
+                                    LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/GettingStarted.svg'}"/>
+                            <dxb:BarButtonItem Content="Get Free Support" RibbonStyle="Large"
+                                    Command="{Binding LinksViewModel.GetFreeSupportCommand}"
+                                    Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Support.svg'}"
+                                    LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Support.svg'}"/>
+                            <dxb:BarButtonItem Content="Buy Now" RibbonStyle="Large"
+                                    Command="{Binding LinksViewModel.BuyNowCommand}"
+                                    Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buy.svg'}"
+                                    LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Buy.svg'}"/>
+                            <dxb:BarButtonItem Content="About" RibbonStyle="Large"
+                                    Command="{Binding LinksViewModel.AboutCommand}"
+                                    Glyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/About.svg'}"
+                                    LargeGlyph="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/About.svg'}"/>
+                        </dxr:RibbonPageGroup>
+                    </dxr:RibbonPage>
+                </dxr:RibbonDefaultPageCategory>
+            </dxr:RibbonControl>
+            <dxr:RibbonStatusBarControl DockPanel.Dock="Bottom"/>
+            <Grid>
+                <Grid.Resources>
+                    <dxmvvm:ObjectToObjectConverter x:Key="ManeuverToDistanceVisibilityConverter" DefaultTarget="Visible">
+                        <dxmvvm:MapItem Source="DepartStart" Target="Collapsed"/>
+                        <dxmvvm:MapItem Source="ArriveFinish" Target="Collapsed"/>
+                    </dxmvvm:ObjectToObjectConverter>
+                    <dxmvvm:ObjectToObjectConverter x:Key="ManeuverToImageConverter">
+                        <dxmvvm:MapItem Source="DepartStart">
+                            <dxmvvm:MapItem.Target>
+                                <DataTemplate>
+                                    <dx:DXImage Source="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MapItems/A.svg'}" Stretch="None"/>
+                                </DataTemplate>
+                            </dxmvvm:MapItem.Target>
+                        </dxmvvm:MapItem>
+                        <dxmvvm:MapItem Source="ArriveFinish">
+                            <dxmvvm:MapItem.Target>
+                                <DataTemplate>
+                                    <dx:DXImage Source="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MapItems/B.svg'}" Stretch="None"/>
+                                </DataTemplate>
+                            </dxmvvm:MapItem.Target>
+                        </dxmvvm:MapItem>
+                        <dxmvvm:MapItem Source="TurnLeft">
+                            <dxmvvm:MapItem.Target>
+                                <DataTemplate>
+                                    <dx:DXImage Source="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MapItems/ArrowLeft.svg'}" Stretch="None"/>
+                                </DataTemplate>
+                            </dxmvvm:MapItem.Target>
+                        </dxmvvm:MapItem>
+                        <dxmvvm:MapItem Source="TurnRight">
+                            <dxmvvm:MapItem.Target>
+                                <DataTemplate>
+                                    <dx:DXImage Source="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MapItems/ArrowRight.svg'}" Stretch="None"/>
+                                </DataTemplate>
+                            </dxmvvm:MapItem.Target>
+                        </dxmvvm:MapItem>
+                        <dxmvvm:MapItem Source="KeepStraight">
+                            <dxmvvm:MapItem.Target>
+                                <DataTemplate>
+                                    <dx:DXImage Source="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MapItems/ArrowForward.svg'}" Stretch="None"/>
+                                </DataTemplate>
+                            </dxmvvm:MapItem.Target>
+                        </dxmvvm:MapItem>
+                        <dxmvvm:MapItem Source="BearLeft">
+                            <dxmvvm:MapItem.Target>
+                                <DataTemplate>
+                                    <dx:DXImage Source="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MapItems/ArrowBearLeft.svg'}" Stretch="None"/>
+                                </DataTemplate>
+                            </dxmvvm:MapItem.Target>
+                        </dxmvvm:MapItem>
+                        <dxmvvm:MapItem Source="BearRight">
+                            <dxmvvm:MapItem.Target>
+                                <DataTemplate>
+                                    <dx:DXImage Source="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MapItems/ArrowBearLeft.svg'}" Stretch="None"/>
+                                </DataTemplate>
+                            </dxmvvm:MapItem.Target>
+                        </dxmvvm:MapItem>
+                    </dxmvvm:ObjectToObjectConverter>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <dxm:MapControl Name="mapControl" CenterPoint="{Binding CenterPoint}">
+                    <dxmvvm:Interaction.Behaviors>
+                        <local:MapPushpinsService/>
+                    </dxmvvm:Interaction.Behaviors>
+                    <dxm:ImageLayer>
+                        <dxm:BingMapDataProvider Kind="Road" BingKey="{x:Static devAv:MapViewModelBase.WpfBingKey}"/>
+                    </dxm:ImageLayer>
+                    <dxm:VectorLayer SelectedItem="SelectedItineraryItem">
+                        <dxm:VectorLayer.Data>
+                            <dxm:ListSourceDataAdapter DataSource="{Binding ActiveItinerary}">
+                                <dxm:ListSourceDataAdapter.Mappings>
+                                    <dxm:MapItemMappingInfo Longitude="Location.Longitude" Latitude="Location.Latitude"/>
+                                </dxm:ListSourceDataAdapter.Mappings>
+                                <dxm:ListSourceDataAdapter.ItemSettings>
+                                    <dxm:MapCustomElementSettings>
+                                        <dxm:MapCustomElementSettings.ContentTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Ellipse Stroke="#FF7092BE" Fill="#01000000" Width="10" Height="10" StrokeThickness="2">
+                                                        <Ellipse.RenderTransform>
+                                                            <TranslateTransform X="-5" Y="-5"/>
+                                                        </Ellipse.RenderTransform>
+                                                    </Ellipse>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </dxm:MapCustomElementSettings.ContentTemplate>
+                                    </dxm:MapCustomElementSettings>
+                                </dxm:ListSourceDataAdapter.ItemSettings>
+                            </dxm:ListSourceDataAdapter>
+                        </dxm:VectorLayer.Data>
+                    </dxm:VectorLayer>
+                    <dxm:InformationLayer EnableHighlighting="true">
+                        <dxm:InformationLayer.DataProvider>
+                            <dxm:BingGeocodeDataProvider BingKey="{x:Static devAv:MapViewModelBase.WpfBingKey}" LayerItemsGenerating="BingGeocodeDataProvider_LayerItemsGenerating" MaxVisibleResultCount="1" ProcessMouseEvents="{Binding IsEditingMode}"/>
+                        </dxm:InformationLayer.DataProvider>
+                    </dxm:InformationLayer>
+                    <dxm:InformationLayer EnableHighlighting="False">
+                        <dxmvvm:Interaction.Behaviors>
+                            <local:MapRouteService/>
+                        </dxmvvm:Interaction.Behaviors>
+                        <dxm:InformationLayer.DataProvider>
+                            <dxm:BingRouteDataProvider BingKey="{x:Static devAv:MapViewModelBase.WpfBingKey}" LayerItemsGenerating="BingRouteDataProvider_LayerItemsGenerating">
+                                <dxm:BingRouteDataProvider.RouteStrokeStyle>
+                                    <dxm:StrokeStyle Thickness="10" DashCap="Round" StartLineCap="Round" EndLineCap="Round" />
+                                </dxm:BingRouteDataProvider.RouteStrokeStyle>
+                            </dxm:BingRouteDataProvider>
+                        </dxm:InformationLayer.DataProvider>
+                    </dxm:InformationLayer>
+                    <dxm:InformationLayer EnableHighlighting="true">
+                        <dxm:InformationLayer.DataProvider>
+                            <dxm:BingSearchDataProvider BingKey="{x:Static devAv:MapViewModelBase.WpfBingKey}" LayerItemsGenerating="BingGeocodeDataProvider_LayerItemsGenerating"/>
+                        </dxm:InformationLayer.DataProvider>
+                    </dxm:InformationLayer>
+                </dxm:MapControl>
+                <Grid Grid.Column="1" Width="500">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ContentPresenter Margin="10" Grid.ColumnSpan="2" Content="{Binding DetailsForm, ElementName=root}"/>
+                    <StackPanel HorizontalAlignment="Right" Grid.ColumnSpan="2" Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,0,14,0" >
+                        <Button Style="{StaticResource BitmapButton}" Content="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Driving.svg'}"
+                                                Command="{Binding CalculateRouteDrivingCommand}"/>
+                        <Button Style="{StaticResource BitmapButton}" Margin="20,0,0,0" Content="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Walking.svg'}"
+                                                Command="{Binding CalculateRouteWalkingCommand}" Visibility="{Binding IsWalkingAvailable, Converter={dxmvvm:BooleanToVisibilityConverter}}"/>
+                    </StackPanel>
+                    <dx:DXImage Margin="10,0,0,0" HorizontalAlignment="Center" Grid.Row="2" Grid.Column="0" Stretch="None" Source="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MapItems/A.svg'}"/>
+                    <dxe:TextEdit Margin="10" Grid.Row="2" Grid.Column="1" EditValue="{Binding StartingAddress}" IsReadOnly="True"/>
+                    <Button Style="{StaticResource BitmapButton}" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,15,0"
+                                            Content="{dx:SvgImageSource Size='16,16', Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MapItems/RevertDirection.svg'}"
+                                            Command="{Binding SwapCommand}"/>
+                    <dx:DXImage Margin="10,0,0,0" HorizontalAlignment="Center" Grid.Row="4" Grid.Column="0" Stretch="None" Source="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/MapItems/B.svg'}"/>
+                    <dxe:TextEdit Margin="10" Grid.Row="4" Grid.Column="1" EditValue="{Binding DestinationAddress}" IsReadOnly="True"/>
+                    <ListView ItemsSource="{Binding ActiveItinerary}" SelectedItem="{Binding SelectedItineraryItem}" Margin="10" Grid.Row="5" Grid.Column="1" BorderThickness="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="35"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <ContentControl ContentTemplate="{Binding Maneuver, Converter={StaticResource ManeuverToImageConverter}}"/>
+                                    <Grid Grid.Column="1" VerticalAlignment="Center">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock FontSize="14" Visibility="{Binding Maneuver, Converter={StaticResource ManeuverToDistanceVisibilityConverter}}">
+                                            <TextBlock.Text>
+                                                <Binding Path="Distance" StringFormat="{}{0:n1} mi"/>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                        <TextBlock FontSize="14" Grid.Row="1" Text="{Binding ManeuverInstruction}" TextWrapping="Wrap"/>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</UserControl>
