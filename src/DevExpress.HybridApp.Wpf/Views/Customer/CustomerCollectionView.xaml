@@ -1,0 +1,206 @@
+<UserControl x:Class="DevExpress.DevAV.Views.CustomerCollectionView"
+        xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:dxi="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dxet="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
+        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
+        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+        xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+        xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+        xmlns:views="clr-namespace:DevExpress.DevAV.Views"
+        xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"
+        xmlns:local="clr-namespace:DevExpress.DevAV"
+        xmlns:devav="clr-namespace:DevExpress.DevAV"
+        mc:Ignorable="d"
+        d:DesignHeight="768" d:DesignWidth="1024"
+        DataContext="{dxmvvm:ViewModelSource viewmodel:CustomerCollectionViewModel}">
+
+    <UserControl.Resources>
+        <dxmvvm:ObjectToObjectConverter x:Key="ContactsVisibilityConverter">
+            <dxmvvm:MapItem Source="Contacts" Target="Visible"/>
+            <dxmvvm:MapItem Source="Stores" Target="Collapsed"/>
+        </dxmvvm:ObjectToObjectConverter>
+        <dxmvvm:ObjectToObjectConverter x:Key="StoresVisibilityConverter">
+            <dxmvvm:MapItem Source="Contacts" Target="Collapsed"/>
+            <dxmvvm:MapItem Source="Stores" Target="Visible"/>
+        </dxmvvm:ObjectToObjectConverter>
+        <local:PictureConverter x:Key="PictureConverter" />
+        <DataTemplate x:Key="CustomerEmployeeTemplate">
+            <Border Background="Transparent">
+                <Grid Margin="0,0,16,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+					<Border BorderThickness="1" BorderBrush="#FFC3C3C3">
+                    	<common:DpiResizingPanel>
+                        	<dxe:ImageEdit Height="120" Width="120" IsReadOnly="True" EditValue="{Binding Picture, Converter={StaticResource PictureConverter}}" ShowBorder="False"/>
+                    	</common:DpiResizingPanel>
+					</Border>
+                    <StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="0,5,0,0" TextBlock.FontSize="12">
+                        <TextBlock Text="{Binding FullName}" HorizontalAlignment="Center" Foreground="{StaticResource darkGrayForegroundBrush}" />
+                        <TextBlock Text="{Binding Position}" HorizontalAlignment="Center" Foreground="{StaticResource grayForegroundBrush}" />
+                        <TextBlock Text="{Binding Address.City, Converter={dxmvvm:FormatStringConverter FormatString='({0})'}}" HorizontalAlignment="Center" Foreground="{StaticResource grayForegroundBrush}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="CustomerStoreTemplate">
+            <Border Background="Transparent">
+                <Grid Margin="0,0,16,0" Width="120">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <common:DpiResizingPanel>
+                        <dxe:ImageEdit Height="120" IsReadOnly="True" EditValue="{Binding Crest.LargeImage}" ShowBorder="False" />
+                    </common:DpiResizingPanel>
+                    <StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="0,5,0,0" TextBlock.FontSize="12">
+                        <TextBlock Text="{Binding Address.City}" HorizontalAlignment="Center" Foreground="{StaticResource darkGrayForegroundBrush}" />
+                        <TextBlock Text="{Binding AddressLine}" HorizontalAlignment="Center" Foreground="{StaticResource grayForegroundBrush}" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <Style x:Key="slideViewItemStyle" TargetType="dxwui:SlideViewItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="dxwui:SlideViewItem">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="nameColumnTotalSummaryContentStyle" TargetType="ContentPresenter">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel HorizontalAlignment="Left" Margin="{StaticResource totalSummaryMargin}">
+                            <TextBlock HorizontalAlignment="Left" Foreground="{StaticResource grayForegroundBrush}" TextTrimming="CharacterEllipsis" TextAlignment="Left" IsHitTestVisible="False">
+                                <Run Text="CUSTOMER COUNT: " />
+                                <Run Text="{Binding Column.TotalSummaryText, Mode=OneWay}" Foreground="{StaticResource blackForegroundBrush}" FontWeight="Bold" />
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="monthlySalesColumnTotalSummaryContentStyle" TargetType="ContentPresenter">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel HorizontalAlignment="Right" Margin="{StaticResource totalSummaryMargin}">
+                            <TextBlock HorizontalAlignment="Right" Foreground="{StaticResource grayForegroundBrush}" TextTrimming="CharacterEllipsis" TextAlignment="Right" IsHitTestVisible="False">
+                                <Run Text="TOTAL SALES (FY2013): " />
+                                <Run Text="{Binding Column.TotalSummaryText, Mode=OneWay}" Foreground="{StaticResource blackForegroundBrush}" FontWeight="Bold" />
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <DataTemplate x:Key="{dxet:ButtonsThemeKey ResourceKey=DropDownGlyph, IsThemeIndependent=True}">
+            <Border VerticalAlignment="Stretch" Width="25" SnapsToDevicePixels="True" Background="Transparent">
+                <Path x:Name="dropDownGlyph" Stretch="Fill" Fill="#FF7F7F7F" Data="F1 M 0,0L 9,0L 5,5" Margin="0,3,0,0" Width="9" Height="5" />
+            </Border>
+            <DataTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Fill" TargetName="dropDownGlyph" Value="#FF404040" />
+                </Trigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+        <ControlTemplate TargetType="{x:Type ButtonBase}" x:Key="{dxet:ButtonsThemeKey ResourceKey=ButtonTemplate, IsThemeIndependent=True}">
+            <ContentPresenter x:Name="PART_Glyph" VerticalAlignment="Stretch" Style="{DynamicResource {dxet:ButtonsThemeKey ResourceKey=ButtonInfoContentStyle, IsThemeIndependent=True}}" />
+        </ControlTemplate>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIMessageBoxService/>
+    </dxmvvm:Interaction.Behaviors>
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="CUSTOMERS" Style="{StaticResource TextBlockTitleBlueStyle}"/>
+        <dxwui:AppBar DockPanel.Dock="Bottom" HideMode="AlwaysVisible">
+            <dxwui:AppBarButton Label="New" Command="{Binding NewCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/New.png"/>
+            <dxwui:AppBarButton Label="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedEntity}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Edit.png"/>
+            <dxwui:AppBarSeparator />
+            <dxwui:AppBarButton Label="Custom Filter" Command="{Binding CreateCustomFilterCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/CustomFilter.png"/>
+            <dxg:GridSearchControl x:Name="searchControl" View="{Binding ElementName=tableView}" Margin="23" Style="{DynamicResource {dxet:SearchControlThemeKey ThemeName=DXStyle, ResourceKey=StandaloneStyle}}"/>
+        </dxwui:AppBar>
+        <Grid Margin="42,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <dxg:GridControl Name="gridControl" ItemsSource="{Binding Entities}" SelectedItem="{Binding SelectedEntity}" ShowBorder="True" FontSize="14" ShowLoadingPanel="{Binding IsLoading}">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand PassEventArgsToCommand="True" Command="{Binding EditCommand}" EventName="MouseDoubleClick">
+                        <dxmvvm:EventToCommand.EventArgsConverter>
+                            <dx:EventArgsToDataRowConverter/>
+                        </dxmvvm:EventToCommand.EventArgsConverter>
+                    </dxmvvm:EventToCommand>
+                </dxmvvm:Interaction.Behaviors>
+                <dxg:GridControl.Columns>
+                    <dxg:GridColumn IsSmart="True" FieldName="Name" Width="135" TotalSummaryContentStyle="{StaticResource nameColumnTotalSummaryContentStyle}" />
+                    <dxg:GridColumn IsSmart="True" FieldName="HomeOfficeLine" Header="Address" Width="145" />
+                    <dxg:GridColumn IsSmart="True" FieldName="HomeOfficeCity" Header="City" Width="95" />
+                    <dxg:GridColumn IsSmart="True" FieldName="HomeOfficeState" Header="State" Width="60">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn IsSmart="True" FieldName="HomeOfficeZipCode" Header="Zipcode" FixedWidth="True" Width="100" />
+                    <dxg:GridColumn IsSmart="True" FieldName="Phone" Width="135" />
+                    <dxg:GridColumn IsSmart="True" FieldName="Fax" Width="130" />
+                    <dxg:GridColumn IsSmart="True" FieldName="MonthlySales" Header="Monthly Sales (FY2013)" AllowColumnFiltering="False" AllowSorting="False" MinWidth="30" Width="220" TotalSummaryContentStyle="{StaticResource monthlySalesColumnTotalSummaryContentStyle}">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:SparklineEditSettings>
+                                <dxe:SparklineEditSettings.StyleSettings>
+                                    <dxe:BarSparklineStyleSettings />
+                                </dxe:SparklineEditSettings.StyleSettings>
+                            </dxe:SparklineEditSettings>
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                </dxg:GridControl.Columns>
+                <dxg:GridControl.TotalSummary>
+                    <dxg:GridSummaryItem SummaryType="Count" FieldName="Name" DisplayFormat="{}{0}" />
+                    <dxg:GridSummaryItem SummaryType="Sum" FieldName="TotalSales" ShowInColumn="MonthlySales" DisplayFormat="{}{0:c}" />
+                </dxg:GridControl.TotalSummary>
+                <dxg:GridControl.View>
+                    <dxg:TableView Name="tableView" AllowEditing="False" ShowTotalSummary="True" AllowPerPixelScrolling="True" 
+                                   AutoWidth="True" ShowIndicator="False" ShowGroupPanel="False" ShowSearchPanelMode="Never" 
+                                   SearchControl="{Binding ElementName=searchControl}" NavigationStyle="Row" 
+                                   ShowFilterPanelMode="Never" AllowMoveColumnToDropArea="False">
+                        <dxg:TableView.ColumnMenuCustomizations>
+                            <dxb:RemoveBarItemAndLinkAction ItemName="{x:Static dxg:DefaultColumnMenuItemNames.GroupBox }"/>
+                        </dxg:TableView.ColumnMenuCustomizations>                                               
+                    </dxg:TableView>
+                </dxg:GridControl.View>
+            </dxg:GridControl>
+            <Grid Grid.Row="1" Margin="0,0,0,20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Height="45">
+                    <TextBlock Text="{Binding SelectedEntity.Name}" VerticalAlignment="Center" Foreground="{StaticResource blueForegroundBrush}" FontSize="17" Margin="0,1,0,0" />
+                    <dxe:ComboBoxEdit x:Name="customerDetailsComboBoxEdit" Foreground="#FF806464" FontSize="17" ShowBorder="False" HorizontalContentAlignment="Center" VerticalAlignment="Center" IsTextEditable="False" Width="115" Margin="7,0,0,0" SelectedIndex="0">
+                        <dxe:ComboBoxEditItem>Contacts</dxe:ComboBoxEditItem>
+                        <dxe:ComboBoxEditItem>Stores</dxe:ComboBoxEditItem>
+                    </dxe:ComboBoxEdit>
+                </StackPanel>
+                <dxwui:SlideView Grid.Row="1" Visibility="{Binding EditValue, ElementName=customerDetailsComboBoxEdit, Converter={StaticResource ContactsVisibilityConverter}}" ShowBackButton="False" ItemsSource="{Binding SelectedEntity.Employees}" ItemTemplate="{StaticResource CustomerEmployeeTemplate}" ItemContainerStyle="{StaticResource slideViewItemStyle}"/>
+                <dxwui:SlideView Grid.Row="2" Visibility="{Binding EditValue, ElementName=customerDetailsComboBoxEdit, Converter={StaticResource StoresVisibilityConverter}}" ShowBackButton="False" ItemsSource="{Binding SelectedEntity.CustomerStores}" ItemTemplate="{StaticResource CustomerStoreTemplate}" ItemContainerStyle="{StaticResource slideViewItemStyle}"/>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</UserControl>

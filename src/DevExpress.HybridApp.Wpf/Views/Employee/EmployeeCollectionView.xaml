@@ -1,0 +1,164 @@
+<UserControl x:Class="DevExpress.DevAV.Views.EmployeeCollectionView"
+        xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dxet="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
+        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+        xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+        xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+        xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"
+        xmlns:views="clr-namespace:DevExpress.DevAV.Views"
+        xmlns:local="clr-namespace:DevExpress.DevAV"
+        xmlns:dxnav="http://schemas.devexpress.com/winfx/2008/xaml/navigation"
+        xmlns:devav="clr-namespace:DevExpress.DevAV"
+        mc:Ignorable="d"
+        d:DesignHeight="400" d:DesignWidth="600"
+        DataContext="{dxmvvm:ViewModelSource viewmodel:EmployeeCollectionViewModel}">
+    <UserControl.Resources>
+        <dxmvvm:ObjectToObjectConverter x:Key="notNullToVisibleConverter" DefaultTarget="Visible">
+            <dxmvvm:MapItem Source="{x:Null}" Target="Collapsed"/>
+        </dxmvvm:ObjectToObjectConverter>
+        <dxmvvm:ObjectToObjectConverter x:Key="nullToVisibleConverter" DefaultTarget="Collapsed">
+            <dxmvvm:MapItem Source="{x:Null}" Target="Visible"/>
+        </dxmvvm:ObjectToObjectConverter>
+        <local:PictureConverter x:Key="PictureConverter" />
+        <DataTemplate x:Key="cardTemplate">
+            <Grid Grid.Row="1" Width="316">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="0" BorderBrush="#FFC2C4CB" BorderThickness="1" 
+                         Visibility="{Binding Path=DataContext.Picture, Converter={StaticResource notNullToVisibleConverter}}">
+                    <Image Stretch="UniformToFill" Height="150" Width="120" Source="{Binding Path=DataContext.Picture, Converter={StaticResource PictureConverter}}"/>
+                </Border>
+                <Grid x:Name="emptyImage" Grid.Column="0" Height="150" Width="120" 
+                          Visibility="{Binding Path=DataContext.Picture, Converter={StaticResource nullToVisibleConverter}}" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.25*" />
+                        <RowDefinition Height="0.5*" />
+                        <RowDefinition Height="0.25*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.25*" />
+                        <ColumnDefinition Width="0.5*" />
+                        <ColumnDefinition Width="0.25*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.ColumnSpan="3" Grid.RowSpan="3" BorderBrush="#FFC2C4CB" BorderThickness="1"/>
+                    <Path Stretch="Uniform" Fill="#FF2F51A5" Data="F1 M 546,395C 551,394 554,404 564,403C 574,402 576,384 596,390C 597.058,390.317 598,390.895 598,392L 598,411C 598,412.105 597.104,413 596,413L 546,413C 544.895,413 544,412.105 544,411L 544,398C 544,396.895 544.917,395.217 546,395 Z M 560,379C 563.866,379 567,382.134 567,386C 567,389.866 563.866,393 560,393C 556.134,393 553,389.866 553,386C 553,382.134 556.134,379 560,379 Z M 543,370L 599,370C 601.209,370 603,371.791 603,374L 603,414C 603,416.209 601.209,418 599,418L 543,418C 540.791,418 539,416.209 539,414L 539,374C 539,371.791 540.791,370 543,370 Z M 545,374C 543.895,374 543,374.896 543,376L 543,412C 543,413.105 543.895,414 545,414L 597,414C 598.104,414 599,413.105 599,412L 599,376C 599,374.896 598.104,374 597,374L 545,374 Z " UseLayoutRounding="False" Margin="3" Grid.Column="1" Grid.Row="1" />
+                </Grid>
+                <Grid Margin="12,10,12,0" Grid.Column="1" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel VerticalAlignment="Top">
+                        <TextBlock Text="ADDRESS:" Foreground="#FF808080" FontSize="13"/>
+                        <TextBlock Text="{Binding Path=DataContext.Address.Line}" />
+                        <TextBlock Text="{Binding Path=DataContext.Address.CityLine}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" VerticalAlignment="Top">
+                        <TextBlock Text="PHONE:" Foreground="#FF808080" FontSize="13"/>
+                        <TextBlock Text="{Binding Path=DataContext.MobilePhone}" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" VerticalAlignment="Top">
+                        <TextBlock Text="EMAIL:" Foreground="#FF808080" FontSize="13"/>
+                        <TextBlock Text="{Binding Path=DataContext.Email}" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIMessageBoxService/>
+        <dx:WindowedDocumentUIService WindowType="dxwui:WinUIDialogWindow" x:Name="EditNoteDocumentManagerService" YieldToParent="True">
+            <dx:WindowedDocumentUIService.WindowStyle>
+                <Style TargetType="dxwui:WinUIDialogWindow">
+                    <Setter Property="ShowTitle" Value="False" />
+                </Style>
+            </dx:WindowedDocumentUIService.WindowStyle>
+        </dx:WindowedDocumentUIService>
+    </dxmvvm:Interaction.Behaviors>
+    <Grid>
+        <DockPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <TextBlock Text="EMPLOYEE" Style="{StaticResource TextBlockTitleGrayStyle}"/>
+                <TextBlock Text="Status" Style="{StaticResource TextBlockSubtitleBlueStyle}"/>
+            </StackPanel>
+            <dxwui:AppBar DockPanel.Dock="Bottom" HideMode="AlwaysVisible">
+                <dxwui:AppBarButton Label="Ascending" Command="{Binding ElementName=collectionViewBehavior, Path=SortAscendingCommand}" CommandParameter="LastName" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/SortAZ.png"/>
+                <dxwui:AppBarButton Label="Descending" Command="{Binding ElementName=collectionViewBehavior, Path=SortDescendingCommand}" CommandParameter="LastName" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/SortZA.png"/>
+                <dxwui:AppBarSeparator/>
+                <dxwui:AppBarButton Label="New" Command="{Binding NewCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/New.png"/>
+                <dxwui:AppBarButton Label="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedEntity}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Edit.png"/>
+                <dxwui:AppBarSeparator/>
+                <dxwui:AppBarButton Label="Reports" Name="reportsAppBarButton" Command="{Binding ElementName=printFalyout, Path=OpenCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Reports.png"/>
+                <dxwui:AppBarSeparator/>
+                <dxwui:AppBarButton Label="Mail Merge" Command="{Binding ShowMailMergeCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/MailMerge.png"/>
+                <dxwui:AppBarButton Label="Task" Command="{Binding AddTaskCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Task.png"/>
+                <dxwui:AppBarButton Label="Note" Command="{Binding AddNoteCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Note.png"/>
+                <dxg:GridSearchControl x:Name="searchControl" View="{Binding ElementName=cardView}" Margin="23" Style="{DynamicResource {dxet:SearchControlThemeKey ThemeName=DXStyle, ResourceKey=StandaloneStyle}}"/>
+            </dxwui:AppBar>
+            <views:StaticFiltersPanel DockPanel.Dock="Left"/>
+            <dxg:GridControl Name="gridControl" Margin="0,0,42,0" ShowBorder="False" SelectedItem="{Binding SelectedEntity}" ItemsSource="{Binding Entities}">
+                <dxmvvm:Interaction.Behaviors>
+                    <devav:CollectionViewBehavior x:Name="collectionViewBehavior" />
+                    <dxmvvm:EventToCommand PassEventArgsToCommand="True" Command="{Binding EditCommand}" EventName="MouseDoubleClick">
+                        <dxmvvm:EventToCommand.EventArgsConverter>
+                            <dx:EventArgsToDataRowConverter/>
+                        </dxmvvm:EventToCommand.EventArgsConverter>
+                    </dxmvvm:EventToCommand>
+                </dxmvvm:Interaction.Behaviors>
+                <dxg:GridControl.Columns>
+                    <dxg:GridColumn FieldName="LastName"/>
+                    <dxg:GridColumn FieldName="FirstName"/>
+                    <dxg:GridColumn FieldName="FullName"/>
+                </dxg:GridControl.Columns>
+                <dxg:GridControl.View>
+                    <dxg:CardView Name="cardView" IsColumnChooserVisible="False" AutoScrollOnSorting="False" SeparatorThickness="0"                                  
+                              CardLayout="Columns" SearchControl="{Binding ElementName=searchControl}" ShowCardExpandButton="False" 
+                              ShowColumnHeaders="False" ShowFilterPanelMode="Never" ShowGroupedColumns="False" ShowGroupPanel="False" 
+                              SearchPanelHighlightResults="False" ShowSearchPanelMode="Never"
+                              CardHeaderBinding="{Binding Path=Data.FullName, RelativeSource={RelativeSource Self}}" 
+                              CardTemplate="{StaticResource cardTemplate}"/>
+                </dxg:GridControl.View>
+            </dxg:GridControl>
+        </DockPanel>
+        <dxe:FlyoutControl PlacementTarget="{Binding ElementName=reportsAppBarButton}" IsOpen="False" HorizontalAlignment="Center" Name="printFalyout">
+            <dxe:FlyoutControl.Settings>
+                <dxe:FlyoutSettings ShowIndicator="True" IndicatorTarget="{Binding ElementName=reportsAppBarButton}" Placement="Top" IndicatorHorizontalAlignment="Center"/>
+            </dxe:FlyoutControl.Settings>
+            <StackPanel>
+                <Button Command="{Binding ShowPrintCommand}" CommandParameter="Profile" HorizontalContentAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/PrintItems/Print.png"/>
+                        <TextBlock Text="Employee Profile" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ShowPrintCommand}" CommandParameter="Directory" HorizontalContentAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/PrintItems/Print.png"/>
+                        <TextBlock Text="Employee Directory" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding ShowPrintCommand}" CommandParameter="TaskList" HorizontalContentAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/PrintItems/Print.png"/>
+                        <TextBlock Text="Employee List" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </dxe:FlyoutControl>
+    </Grid>
+</UserControl>
+
+
+

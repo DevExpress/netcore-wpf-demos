@@ -1,0 +1,137 @@
+<UserControl x:Class="DevExpress.DevAV.Views.ProductView"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+xmlns:dxpdf="http://schemas.devexpress.com/winfx/2008/xaml/pdf"
+xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"
+xmlns:system="clr-namespace:System;assembly=mscorlib"
+xmlns:devav="clr-namespace:DevExpress.DevAV;assembly=DevExpress.DevAV.v19.1.Data"
+xmlns:dxwuit="http://schemas.devexpress.com/winfx/2008/xaml/windowsui/themekeys"
+xmlns:dxwuii="http://schemas.devexpress.com/winfx/2008/xaml/windowsui/internal"
+mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="1000"
+DataContext="{dxmvvm:ViewModelSource viewmodel:ProductViewModel}">
+    <UserControl.Resources>
+        <ControlTemplate x:Key="{dxwuit:WindowsUIElementsThemeKey ResourceKey=PageAdornerControlTemplate, IsThemeIndependent=True}" TargetType="dxwui:PageAdornerControl">
+            <Grid Margin="0,20,59,55">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <dxwuii:NavigationHeaderControl Margin="14,0,0,0" x:Name="PART_NavigationHeader" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}" BackCommand="{TemplateBinding BackCommand}" ShowBackButton="{TemplateBinding ShowBackButton}" />
+                <ContentPresenter Grid.Row="1" />
+            </Grid>
+        </ControlTemplate>
+        <dxmvvm:ObjectToObjectConverter x:Key="objectToVisibilityConverter" DefaultTarget="Collapsed">
+            <dxmvvm:MapItem Source="{x:Null}" Target="Visible"/>
+        </dxmvvm:ObjectToObjectConverter>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIMessageBoxService/>
+    </dxmvvm:Interaction.Behaviors>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <dxwui:PageAdornerControl Header="{Binding Entity.Name}" FontSize="13" Foreground="#FF646464" Width="475">
+            <dxwui:PageAdornerControl.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="5,-7,0,0">
+                        <TextBlock Text="PRODUCT" FontSize="18" Foreground="#FF806464"/>
+                        <TextBlock Text="{Binding}" Margin="7,0,0,0" FontSize="18" Foreground="{StaticResource blueForegroundBrush}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </dxwui:PageAdornerControl.HeaderTemplate>
+            <dxlc:LayoutControl Orientation="Vertical" ItemSpace="5" Margin="65,-4,-35,-25" Padding="2">
+                <dxlc:LayoutControl.Resources>
+                    <Style TargetType="dxlc:LayoutItem">
+                        <Setter Property="ElementSpace" Value="55"/>
+                    </Style>
+                </dxlc:LayoutControl.Resources>
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand Event="{x:Static Binding.SourceUpdatedEvent}" Command="{Binding UpdateCommand}" />
+                </dxmvvm:Interaction.Behaviors>                
+                <dxlc:LayoutItem Label="NAME">
+                    <dxe:TextEdit NullText="Enter Product Name" EditValue="{Binding Entity.Name, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" Margin="0,6,0,0" AcceptsReturn="True" FontSize="{StaticResource editorFontSize}"  Height="{StaticResource editorHeight}" />
+                </dxlc:LayoutItem>                                               
+                <dxlc:LayoutItem Label="PRODUCTION START DATE">
+                    <dxe:DateEdit EditValue="{Binding Entity.ProductionStart, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" AllowNullInput="False" Height="{StaticResource editorHeight}" FontSize="{StaticResource editorFontSize}" Foreground="{StaticResource editorFontBrush}">
+                        <dxe:DateEdit.StyleSettings>
+                            <dxe:DateEditPickerStyleSettings />
+                        </dxe:DateEdit.StyleSettings>
+                    </dxe:DateEdit>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="AVAILABLE FOR SALE">
+                    <dxe:CheckEdit EditValue="{Binding Entity.Available, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" Height="{StaticResource editorHeight}" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="SUPPORT ENGINEER">
+                    <dxe:ComboBoxEdit EditValue="{Binding Entity.SupportId, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" ValueMember="Id" ItemsSource="{Binding LookUpEmployees.Entities}" AllowUpdateTwoWayBoundPropertiesOnSynchronization="False" DisplayMember="FullName" AutoComplete="True" Height="{StaticResource editorHeight}"  FontSize="{StaticResource editorFontSize}" Foreground="{StaticResource editorFontBrush}" ImmediatePopup="True" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="PRODUCT ENGINEER">
+                    <dxe:ComboBoxEdit EditValue="{Binding Entity.EngineerId, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" ValueMember="Id" ItemsSource="{Binding LookUpEmployees.Entities}" AllowUpdateTwoWayBoundPropertiesOnSynchronization="False" DisplayMember="FullName" AutoComplete="True" Height="{StaticResource editorHeight}"  FontSize="{StaticResource editorFontSize}" Foreground="{StaticResource editorFontBrush}" ImmediatePopup="True" />
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="CATEGORY">
+                    <dxe:ComboBoxEdit EditValue="{Binding Entity.Category, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" IsTextEditable="False" Height="{StaticResource editorHeight}" FontSize="{StaticResource editorFontSize}" Foreground="{StaticResource editorFontBrush}">
+                        <dxe:ComboBoxEdit.ItemsSource>
+                            <dxe:EnumItemsSource EnumType="devav:ProductCategory" />
+                        </dxe:ComboBoxEdit.ItemsSource>
+                    </dxe:ComboBoxEdit>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="CURRENT INVENTORY">
+                    <dxe:SpinEdit EditValue="{Binding Entity.CurrentInventory, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" MaskType="Numeric" Mask="d" MaskUseAsDisplayFormat="True" HorizontalContentAlignment="Right" EditValueType="system:Int32" AllowNullInput="True" AllowDefaultButton="False" Height="{StaticResource editorHeight}"  FontSize="{StaticResource editorFontSize}" Foreground="{StaticResource editorFontBrush}">
+                        <dxe:SpinButtonInfo SpinStyle="Horizontal" IsDefaultButton="True" />
+                    </dxe:SpinEdit>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="BACKORDERS">
+                    <dxe:SpinEdit EditValue="{Binding Entity.Backorder, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" MaskType="Numeric" Mask="d" MaskUseAsDisplayFormat="True" HorizontalContentAlignment="Right" EditValueType="system:Int32" AllowDefaultButton="False" Height="{StaticResource editorHeight}"  FontSize="{StaticResource editorFontSize}" Foreground="{StaticResource editorFontBrush}">
+                        <dxe:SpinButtonInfo SpinStyle="Horizontal" IsDefaultButton="True" />
+                    </dxe:SpinEdit>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="COST">
+                    <dxe:TextEdit EditValue="{Binding Entity.Cost, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" MaskType="Numeric" Mask="c0" MaskUseAsDisplayFormat="True" HorizontalContentAlignment="Right" Height="{StaticResource editorHeight}"  FontSize="{StaticResource editorFontSize}" Foreground="{StaticResource editorFontBrush}"/>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="SALE PRICE">
+                    <dxe:TextEdit EditValue="{Binding Entity.SalePrice, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" MaskType="Numeric" Mask="c0" MaskUseAsDisplayFormat="True" HorizontalContentAlignment="Right" Height="{StaticResource editorHeight}"  FontSize="{StaticResource editorFontSize}" Foreground="{StaticResource editorFontBrush}"/>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="RETAIL PRICE">
+                    <dxe:TextEdit EditValue="{Binding Entity.RetailPrice, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" MaskType="Numeric" Mask="c0" MaskUseAsDisplayFormat="True" HorizontalContentAlignment="Right" Height="{StaticResource editorHeight}"  FontSize="{StaticResource editorFontSize}" Foreground="{StaticResource editorFontBrush}"/>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutGroup Orientation="Vertical" Margin="0,15,0,0" MinHeight="300">
+                    <TextBlock Text="DESCRIPTION" VerticalAlignment="Top"/>
+                    <dxe:TextEdit EditValue="{Binding Entity.Description, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, ValidatesOnDataErrors=True}" Margin="0,6,0,0" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"  FontSize="{StaticResource editorFontSize}" Foreground="{StaticResource editorFontBrush}"/>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutControl>
+        </dxwui:PageAdornerControl>
+        <dxpdf:PdfViewerControl Grid.Column="1" Background="#FFE0E0E0" DocumentSource="{Binding PdfDocument}" ShowStartScreen="False" ZoomFactor="{Binding ZoomFactor, Mode=TwoWay}" CommandBarStyle="None" CursorMode="SelectTool" ManipulationBoundaryFeedback="PdfViewerControl_ManipulationBoundaryFeedback">
+            <dxpdf:PdfViewerControl.ThumbnailsViewerSettings>
+                <dxpdf:PdfThumbnailsViewerSettings HideThumbnailsViewer="True"/>
+            </dxpdf:PdfViewerControl.ThumbnailsViewerSettings>
+            <dxpdf:PdfViewerControl.AttachmentsViewerSettings>
+                <dxpdf:PdfAttachmentsViewerSettings HideAttachmentsViewer="True"/>
+            </dxpdf:PdfViewerControl.AttachmentsViewerSettings>
+        </dxpdf:PdfViewerControl>
+        <TextBlock Grid.Column="1" Foreground="#FF191919" FontWeight="Bold" FontSize="12" Text="The document does not contain any pages." HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding PdfDocument, Converter={StaticResource objectToVisibilityConverter}}" IsHitTestVisible="False" />
+        <dxwui:AppBar Grid.Row="1" Grid.ColumnSpan="2" HideMode="AlwaysVisible">
+            <dxwui:AppBarButton Label="Save" Command="{Binding SaveAndCloseCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Save.png"/>
+            <dxwui:AppBarButton Label="Cancel" Command="{Binding CloseCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Cancel.png"/>
+            <dxwui:AppBarSeparator/>
+            <dxwui:AppBarButton Label="Zoom In" Command="{Binding ZoomInCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/ZoomIn.png"/>
+            <dxwui:AppBarButton Label="Zoom Out" Command="{Binding ZoomOutCommand}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/ZoomOut.png"/>
+        </dxwui:AppBar>
+    </Grid>
+</UserControl>

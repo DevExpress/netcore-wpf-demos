@@ -1,0 +1,195 @@
+<UserControl x:Class="DevExpress.DevAV.Views.DashboardView"
+        xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dxet="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
+        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
+        xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+        xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+        xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+        xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"
+        mc:Ignorable="d"
+        d:DesignHeight="400" d:DesignWidth="600"
+        DataContext="{dxmvvm:ViewModelSource viewmodel:DashboardViewModel}">
+
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIMessageBoxService/>
+    </dxmvvm:Interaction.Behaviors>
+    <Grid>
+        <dxdo:DockLayoutManager Margin="15" Background="White">
+            <dxdo:DockLayoutManager.LayoutRoot>
+                <dxdo:LayoutGroup Orientation="Horizontal" VerticalAlignment="Stretch">
+                    <dxdo:LayoutGroup Orientation="Vertical" ItemWidth="2*">
+                        <dxdo:LayoutPanel ItemHeight="7*" AllowSizing="False" Background="WhiteSmoke" ShowControlBox="False" ShowCaption="False">
+                            <Grid VerticalAlignment="Stretch">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="55"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="SALES" Margin="15,0,0,0" VerticalAlignment="Center"/>
+                                <dxg:GridSearchControl Grid.Row="0" x:Name="searchControl" Width="270" Height="35" ShowMRUButton="False" HorizontalAlignment="Right"
+                                                       Margin="0,0,10,0" VerticalAlignment="Center"
+                                                       Style="{DynamicResource {dxet:SearchControlThemeKey ThemeName=DXStyle, ResourceKey=StandaloneStyle}}"/>
+                                <dxg:GridControl Grid.Row="1" ItemsSource="{Binding DashboardOrders}" ShowBorder="True">
+                                    <dxg:GridControl.View>
+                                        <dxg:TableView AllowEditing="False" ShowFixedTotalSummary="False" AllowPerPixelScrolling="True"
+                                                       AutoWidth="True" VerticalAlignment="Top" AllowGrouping="False"
+                                                       ShowGroupPanel="False" GroupSummaryDisplayMode="AlignByColumns"
+                                                       ShowFilterPanelMode="Never" AllowMoveColumnToDropArea="False"
+                                                       VerticalScrollbarVisibility="Visible" HorizontalScrollbarVisibility="Hidden" ShowIndicator="False"
+                                                       ShowTotalSummary="False" ShowSearchPanelMode="Never" SearchControl="{Binding ElementName=searchControl}">
+                                            <dxg:TableView.ColumnMenuCustomizations>
+                                                <dxb:RemoveBarItemAndLinkAction ItemName="{x:Static dxg:DefaultColumnMenuItemNames.GroupBox }"/>
+                                                <dxb:RemoveBarItemAndLinkAction ItemName="{x:Static dxg:DefaultColumnMenuItemNames.SearchPanel }"/>                                               
+                                            </dxg:TableView.ColumnMenuCustomizations>
+                                        </dxg:TableView>
+                                    </dxg:GridControl.View>
+                                    <dxg:GridControl.Columns>
+                                        <dxg:GridColumn IsSmart="True" FieldName="InvoiceNumber" Header="Invoice #" VisibleIndex="0" Width="60" />
+                                        <dxg:GridColumn FieldName="OrderDate" Header="Order Date"  VisibleIndex="1" Width="50"/>
+                                        <dxg:GridColumn FieldName="Company" VisibleIndex="2" Width="144"/>
+                                        <dxg:GridColumn FieldName="Store" VisibleIndex="3" Width="144"/>
+                                        <dxg:GridColumn FieldName="TotalAmount" Header="Total Amount" VisibleIndex="4" Width="60" >
+                                            <dxg:GridColumn.EditSettings>
+                                                <dxe:TextEditSettings DisplayFormat="c2"/>
+                                            </dxg:GridColumn.EditSettings>
+                                        </dxg:GridColumn>
+                                    </dxg:GridControl.Columns>
+                                </dxg:GridControl>
+                            </Grid>
+                        </dxdo:LayoutPanel>
+                        <dxdo:LayoutGroup Orientation="Horizontal" ItemHeight="4*">
+                            <dxdo:LayoutPanel VerticalAlignment="Top" AllowSizing="False" Background="WhiteSmoke" ShowControlBox="False" ShowCaption="False" ItemWidth="6*">
+                                <Grid VerticalAlignment="Stretch">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="55"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="REVENUES" Margin="15,0,0,0" VerticalAlignment="Center"/>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                        <ToggleButton Content="Today" IsChecked="{Binding RevenuePeriodSelector[2]}" Margin="5,0,5,0" VerticalAlignment="Center" />
+                                        <ToggleButton Content="This Month" IsChecked="{Binding RevenuePeriodSelector[1]}" Margin="5,0,5,0" VerticalAlignment="Center" />
+                                        <ToggleButton Content="YTD" IsChecked="{Binding RevenuePeriodSelector[0]}" Margin="5,0,5,0" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <dxc:ChartControl Grid.Row="1" Grid.ColumnSpan="2" Name="chart2" BorderThickness="0" Padding="5"
+                                                      Palette="{StaticResource chartsPalette}" AutoLayout="False" >
+                                        <dxc:ChartControl.Diagram>
+                                            <dxc:SimpleDiagram2D>
+                                                <dxc:PieSeries2D DataSource="{Binding SalesSummarySelectedItem, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                     ArgumentDataMember="Category" ValueDataMember="Sales"
+                                                                     LegendTextPattern="{}{A} {V:c2}"  HoleRadiusPercent="57">
+                                                    <dxc:PieSeries2D.Model>
+                                                        <dxc:BorderlessFlatPie2DModel/>
+                                                    </dxc:PieSeries2D.Model>
+                                                </dxc:PieSeries2D>
+                                            </dxc:SimpleDiagram2D>
+                                        </dxc:ChartControl.Diagram>
+                                        <dxc:ChartControl.Legend >
+                                            <dxc:Legend Orientation="Vertical" HorizontalPosition="RightOutside" VerticalPosition="Center" BorderThickness="0" Padding="0" Margin="0,0,10,0"/>
+                                        </dxc:ChartControl.Legend>
+                                    </dxc:ChartControl>
+                                </Grid>
+                            </dxdo:LayoutPanel>
+                            <dxdo:LayoutPanel VerticalAlignment="Top" AllowSizing="False" Background="WhiteSmoke" ShowControlBox="False" ShowCaption="False" ItemWidth="7*">
+                                <Grid VerticalAlignment="Stretch">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="55"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="6*"/>
+                                        <ColumnDefinition Width="8*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="COST OF GOODS SOLD" Margin="15,0,0,0" VerticalAlignment="Center"/>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                        <ToggleButton Content="Today" IsChecked="{Binding GoodSoldPeriodSelector[2]}" Margin="5,0,5,0" VerticalAlignment="Center" />
+                                        <ToggleButton Content="This Month" IsChecked="{Binding GoodSoldPeriodSelector[1]}" Margin="5,0,5,0" VerticalAlignment="Center" />
+                                        <ToggleButton Content="YTD" IsChecked="{Binding GoodSoldPeriodSelector[0]}" Margin="5,0,5,0" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <dxc:ChartControl Grid.Row="1" Grid.ColumnSpan="2"  Name="chart3" ToolTipEnabled="True" BorderThickness="0"
+                                                      Palette="{StaticResource chartsPalette}" Padding="5" SizeChanged="goodsSold_SizeChanged" AutoLayout="False">
+                                        <dxc:ChartControl.Diagram>
+                                            <dxc:XYDiagram2D Rotated="True">
+                                                <dxc:XYDiagram2D.AxisX>
+                                                    <dxc:AxisX2D TickmarksVisible="False" TickmarksMinorVisible="False">
+                                                        <dxc:AxisX2D.Label>
+                                                            <dxc:AxisLabel Visible="False"/>
+                                                        </dxc:AxisX2D.Label>
+                                                    </dxc:AxisX2D>
+                                                </dxc:XYDiagram2D.AxisX>
+                                                <dxc:XYDiagram2D.AxisY>
+                                                    <dxc:AxisY2D>
+                                                        <dxc:AxisY2D.Label>
+                                                            <dxc:AxisLabel TextPattern="{} {V:c0}"/>
+                                                        </dxc:AxisY2D.Label>
+                                                    </dxc:AxisY2D>
+                                                </dxc:XYDiagram2D.AxisY>
+                                                <dxc:XYDiagram2D.Series>
+                                                    <dxc:BarSideBySideSeries2D DataSource="{Binding CostSelectedItem, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                       ColorEach="True" BarWidth="0.8" ArgumentDataMember="Category"
+                                                                       ValueDataMember="Cost" LegendTextPattern="{}{A}"
+                                                                       ToolTipEnabled="False" CrosshairLabelPattern="{}{A}: {V:c0}">
+                                                        <dxc:BarSideBySideSeries2D.Model>
+                                                            <dxc:BorderlessSimpleBar2DModel/>
+                                                        </dxc:BarSideBySideSeries2D.Model>
+                                                    </dxc:BarSideBySideSeries2D>
+                                                </dxc:XYDiagram2D.Series>
+                                            </dxc:XYDiagram2D>
+                                        </dxc:ChartControl.Diagram>
+                                        <dxc:ChartControl.Legend>                                        
+                                            <dxc:Legend VerticalAlignment="Top" VerticalContentAlignment="Top" Padding="0" Orientation="Horizontal" 
+                                                        HorizontalPosition="Center" VerticalPosition="BottomOutside" BorderThickness="0"/>
+                                        </dxc:ChartControl.Legend>
+                                    </dxc:ChartControl>
+                                </Grid>
+                            </dxdo:LayoutPanel>
+                        </dxdo:LayoutGroup>
+                    </dxdo:LayoutGroup>
+                    <dxdo:LayoutPanel VerticalAlignment="Top" AllowSizing="False" Background="WhiteSmoke" ShowControlBox="False" ShowCaption="False">
+                        <Grid VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="55"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="OPPORTUNITIES" Margin="15,0,0,0" VerticalAlignment="Center"/>
+                            <dxc:ChartControl Grid.Row="1" BorderThickness="0" Palette="{StaticResource chartsPalette}" Padding="5">
+                                <dxc:ChartControl.Diagram>
+                                    <dxc:SimpleDiagram2D>
+                                        <dxc:SimpleDiagram2D.Series>
+                                            <dxc:FunnelSeries2D DataSource="{Binding SummaryOpportunities, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                ArgumentDataMember="StageName" ValueDataMember="Summary" LegendTextPattern="{}{A}"
+                                                                ToolTipPointPattern="{}{A}: ({VP:P0})" ToolTipEnabled="True" LabelsVisibility="True">
+                                                <dxc:FunnelSeries2D.Label>
+                                                    <dxc:SeriesLabel dxc:FunnelSeries2D.LabelPosition="Center"
+                                                                     TextPattern="{}{V:C0}"/>
+                                                </dxc:FunnelSeries2D.Label>
+                                            </dxc:FunnelSeries2D>
+                                        </dxc:SimpleDiagram2D.Series>
+                                    </dxc:SimpleDiagram2D>
+                                </dxc:ChartControl.Diagram>
+                                <dxc:ChartControl.Legend >
+                                    <dxc:Legend Padding="0" Margin="0,10,0,0"  Orientation="Horizontal" HorizontalPosition="Center" VerticalPosition="BottomOutside" BorderThickness="0"/>
+                                </dxc:ChartControl.Legend>
+                            </dxc:ChartControl>
+                        </Grid>
+                    </dxdo:LayoutPanel>
+                </dxdo:LayoutGroup>
+            </dxdo:DockLayoutManager.LayoutRoot>
+        </dxdo:DockLayoutManager>
+    </Grid>
+</UserControl>
+
+
+

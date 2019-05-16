@@ -1,0 +1,161 @@
+<UserControl x:Class="DevExpress.DevAV.Views.DevAVDbView"
+        xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns:dxn="http://schemas.devexpress.com/winfx/2008/xaml/navbar"
+        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+        xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
+        xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+        xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:dxp="http://schemas.devexpress.com/winfx/2008/xaml/printing"
+        xmlns:dxwuin="http://schemas.devexpress.com/winfx/2008/xaml/windowsui/navigation"
+        xmlns:dxnav="http://schemas.devexpress.com/winfx/2008/xaml/navigation"
+        xmlns:dxnavi="http://schemas.devexpress.com/winfx/2008/xaml/navigation/internal"
+        xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+        xmlns:local="clr-namespace:DevExpress.DevAV" 
+        xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"
+        xmlns:pfdata="clr-namespace:System.Windows.Data;assembly=PresentationFramework"
+        mc:Ignorable="d"
+        d:DesignHeight="617" d:DesignWidth="1358"
+        DataContext="{dxmvvm:ViewModelSource viewmodel:DevAVDbViewModel}" dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap">
+
+    <UserControl.Resources>
+        <dxmvvm:ObjectToObjectConverter x:Key="TileColorConverter" DefaultTarget="#FF404040">
+            <dxmvvm:MapItem Source="Dashboard" Target="#FF00879C" />
+            <dxmvvm:MapItem Source="Tasks" Target="#FF404040" />
+            <dxmvvm:MapItem Source="Employees" Target="#FFCC6D00" />
+            <dxmvvm:MapItem Source="Products" Target="#FF0073C4" />
+            <dxmvvm:MapItem Source="Customers" Target="#FF404040" />
+            <dxmvvm:MapItem Source="Sales" Target="#FF3E7038" />
+            <dxmvvm:MapItem Source="Opportunities" Target="#FF404040" />
+        </dxmvvm:ObjectToObjectConverter>
+        <dxmvvm:ObjectToObjectConverter x:Key="NavPaneVisibilityConverter" DefaultTarget="Collapsed">
+            <dxmvvm:MapItem Source="True" Target="Visible"/>
+        </dxmvvm:ObjectToObjectConverter>
+        <dxmvvm:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <DataTemplate x:Key="waitIndicator">
+            <dx:WaitIndicator DeferedVisibility="True"/>
+        </DataTemplate>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:EventToCommand EventName="Initialized" Command="{Binding OnLoadedCommand}" CommandParameter="{Binding DefaultModule}"/>
+        <dxmvvm:CurrentWindowService ClosingCommand="{Binding OnClosingCommand}" />
+        <!--<dx:DXSplashScreenService x:Name="SplashScreenService" SplashScreenType="local:SplashScreenWindow" ShowSplashScreenOnLoading="True" FadeOutDuration="0:0:1.0"/>-->
+        <dxmvvm:DispatcherService x:Name="FinishModuleChangingDispatcherService" Delay="00:00:2.20" DispatcherPriority="ApplicationIdle" />
+        <dxwui:WinUIDialogService x:Name="FilterDialogService" />
+    </dxmvvm:Interaction.Behaviors>
+    <dx:BackgroundPanel>
+        <DockPanel>
+            <common:DpiResizingPanel DockPanel.Dock="Top" Visibility="{Binding IsTablet, Converter={StaticResource NavPaneVisibilityConverter}}">
+                <dxnav:TileNavPane DockPanel.Dock="Top">
+                    <dxnav:TileNavPane.NavButtons>
+                        <dxnav:NavButton Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Window/navButtonHome.Glyph.png" Padding="12,4" AllowGlyphTheming="True" Command="{Binding LinksViewModel.GettingStartedCommand}" FontSize="60"/>
+                        <dxnav:NavButton Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Window/navButtonHelp.Glyph.png" AllowGlyphTheming="True" HorizontalAlignment="Right" Padding="12,4" Command="{Binding LinksViewModel.AboutCommand}"/>
+                        <dxnav:NavButton Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Window/navButtonClose.Glyph.png" AllowGlyphTheming="True" HorizontalAlignment="Right" Click="OnNavButtonCloseClick" Padding="12,4" />
+                    </dxnav:TileNavPane.NavButtons>
+                </dxnav:TileNavPane>
+            </common:DpiResizingPanel>
+            <common:DpiResizingPanel DockPanel.Dock="Top">
+                <common:DpiResizingPanel.Resources>
+                    <CollectionViewSource x:Key="ItemsSource" Source="{Binding Modules}" >
+                        <CollectionViewSource.GroupDescriptions>
+                            <pfdata:PropertyGroupDescription PropertyName="ModuleGroup" />
+                        </CollectionViewSource.GroupDescriptions>
+                    </CollectionViewSource>
+                </common:DpiResizingPanel.Resources>
+                <dxnav:TileBar ItemsSource="{Binding Source={StaticResource ItemsSource}}" Background="#FFE8E8E8" Padding="0,0,0,27" ItemSpacing="5" DockPanel.Dock="Top" ShowGroupHeaders="False" SelectedItem="{Binding SelectedModule, Mode=TwoWay}">
+                    <dxmvvm:Interaction.Behaviors>
+                        <common:TileBarFocusBehavior/>
+                    </dxmvvm:Interaction.Behaviors>
+                    <dxnav:TileBar.ItemContainerStyle>
+                        <Style TargetType="dxnav:TileBarItem">
+                            <Setter Property="ShowFlyoutButton" Value="{Binding FilterTreeViewModel.CustomFilters.Count, Converter={dxmvvm:CriteriaOperatorConverter Expression=This&gt;0}}"/>
+                            <Setter Property="Content" Value="{Binding ModuleTitle}" />
+                            <Setter Property="TileGlyph" Value="{Binding ImageSource}" />
+                            <Setter Property="Background" Value="{Binding ModuleTitle, Converter={StaticResource TileColorConverter}}" />
+                            <Setter Property="FlyoutContent" Value="{Binding}"/>
+                            <Setter Property="Width" Value="166" />
+                            <Setter Property="FlyoutContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <dxnav:TileBar x:Name="customTileBar" ItemsSource="{Binding FilterTreeViewModel.CustomFilters}" Tag="{Binding FilterTreeViewModel.NavigateCommand}">
+                                            <dxmvvm:Interaction.Behaviors>
+                                                <local:FilterUnselectionBehavior SelectedFilter="{Binding FilterTreeViewModel.SelectedItem, Mode=TwoWay}"/>
+                                            </dxmvvm:Interaction.Behaviors>
+                                            <dxnav:TileBar.ItemContainerStyle>
+                                                <Style TargetType="dxnav:TileBarItem">
+                                                    <Setter Property="Height" Value="40"/>
+                                                    <Setter Property="Content" Value="{Binding Name}"/>
+                                                    <Setter Property="VerticalContentAlignment" Value="Top"/>
+                                                    <Setter Property="Background" Value="White"/>
+                                                    <Setter Property="Foreground" Value="Black"/>
+                                                    <Setter Property="FontSize" Value="12"/>
+                                                    <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
+                                                        <Setter.Value>
+                                                            <DataTemplate>
+                                                                <ItemsControl>
+                                                                    <dxmvvm:EventToCommand EventName="MouseDown" Command="{Binding ElementName=customTileBar, Path=Tag}"/>
+                                                                    <local:FilterItemClickBehavior/>
+                                                                </ItemsControl>
+                                                            </DataTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </dxnav:TileBar.ItemContainerStyle>
+                                            <dxnav:TileBar.GroupHeaderStyle>
+                                                <Style TargetType="dxnavi:TileBarGroupHeader">
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                </Style>
+                                            </dxnav:TileBar.GroupHeaderStyle>
+                                        </dxnav:TileBar>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </dxnav:TileBar.ItemContainerStyle>
+                    <dxnav:TileBar.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name, Converter={dxmvvm:CriteriaOperatorConverter Expression=Upper(This)}}" Margin="9,28,0,5" />
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                            <GroupStyle.Panel>
+                                <ItemsPanelTemplate>
+                                    <dxnavi:TileBarItemsPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </GroupStyle.Panel>
+                        </GroupStyle>
+                    </dxnav:TileBar.GroupStyle>
+                </dxnav:TileBar>
+            </common:DpiResizingPanel>
+            <dxwui:NavigationFrame AnimationType="SlideHorizontal">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxwuin:FrameDocumentUIService ShowSplashScreen="True" x:Name="FrameDocumentUIService">
+                        <dxwuin:FrameDocumentUIService.SplashScreenService>
+                            <dx:DXSplashScreenService x:Name="WaitScreenService" ViewTemplate="{StaticResource waitIndicator}" SplashScreenStartupLocation="CenterOwner" />
+                        </dxwuin:FrameDocumentUIService.SplashScreenService>
+                        <dxwuin:FrameDocumentUIService.PageAdornerControlStyle>
+                            <Style TargetType="dxwui:PageAdornerControl">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="dxwui:PageAdornerControl">
+                                            <ContentPresenter />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </dxwuin:FrameDocumentUIService.PageAdornerControlStyle>
+                    </dxwuin:FrameDocumentUIService>
+                </dxmvvm:Interaction.Behaviors>
+            </dxwui:NavigationFrame>
+        </DockPanel>
+    </dx:BackgroundPanel>
+</UserControl>
+

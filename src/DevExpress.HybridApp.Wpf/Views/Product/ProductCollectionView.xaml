@@ -1,0 +1,132 @@
+<UserControl x:Class="DevExpress.DevAV.Views.ProductCollectionView"
+        xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:dxet="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
+        xmlns:dxn="clr-namespace:DevExpress.Xpf.Core.Native;assembly=DevExpress.Xpf.Core.v19.1"
+        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
+        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+        xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+        xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+        xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+        xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+        xmlns:common="clr-namespace:DevExpress.DevAV.Common.View"
+        xmlns:dxnav="http://schemas.devexpress.com/winfx/2008/xaml/navigation"
+        xmlns:devav="clr-namespace:DevExpress.DevAV"
+        xmlns:cview="clr-namespace:DevExpress.DevAV.Common.View"
+        xmlns:views="clr-namespace:DevExpress.DevAV.Views"
+        mc:Ignorable="d"
+        d:DesignHeight="400" d:DesignWidth="600"
+        DataContext="{dxmvvm:ViewModelSource viewmodel:ProductCollectionViewModel}">
+    <UserControl.Resources>
+        <Style x:Key="inventoryColumnTotalSummaryContentStyle" TargetType="ContentPresenter">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel HorizontalAlignment="Right" Margin="{StaticResource totalSummaryMargin}">
+                            <TextBlock HorizontalAlignment="Right" Foreground="{StaticResource grayForegroundBrush}" TextTrimming="CharacterEllipsis" TextAlignment="Right" IsHitTestVisible="False">
+                                <Run Text="TOTAL INVENTORY" />
+                                <LineBreak />
+                                <Run Text="{Binding Column.TotalSummaryText, Mode=OneWay}" Foreground="{StaticResource blackForegroundBrush}" FontWeight="Bold" />
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="monthlySalesColumnTotalSummaryContentStyle" TargetType="ContentPresenter">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel HorizontalAlignment="Right"  Margin="{StaticResource totalSummaryMargin}">
+                            <TextBlock HorizontalAlignment="Right" Foreground="{StaticResource grayForegroundBrush}" TextTrimming="CharacterEllipsis" TextAlignment="Right" IsHitTestVisible="False">
+                                <Run Text="TOTAL SALES" />
+                                <LineBreak />
+                                <Run Text="{Binding Column.TotalSummaryText, Mode=OneWay}" Foreground="{StaticResource blackForegroundBrush}" FontWeight="Bold" />
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIMessageBoxService/>
+    </dxmvvm:Interaction.Behaviors>
+    <DockPanel>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <TextBlock Text="PRODUCT" Style="{StaticResource TextBlockTitleGrayStyle}"/>
+            <TextBlock Text="Categories" Style="{StaticResource TextBlockSubtitleBlueStyle}"/>
+        </StackPanel>
+        <dxwui:AppBar DockPanel.Dock="Bottom" ItemSpacing="5" HideMode="AlwaysVisible">
+            <dxwui:AppBarButton Label="New" Command="{Binding NewCommand}" HorizontalAlignment="Center" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/New.png"/>
+            <dxwui:AppBarButton Label="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedEntity}" HorizontalAlignment="Center" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Edit.png"/>
+            <dxwui:AppBarSeparator/>
+            <dxwui:AppBarButton Label="Custom Filter" Command="{Binding CreateCustomFilterCommand}" HorizontalAlignment="Center" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/CustomFilter.png"/>
+            <dxg:GridSearchControl x:Name="searchControl" View="{Binding ElementName=tableView}" Margin="23" Style="{DynamicResource {dxet:SearchControlThemeKey ThemeName=DXStyle, ResourceKey=StandaloneStyle}}"/>
+        </dxwui:AppBar>
+        <views:StaticFiltersPanel DockPanel.Dock="Left"/>
+        <dxg:GridControl Name="gridControl"
+                         ItemsSource="{Binding Entities}"
+                         SelectedItem="{Binding SelectedEntity}"
+                         Margin="0,0,42,2" ShowLoadingPanel="{Binding IsLoading}">
+            <dxmvvm:Interaction.Behaviors>
+                <dxmvvm:EventToCommand PassEventArgsToCommand="True" Command="{Binding EditCommand}" EventName="MouseDoubleClick">
+                    <dxmvvm:EventToCommand.EventArgsConverter>
+                        <dx:EventArgsToDataRowConverter/>
+                    </dxmvvm:EventToCommand.EventArgsConverter>
+                </dxmvvm:EventToCommand>
+            </dxmvvm:Interaction.Behaviors>
+            <dxg:GridControl.Columns>
+                <dxg:GridColumn IsSmart="True" FieldName="Name"/>
+                <dxg:GridColumn IsSmart="True" FieldName="Cost" />
+                <dxg:GridColumn IsSmart="True" FieldName="SalePrice" />
+                <dxg:GridColumn IsSmart="True" FieldName="RetailPrice" />
+                <dxg:GridColumn IsSmart="True" FieldName="CurrentInventory" Header="Inventory" TotalSummaryContentStyle="{StaticResource inventoryColumnTotalSummaryContentStyle}" />
+                <dxg:GridColumn IsSmart="True" FieldName="Backorder" />
+                <dxg:GridColumn IsSmart="True" FieldName="MonthlySales" Header="Monthly Sales (FY2013)" MinWidth="170" AllowColumnFiltering="False" AllowSorting="False" TotalSummaryContentStyle="{StaticResource monthlySalesColumnTotalSummaryContentStyle}">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:SparklineEditSettings>
+                            <dxe:SparklineEditSettings.StyleSettings>
+                                <dxe:BarSparklineStyleSettings/>
+                            </dxe:SparklineEditSettings.StyleSettings>
+                        </dxe:SparklineEditSettings>
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+            </dxg:GridControl.Columns>
+            <dxg:GridControl.View>
+                <dxg:TableView x:Name="tableView"
+                               ShowSearchPanelMode="Never"
+                               SearchControl="{Binding ElementName=searchControl}"
+                               AllowEditing="False"
+                               AllowPerPixelScrolling="True"
+                               AutoWidth="True"
+                               ShowGroupPanel="False"
+                               AllowColumnMoving="False"
+                               IsColumnMenuEnabled="True"
+                               ShowTotalSummary="True"
+                               ShowIndicator="False"
+                               ShowFilterPanelMode="Never"
+                               NavigationStyle="Row">
+                    <dxg:TableView.ColumnMenuCustomizations>
+                        <dxb:RemoveBarItemAndLinkAction ItemName="{x:Static dxg:DefaultColumnMenuItemNames.GroupBox }"/>
+                        <dxb:RemoveBarItemAndLinkAction ItemName="{x:Static dxg:DefaultColumnMenuItemNames.SearchPanel }"/>
+                    </dxg:TableView.ColumnMenuCustomizations>
+                </dxg:TableView>
+            </dxg:GridControl.View>
+            <dxg:GridControl.TotalSummary>
+                <dxg:GridSummaryItem SummaryType="Sum" FieldName="CurrentInventory" DisplayFormat="{}{0}" />
+                <dxg:GridSummaryItem SummaryType="Sum" FieldName="TotalSales" ShowInColumn="MonthlySales" DisplayFormat="{}{0:c}" />
+            </dxg:GridControl.TotalSummary>
+        </dxg:GridControl>
+    </DockPanel>
+</UserControl>
+
+
+

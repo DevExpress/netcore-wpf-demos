@@ -1,0 +1,159 @@
+<UserControl x:Class="DevExpress.DevAV.Views.OrderCollectionView"
+xmlns="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+xmlns:dxcr="http://schemas.devexpress.com/winfx/2008/xaml/charts/rangecontrolclient"
+xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"
+xmlns:viewmodel="clr-namespace:DevExpress.DevAV.ViewModels"
+xmlns:cview="clr-namespace:DevExpress.DevAV.Common.View"
+xmlns:dxp="http://schemas.devexpress.com/winfx/2008/xaml/printing"
+xmlns:dxet="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
+xmlns:dxgt="http://schemas.devexpress.com/winfx/2008/xaml/grid/themekeys"
+xmlns:local="clr-namespace:DevExpress.DevAV.Common.View"              
+xmlns:devav="clr-namespace:DevExpress.DevAV"
+mc:Ignorable="d" d:DesignHeight="400" d:DesignWidth="600"
+DataContext="{dxmvvm:ViewModelSource viewmodel:OrderCollectionViewModel}">
+    <UserControl.Resources>
+        <dxe:EditRangeToFilterCriteriaConverter x:Key="EditRangeToFilterCriteriaConverter"/>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dxwui:WinUIMessageBoxService/>
+    </dxmvvm:Interaction.Behaviors>
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="SALES" Style="{StaticResource TextBlockTitleBlueStyle}"/>
+        <dxwui:AppBar DockPanel.Dock="Bottom" HideMode="AlwaysVisible">
+            <dxwui:AppBarButton Label="View" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedEntity}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Edit.png"/>
+            <dxwui:AppBarSeparator/>
+            <dxwui:AppBarButton Label="Print" Command="{Binding ShowPrintPreviewCommand}" CommandParameter="{Binding ElementName=tableView}" Glyph="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/Toolbar/Print.png"/>
+            <dxg:GridSearchControl x:Name="searchControl" ShowMRUButton="False" Margin="23" Style="{DynamicResource {dxet:SearchControlThemeKey ThemeName=DXStyle, ResourceKey=StandaloneStyle}}"/>
+        </dxwui:AppBar>
+        <dxlc:LayoutControl Orientation="Horizontal" AllowItemSizing="False" Margin="42,0,42,2" Padding="2">
+            <dxlc:LayoutControl.Resources>
+                <Style TargetType="dxlc:LayoutItem">
+                    <Setter Property="ElementSpace" Value="55"/>
+                </Style>
+            </dxlc:LayoutControl.Resources>
+            <dxlc:LayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,5"
+                                 dxlc:LayoutControl.AllowVerticalSizing="False" dxlc:LayoutControl.AllowHorizontalSizing="False">
+                <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="28"/>
+                        <ColumnDefinition Width="2*" MaxWidth="{Binding IsChecked, ElementName=hideButton, Converter={dxmvvm:BooleanToObjectConverter  FalseValue='4000', TrueValue='0'}}"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <dxg:GridControl Name="gridControl" Grid.Column="0" Grid.Row="0"
+                                     ItemsSource="{Binding Entities}"
+                                     FilterCriteria="{Binding ElementName=rangeControl, Path=SelectionRange, Converter={StaticResource EditRangeToFilterCriteriaConverter}, ConverterParameter=OrderDate}"
+                                     SelectedItem="{Binding SelectedEntity}">
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand PassEventArgsToCommand="True" Command="{Binding EditCommand}" EventName="MouseDoubleClick">
+                                <dxmvvm:EventToCommand.EventArgsConverter>
+                                    <dx:EventArgsToDataRowConverter/>
+                                </dxmvvm:EventToCommand.EventArgsConverter>
+                            </dxmvvm:EventToCommand>
+                        </dxmvvm:Interaction.Behaviors>
+                        <dxg:GridControl.Columns>
+                            <dxg:GridColumn IsSmart="True" FieldName="InvoiceNumber" Header="Invoice" Width="120" FixedWidth="True"/>
+                            <dxg:GridColumn IsSmart="True" FieldName="OrderDate" Header="Order Date" Width="100" FixedWidth="True"/>
+                            <dxg:GridColumn FieldName="Customer.Name" Header="Name" ReadOnly="True"  FixedWidth="False"/>
+                            <dxg:GridColumn IsSmart="True" FieldName="Store.Address.CityLine" Header="City Line"  ReadOnly="True" FixedWidth="False"/>
+                            <dxg:GridColumn IsSmart="True" FieldName="TotalAmount" Header="Total Amount" FixedWidth="True" Width="130"/>
+                        </dxg:GridControl.Columns>
+                        <dxg:GridControl.View>
+                            <dxg:TableView Name="tableView"
+                                           SearchControl="{Binding ElementName=searchControl}"
+                                           ShowSearchPanelMode="Never"
+                                           AutoWidth="True"
+                                           AllowEditing="False"
+                                           AllowGrouping="False"
+                                           ShowGroupPanel="False"
+                                           ShowFixedTotalSummary="False"
+                                           AllowPerPixelScrolling="True"
+                                           ShowFilterPanelMode="Never"
+                                           AllowMoveColumnToDropArea="False"
+                                           ShowIndicator="False">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <cview:PrintableControlPreviewService/>
+                                </dxmvvm:Interaction.Behaviors>
+                                <dxg:TableView.ColumnMenuCustomizations>
+                                    <dxb:RemoveBarItemAndLinkAction ItemName="{x:Static dxg:DefaultColumnMenuItemNames.GroupBox }"/>
+                                    <dxb:RemoveBarItemAndLinkAction ItemName="{x:Static dxg:DefaultColumnMenuItemNames.SearchPanel }"/>
+                                </dxg:TableView.ColumnMenuCustomizations>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                    <dxe:RangeControl Name="rangeControl" MinHeight="100"
+                                      Grid.Column="0" Grid.Row="1" Margin="0,20,0,0"
+                                      AllowZoom="False"
+                                      ShowRangeBar="False"
+                                      ShowLabels="False">
+                        <dxcr:DateTimeChartRangeControlClient ShowArgumentLabels="True"
+                                                              ItemsSource="{Binding AverageOrders}"
+                                                              ArgumentDataMember="OrderDate"
+                                                              ArgumentLabelFormatString="{}{0:MMMM/yyyy}" 
+                                                              SnapAlignment="Month"
+                                                              ValueDataMember="TotalAmount">
+                            <dxcr:DateTimeChartRangeControlClient.View>
+                                <dxcr:RangeControlClientAreaView ShowMarkers="False"/>
+                            </dxcr:DateTimeChartRangeControlClient.View>
+                        </dxcr:DateTimeChartRangeControlClient>
+                    </dxe:RangeControl>
+                    <ToggleButton x:Name="hideButton" Grid.Column="1" Grid.RowSpan="2"
+                              IsChecked="False"
+                              Style="{DynamicResource ResourceKey=HideButtonStyle}"/>
+                    <Grid Grid.Column="3" Grid.RowSpan="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <dxe:ComboBoxEdit HorizontalAlignment="Center" Height="40"
+                                      FontSize="16"
+                                      ItemsSource="{Binding Sales}"
+                                      DisplayMember="Caption"
+                                      SelectedItem="{Binding SelectedSale, Mode=TwoWay}"
+                                      ShowBorder="False"
+                                      IsTextEditable="False"/>
+                        <dxc:ChartControl Grid.Row="1" BorderThickness="0" Palette="{StaticResource chartsPalette}">
+                            <dxc:ChartControl.Legend>
+                                <dxc:Legend VerticalPosition="BottomOutside"
+                                        HorizontalPosition="Center"
+                                        FontSize="15"
+                                        Orientation="Horizontal"
+                                        Margin="0,-10,0,0" BorderThickness="0"/>
+                            </dxc:ChartControl.Legend>
+                            <dxc:ChartControl.Diagram>
+                                <dxc:SimpleDiagram2D>
+                                    <dxc:PieSeries2D DataSource="{Binding SelectedSale.ListProductInfo}"
+                                                                     ArgumentDataMember="Name" ValueDataMember="Value"
+                                                                     LegendTextPattern="{}{A}" HoleRadiusPercent="50">
+                                        <dxc:PieSeries2D.Model>
+                                            <dxc:BorderlessFlatPie2DModel/>
+                                        </dxc:PieSeries2D.Model>
+                                        <dxc:PieSeries2D.Label>
+                                            <dxc:SeriesLabel Visible="True" dxc:PieSeries.LabelPosition="Inside"
+                                                     TextPattern="{}{V:C2}">
+                                            </dxc:SeriesLabel>
+                                        </dxc:PieSeries2D.Label>
+                                    </dxc:PieSeries2D>
+                                </dxc:SimpleDiagram2D>
+                            </dxc:ChartControl.Diagram>
+                        </dxc:ChartControl>
+                    </Grid>
+                </Grid>
+            </dxlc:LayoutItem>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</UserControl>

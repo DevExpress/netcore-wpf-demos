@@ -2,6 +2,7 @@
 
 This repository contains the DevExpress demo applications that target .Net Core 3:
 - Outlook-Inspired App
+- Hybrid App
 - Mail Client
 - Realtor World
 
