@@ -6,6 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxet="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    dx:ThemeManager.Theme="Office2019Colorful"
     mc:Ignorable="d" x:Name="splashWindow"
     WindowStyle="None" ResizeMode="NoResize" ShowActivated="False" Width="800" Height="600"
     AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True"

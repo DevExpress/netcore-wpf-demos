@@ -9,7 +9,7 @@
         xmlns:ViewModel="clr-namespace:DevExpress.RealtorWorld.Xpf.ViewModel"
         xmlns:View="clr-namespace:DevExpress.RealtorWorld.Xpf.View"
         WindowStartupLocation="CenterScreen"
-        dx:ThemeManager.Theme="TouchlineDark"
+        dx:ThemeManager.Theme="MetropolisDark"
         Title="Realtor World" Height="730" Width="1300" MinHeight="600" MinWidth="1000" ShowIcon="False" ShowTitle="False"
         Icon="/DevExpress.RealtorWorld.Xpf;component/Images/AppIcon.ico">
 
