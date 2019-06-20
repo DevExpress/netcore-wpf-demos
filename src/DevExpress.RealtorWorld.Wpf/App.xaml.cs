@@ -34,6 +34,7 @@ namespace DevExpress.RealtorWorld.Xpf {
         }
         #region LoadPlugins
         static void LoadPlugins() {
+#if !DXCORE3
             foreach(string file in Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), "DevExpress.RealtorWorld.Xpf.Plugins.*.exe")) {
                 Assembly plugin = Assembly.LoadFrom(file);
                 if(plugin == null) continue;
@@ -43,8 +44,9 @@ namespace DevExpress.RealtorWorld.Xpf {
                 if(start == null) continue;
                 start.Invoke(null, new object[] { });
             }
+#endif
         }
-        #endregion
+#endregion
     }
 }
 #if CLICKONCE
