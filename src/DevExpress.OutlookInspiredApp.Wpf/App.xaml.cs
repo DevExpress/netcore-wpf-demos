@@ -12,6 +12,7 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.Native;
 using DevExpress.Mvvm.UI;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.DemoBase;
 
 namespace DevExpress.DevAV {
     public partial class App : Application {
@@ -21,11 +22,11 @@ namespace DevExpress.DevAV {
             ExceptionHelper.Initialize();
             AppDomain.CurrentDomain.AssemblyResolve += OnCurrentDomainAssemblyResolve;
             DevAVDataDirectoryHelper.LocalPrefix = "WpfOutlookInspiredApp";
-#if !DXCORE3
             AssemblyResolver.Subcribe();
+#if !DXCORE3
             ServiceContainer.Default.RegisterService(new ApplicationJumpListService());
+#endif            
             Theme.RegisterPredefinedPaletteThemes();
-#endif
             ImagesAssemblyLoader.Load();
             Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata(200));
             LoadPlugins();
@@ -37,10 +38,8 @@ namespace DevExpress.DevAV {
                 Shutdown();
                 return;
             }
-#if !DXCORE3
             Theme.TouchlineDark.ShowInThemeSelector = false;
             ApplicationThemeHelper.ApplicationThemeName = Theme.Office2019Colorful.Name;
-#endif
             SetCultureInfo();
         }
         static void SetCultureInfo() {

@@ -11,6 +11,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AssemblyName>DevExpress.RealtorWorld.Xpf</AssemblyName>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>
@@ -123,7 +124,7 @@
     <EmbeddedResource Include="Images\HomePhoto.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DevExpress.WindowsDesktop.Wpf" Version="19.1.4-ctp"/>
+    <PackageReference Include="DevExpress.WindowsDesktop.Wpf" Version="19.1.5-ctp"/>
   </ItemGroup>
   <Target Name="MakeImagesDir" AfterTargets="Build">
     <MakeDir Directories="$(SolutionDir)Images" />
