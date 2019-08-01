@@ -15,8 +15,8 @@ namespace DevExpress.RealtorWorld.Xpf {
             ExceptionHelper.Initialize();
 #if !DXCORE3
             DataDirectoryHelper.SetWebBrowserMode();
+#endif            
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisDark.Name;
-#endif
             LoadPlugins();           
             base.OnStartup(e);
             Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline), new FrameworkPropertyMetadata(200));

@@ -69,7 +69,7 @@ namespace DevExpress.DevAV.ViewModels {
         public static IReportInfo SalesAnalysis(IEnumerable<OrderItem> sales) {
             return GetReportInfo(SelectYearsViewModel.Create(), p => ReportFactory.SalesAnalysis(sales, p.Years));
         }
-        public static IReportInfo SalesAnalysisReport(IEnumerable<SaleAnalisysInfo> sales) {
+        public static IReportInfo SalesAnalysisReport(IEnumerable<SaleAnalysisInfo> sales) {
             return GetReportInfo(SelectYearsViewModel.Create(), p => ReportFactory.SalesAnalysisReport(sales, p.Years));
         }
 

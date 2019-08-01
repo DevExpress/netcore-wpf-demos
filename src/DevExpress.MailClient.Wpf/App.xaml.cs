@@ -20,8 +20,8 @@ namespace DevExpress.MailClient.Xpf {
             StrategyManager.Default.RegisterStrategy<AccordionControl, AccordionControlStrategy>();
 #if !DXCORE3
             ServiceContainer.Default.RegisterService(new ApplicationJumpListService());
+#endif            
             ApplicationThemeHelper.ApplicationThemeName = Theme.Office2016WhiteSEName;
-#endif
             ViewLocator.Default = new ViewLocator(typeof(App).Assembly);
             bootstrapper = new Bootstrapper();
             bootstrapper.Run();

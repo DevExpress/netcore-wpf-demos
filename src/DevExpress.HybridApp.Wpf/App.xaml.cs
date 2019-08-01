@@ -36,9 +36,7 @@ namespace DevExpress.DevAV {
                 Shutdown();
                 return;
             }
-#if !DXCORE3
             ApplicationThemeHelper.ApplicationThemeName = Theme.HybridApp.Name;
-#endif
             SetCultureInfo();
             SetLocalization();
         }
