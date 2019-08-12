@@ -7,7 +7,6 @@
     UseLayoutRounding="True" TitleAlignment="Center"
     Loaded="MainWindowLoaded"
     Title="DevAV" Icon="pack://application:,,,/DevExpress.HybridApp.Wpf;component/Resources/AppIcon.ico"
-    dx:ThemeManager.Theme="DXStyle"    
     Width="1400" Height="891">
 
     <view:DevAVDbView />

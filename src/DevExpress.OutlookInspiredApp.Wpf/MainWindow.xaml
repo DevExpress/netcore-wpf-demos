@@ -7,8 +7,7 @@
     UseLayoutRounding="True"
     WindowState="Maximized"            
     Loaded="MainWindowLoaded" dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap" ShowIcon="False"
-    Title="DevAV"
-    dx:ThemeManager.Theme="Office2019Colorful"                             
+    Title="DevAV" 
     Width="1384" Height="810">
 
     <view:DevAVDbView />

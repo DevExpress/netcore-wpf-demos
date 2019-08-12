@@ -4,7 +4,6 @@
         xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"      
         xmlns:view="clr-namespace:DevExpress.MailClient.View"
         Title="DevExpress Mail Client" Height="700" Width="1200" 
-        dx:ThemeManager.Theme="Office2016WhiteSE"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen"
         Icon="/DevExpress.MailClient.Xpf;component/Images/AppIcon/AppIcon.ico">
     <view:MainView />

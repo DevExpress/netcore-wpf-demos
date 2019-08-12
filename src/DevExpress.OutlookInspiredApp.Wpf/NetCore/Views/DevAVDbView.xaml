@@ -16,18 +16,20 @@
     xmlns:view="clr-namespace:DevExpress.DevAV.Views"
     xmlns:local="clr-namespace:DevExpress.DevAV"
     xmlns:controls="clr-namespace:DevExpress.DevAV.Controls"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:dxnav="http://schemas.devexpress.com/winfx/2008/xaml/navigation"
+    xmlns:dbase="http://schemas.devexpress.com/winfx/2008/xaml/demobase"
     mc:Ignorable="d"
     d:DesignHeight="600" d:DesignWidth="800"
     DataContext="{dxmvvm:ViewModelSource viewmodel:DevAVDbViewModel}">
     <dxmvvm:Interaction.Behaviors>
         <dxmvvm:CurrentWindowService ClosingCommand="{Binding OnClosingCommand}" />
         <dxmvvm:NotificationService UseWin8NotificationsIfAvailable="True"
-                                    PredefinedNotificationDuration="Long"
+                                    PredefinedNotificationDuration="Default"
                                     PredefinedNotificationTemplate="ShortHeaderAndLongText"
                                     CreateApplicationShortcut="True"
                                     RemoveApplicationShortcutOnUnloaded="True"
-                                    ApplicationName="OutlookInspiredApp.Wpf"
+                                    ApplicationName="Outlook Inspired App"
                                     ApplicationActivator="{x:Type local:OutlookInspiredAppNotificationActivator}">
             <dxmvvm:NotificationService.ApplicationId>
                 <Binding Source="{x:Static local:App.ApplicationID}" />
@@ -50,20 +52,17 @@
             <dxmvvm:TaskbarThumbButtonInfo ImageSource="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Modules/Employees.svg'}"
                                                Command="{Binding ShowCommand}" CommandParameter="{Binding Modules[0]}"
                                                Description="Employees"/>
-            <dxmvvm:TaskbarThumbButtonInfo ImageSource="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Modules/Tasks.svg'}"
-                                               Command="{Binding ShowCommand}" CommandParameter="{Binding Modules[1]}"
-                                               Description="Tasks"/>
             <dxmvvm:TaskbarThumbButtonInfo ImageSource="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Modules/Customers.svg'}"
-                                               Command="{Binding ShowCommand}" CommandParameter="{Binding Modules[2]}"
+                                               Command="{Binding ShowCommand}" CommandParameter="{Binding Modules[1]}"
                                                Description="Customers"/>
             <dxmvvm:TaskbarThumbButtonInfo ImageSource="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Modules/Products.svg'}"
-                                               Command="{Binding ShowCommand}" CommandParameter="{Binding Modules[3]}"
+                                               Command="{Binding ShowCommand}" CommandParameter="{Binding Modules[2]}"
                                                Description="Products"/>
             <dxmvvm:TaskbarThumbButtonInfo ImageSource="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Modules/Sales.svg'}"
-                                               Command="{Binding ShowCommand}" CommandParameter="{Binding Modules[4]}"
+                                               Command="{Binding ShowCommand}" CommandParameter="{Binding Modules[3]}"
                                                Description="Sales"/>
             <dxmvvm:TaskbarThumbButtonInfo ImageSource="{dx:SvgImageSource Uri='pack://application:,,,/DevExpress.OutlookInspiredApp.Wpf;component/Resources/Modules/Opportunities.svg'}"
-                                               Command="{Binding ShowCommand}" CommandParameter="{Binding Modules[5]}"
+                                               Command="{Binding ShowCommand}" CommandParameter="{Binding Modules[4]}"
                                                Description="Opportunities"/>
         </dxmvvm:TaskbarButtonService>
         <dx:WindowedDocumentUIService DocumentShowMode="Dialog" WindowType="dx:ThemedWindow" x:Name="AnalysisWindowedDocumentUIService">
@@ -206,6 +205,33 @@
                                 <dxb:BarCheckItem x:Name="IsFilterPaneMinimizedBarCheckItem" Content="Minimized" IsChecked="{Binding NavigationPaneVisibility, Mode=TwoWay, Converter={StaticResource NavigationPaneIsMinimizedConverter}}"/>
                                 <dxb:BarCheckItem x:Name="IsFilterPaneOffBarCheckItem" Content="Off" IsChecked="{Binding NavigationPaneVisibility, Mode=TwoWay, Converter={StaticResource NavigationPaneOffConverter}}"/>
                             </dxb:BarSubItem>
+                        </dxr:RibbonPageGroup>
+                        <dxr:RibbonPageGroup Caption="Appearance" MergeOrder="{x:Static sys:Int32.MaxValue}">
+                            <dbase:ThemesBarSplitButtonItem x:Name="themesItem" dxb:BarManager.ShowGlyphsInPopupMenus="False" GlyphSize="Large">
+                                <dbase:ThemesBarSplitButtonItem.Tag>
+                                    <sys:Boolean>False</sys:Boolean>
+                                </dbase:ThemesBarSplitButtonItem.Tag>
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dbase:BarSplitItemDemoThemeSelectorBehavior x:Name="behavior" ShowTouchThemes="False" 
+                                                                           ShowAllCategories="{Binding AssociatedObject.Tag, Mode=TwoWay, RelativeSource={RelativeSource Self}}">
+                                        <dbase:BarSplitItemDemoThemeSelectorBehavior.Footer>
+                                            <dxb:MenuBarControl>
+                                                <dxb:PopupMenu dxb:BarManager.ShowGlyphsInPopupMenus="False" dxb:PopupMenuManager.IgnorePopupItemClickBehaviour="True">
+                                                    <dbase:ThemesRibbonGalleryBarShowMoreButtonItem Tag="{x:Reference themesItem}"
+                                                                                                     Content="{DXBinding '@s.Tag.Tag ? `Show Less` : `Show More`'}"
+                                                                                                     Command="{DXCommand '@s.Tag.Tag = !@s.Tag.Tag'}" >
+                                                    </dbase:ThemesRibbonGalleryBarShowMoreButtonItem>
+                                                </dxb:PopupMenu>
+                                            </dxb:MenuBarControl>
+                                        </dbase:BarSplitItemDemoThemeSelectorBehavior.Footer>
+                                    </dbase:BarSplitItemDemoThemeSelectorBehavior>
+                                </dxmvvm:Interaction.Behaviors>
+                            </dbase:ThemesBarSplitButtonItem>
+                            <dxr:RibbonGalleryBarItem>
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxr:RibbonGalleryItemThemePaletteSelectorBehavior />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxr:RibbonGalleryBarItem>
                         </dxr:RibbonPageGroup>
                     </dxr:RibbonPage>
                 </dxr:RibbonDefaultPageCategory>

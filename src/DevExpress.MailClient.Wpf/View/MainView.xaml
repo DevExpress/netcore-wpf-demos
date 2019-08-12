@@ -13,6 +13,7 @@
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxt="http://schemas.devexpress.com/winfx/2008/xaml/core/themekeys"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:dbase="http://schemas.devexpress.com/winfx/2008/xaml/demobase"
              mc:Ignorable="d" 
              dx:ScrollBarExtensions.ScrollBarMode="TouchOverlap"
              d:DesignHeight="392" d:DesignWidth="699">
@@ -53,13 +54,30 @@
                             <dxb:BarButtonItem Content="Tasks" Command="{Binding OpenTasksCommand}" Glyph="{dx:DXImageOffice2013 Image=Task_16x16.png}" LargeGlyph="{dx:DXImageOffice2013 Image=Task_32x32.png}" />
                         </dxb:BarSubItem>
                     </dxr:RibbonPageGroup>
-                    <dxr:RibbonPageGroup Caption="Theme" MergeOrder="{x:Static sys:Int32.MaxValue}">
-                        <dxr:RibbonGalleryBarItem>
-                            <dxr:RibbonGalleryBarItem.DropDownGallery>
-                                <dxb:Gallery RowCount="6"/>
-                            </dxr:RibbonGalleryBarItem.DropDownGallery>
+                    <dxr:RibbonPageGroup Caption="Appearance" MergeOrder="{x:Static sys:Int32.MaxValue}">
+                        <dbase:ThemesBarSplitButtonItem x:Name="themesItem" dxb:BarManager.ShowGlyphsInPopupMenus="False" GlyphSize="Large">
+                            <dbase:ThemesBarSplitButtonItem.Tag>
+                                <sys:Boolean>False</sys:Boolean>
+                            </dbase:ThemesBarSplitButtonItem.Tag>
                             <dxmvvm:Interaction.Behaviors>
-                                <view:ThemeSelectorBehavior ShowTouchThemes="False"/>
+                                <dbase:BarSplitItemDemoThemeSelectorBehavior x:Name="behavior" ShowTouchThemes="False" 
+                                                                           ShowAllCategories="{Binding AssociatedObject.Tag, Mode=TwoWay, RelativeSource={RelativeSource Self}}">
+                                    <dbase:BarSplitItemDemoThemeSelectorBehavior.Footer>
+                                        <dxb:MenuBarControl>
+                                            <dxb:PopupMenu dxb:BarManager.ShowGlyphsInPopupMenus="False" dxb:PopupMenuManager.IgnorePopupItemClickBehaviour="True">
+                                                <dbase:ThemesRibbonGalleryBarShowMoreButtonItem Tag="{x:Reference themesItem}"
+                                                                                                     Content="{DXBinding '@s.Tag.Tag ? `Show Less` : `Show More`'}"
+                                                                                                     Command="{DXCommand '@s.Tag.Tag = !@s.Tag.Tag'}" >
+                                                </dbase:ThemesRibbonGalleryBarShowMoreButtonItem>
+                                            </dxb:PopupMenu>
+                                        </dxb:MenuBarControl>
+                                    </dbase:BarSplitItemDemoThemeSelectorBehavior.Footer>
+                                </dbase:BarSplitItemDemoThemeSelectorBehavior>
+                            </dxmvvm:Interaction.Behaviors>
+                        </dbase:ThemesBarSplitButtonItem>
+                        <dxr:RibbonGalleryBarItem>
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxr:RibbonGalleryItemThemePaletteSelectorBehavior />
                             </dxmvvm:Interaction.Behaviors>
                         </dxr:RibbonGalleryBarItem>
                     </dxr:RibbonPageGroup>
