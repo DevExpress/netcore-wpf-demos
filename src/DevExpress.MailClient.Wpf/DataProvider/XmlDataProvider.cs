@@ -68,15 +68,11 @@ namespace DevExpress.MailClient.DataProvider {
         #region Static
         static DataSet InitDataSet(string path) {
             var result = new DataSet();
-#if DXCORE3
-            result.ReadXml(path);
-#else
             string fullPath = FilePathHelper.GetFullPath(path);
             if(fullPath != string.Empty) {
                 FileInfo fi = new FileInfo(fullPath);
                 result.ReadXml(fi.FullName);
             }
-#endif            
             return result;
         }
         static ContactItemViewModel CreateContact(Employee employee) {

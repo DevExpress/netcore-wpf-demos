@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 #if DXCORE3
 using Microsoft.EntityFrameworkCore;
+using DevExpress.Internal;
 #else
 using System.Data.Entity;
 #endif
@@ -25,17 +26,32 @@ namespace DevExpress.MailClient.Helpers {
         internal static List<Employee> Employees {
             get {
                 if(employees == null) {
-                    DevAVDb devAvDb = new DevAVDb(
 #if DXCORE3
-                        @"Data Source=devav.sqlite3"
+                    SetFilePath();
+                    var devAvDb = new DevAVDb(string.Format("Data Source={0}", filePath));
+                    devAvDb.Pictures.Load();
+#else
+                    var devAvDb = new DevAVDb();
 #endif
-);
                     devAvDb.Employees.Load();
                     employees = devAvDb.Employees.Local.ToList();
                 }
                 return employees;
             }
         }
+#if DXCORE3
+        static string filePath;
+        static void SetFilePath() {
+            if(filePath == null)
+                filePath = DataDirectoryHelper.GetFile("devav.sqlite3", DataDirectoryHelper.DataFolderName);
+            try {
+                var attributes = File.GetAttributes(filePath);
+                if(attributes.HasFlag(FileAttributes.ReadOnly)) {
+                    File.SetAttributes(filePath, attributes & ~FileAttributes.ReadOnly);
+                }
+            } catch { }
+        }
+#endif
         internal static ImageSource UnknownUserPicture {
             get {
                 if(unknownUserPicture == null) {
@@ -89,14 +105,12 @@ namespace DevExpress.MailClient.Helpers {
         }
     }
     public class FilePathHelper {
-#if !DXCORE3
         public static string GetFullPath(string name) {
             var type = Type.GetType("DevExpress.DemoData.Helpers.DataFilesHelper, " + AssemblyInfo.SRAssemblyDemoDataCore + ", Version=" + AssemblyInfo.Version + ", Culture=neutral, PublicKeyToken=" + AssemblyInfo.PublicKeyToken);
             var method = type.GetMethod("FindFile", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
             var propValue = "Data";
             return (string)method.Invoke(null, new object[] { name, propValue });
         }
-#endif
         public static Uri GetDXImageUri(string path) {
             return AssemblyHelper.GetResourceUri(typeof(DXImages).Assembly, string.Format("Office2013/{0}.png", path));
         }

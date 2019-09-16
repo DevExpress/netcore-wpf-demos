@@ -160,11 +160,4 @@
     <PackageReference Include="DevExpress.WindowsDesktop.Wpf" Version="19.1.5-ctp"/>
     <PackageReference Include="DevExpress.WindowsDesktop.Wpf.Demos" Version="19.1.5-ctp"/>
   </ItemGroup> 
-  <PropertyGroup>
-    <PostBuildEvent>
-      copy /Y "$(SolutionDir)..\Data\devav.sqlite3" "$(SolutionDir)\DevExpress.MailClient.Wpf\bin.NetCore\devav.sqlite3"
-      copy /Y "$(SolutionDir)..\Data\EnglishAlphabet.txt" "$(SolutionDir)\DevExpress.MailClient.Wpf\bin.NetCore\EnglishAlphabet.txt"
-      copy /Y "$(SolutionDir)..\Data\MailDevAv.xml" "$(SolutionDir)\DevExpress.MailClient.Wpf\bin.NetCore\MailDevAv.xml"
-    </PostBuildEvent>
-  </PropertyGroup>
 </Project>
