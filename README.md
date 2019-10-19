@@ -8,11 +8,11 @@ This repository contains the DevExpress demo applications that target .Net Core 
 
 ## Requirements
 
-Install the following software to build and run the demo application:
+Install the following software to build and run the demo applications:
 
-- **Visual Studio 2019** with the **.NET desktop development** workload installed
+- **Visual Studio 2019 v16.3** (or later) with the **.NET desktop development** workload installed
 
-- [.NET core 3 preview 5 or more recent](https://dotnet.microsoft.com/download/dotnet-core/3.0)
+- [.NET core 3](https://dotnet.microsoft.com/download/dotnet-core/3.0)
 
 ## Getting started
 
@@ -20,20 +20,26 @@ Clone the repository to a working folder, navigate to './src'.
 
 Open a solution in Visual Studio. 
 
-Before you build the solution, ensure that the 'Use previews of the .NET Core SDK' option is enabled. 
-You can find this setting from the Visual Studio main menu: 
-- In Visual Studio 2019 version 16.1+: Tools -> Options -> Environment -> Preview Features
-- In Visual Studio 2019 version 16.0: Tools -> Options -> Project and Solutions -> .NET Core
-
 ## Integrate DevExpress WPF Controls into a .NET Core 3 application
 
-You need the DevExpress NuGet packages to create a .Net Core 3 project. Follow the steps below to add the packages to a solution:
+You need the DevExpress NuGet packages to build and run these demos. Follow the steps below to add the packages to a solution:
 
-1. [Register](https://docs.devexpress.com/GeneralInformation/116698/installation/install-devexpress-controls-using-nuget-packages/setup-visual-studio%27s-nuget-package-manager) the DevExpress Early Access feed in Visual Studio's NuGet Package Manager. Note that you should enable the **Include prerelease** option.
+1. [Obtain your NuGet feed URL](https://docs.devexpress.com/GeneralInformation/116042/installation/install-devexpress-controls-using-nuget-packages/obtain-your-nuget-feed-url).
+2. In Visual Studio, go to **Tools | NuGet Package Manager | Manage NuGet Packages for Solution**
+3. Open "Settings"...
 
-    `https://nuget.devexpress.com/early-access/api`
+    ... and add a new NuGet feed with the following credentials:
 
-2. Install the DevExpress.WindowsDesktop.Wpf package for .Net Core 3. 
+    **Name:** _DevExpress_  
+    **Source:** `https://nuget.devexpress.com/{your feed authorization key}/api`
+
+4. Select the **DevExpress** package source.
+
+5. In the "Browse" tab, search for the _'WindowsDesktop.Wpf'_ keyword and install the **DevExpress.WindowsDesktop.Wpf** and **DevExpress.WindowsDesktop.Wpf.Themes.All** packages for the current project. Read and accept the license agreement. 
+
+## Documentation
+
+[.NET Core 3 Support](https://docs.devexpress.com/WPF/401165/dotnet-core-support)
 
 ## Feedback
 
