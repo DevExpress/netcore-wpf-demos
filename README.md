@@ -1,5 +1,11 @@
 # .Net Core 3 WPF Demos
 
+> ⚠ **Important Note**
+> 
+> This repository contains a pre-release version of DevExpress demo applications for the .NET Core 3 platform.
+> 
+> Please visit [https://www.devexpress.com/dotnet-core-3/](https://www.devexpress.com/dotnet-core-3/) to download the most recent version of the DevExpress .NET Core 3 installer (contains shipping versions of all DevExpress .NET Core 3 demos).
+
 This repository contains the DevExpress demo applications that target .Net Core 3:
 - Outlook-Inspired App
 - Hybrid App
